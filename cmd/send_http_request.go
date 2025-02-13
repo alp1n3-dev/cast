@@ -21,20 +21,17 @@ func init() {
 
 		method := strings.ToUpper(args[0])
 		url := args[1]
-		fmt.Println(method)
-		fmt.Println(url)
-
+		//fmt.Println(method)
+		//fmt.Println(url)
 
 		//http_extractors.ValidateHTTP(method, url)
 		request := http_extractors.BuildHTTPRequest(method, url)
 		SendHTTPRequest(request)
 
-
 		//makeRequest(method, url)
 
 	}
 }
-
 
 func SendHTTPRequest(r models.HTTPRequest) (*http.Response, error) {
 	client := &http.Client{}
