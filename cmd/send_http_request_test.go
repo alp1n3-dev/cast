@@ -23,5 +23,5 @@ func TestSendRequest(t *testing.T) {
 	}
 
 	// Call function (note: it prints output instead of returning values)
-	SendRequest(req)
+	SendHTTPRequest(req)
 }

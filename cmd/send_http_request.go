@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func SendRequest(req *http.Request) {
+func SendHTTPRequest(req *http.Request) {
 	client := &http.Client{}
 
 	resp, err := client.Do(req)
