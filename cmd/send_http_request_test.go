@@ -1,11 +1,13 @@
 package cmd
 
+// Test is deprecated currently due to ongoing program architect issues.
+
 import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"io"
+
 	"github.com/alp1n3-eth/cast/models"
 )
 
@@ -28,12 +30,12 @@ func TestSendRequest(t *testing.T) {
 	var request models.HTTPRequest
 	request.Request.URL = mockServer.URL
 	request.Request.Method = "GET"
-	resp, err := SendHTTPRequest(request)
+	request, err := SendHTTPRequest(request)
 	if err != nil {
 		t.Fatalf("Error sending request: %v", err)
 	}
 
 
-	convResp, _ := io.ReadAll(resp.Body)
-	fmt.Println("Returned response body from SendHTTPRequest: "+ string(convResp))
+	//convResp, _ := io.ReadAll(resp.Body)
+	//fmt.Println("Returned response body from SendHTTPRequest: "+ string(convResp))
 }

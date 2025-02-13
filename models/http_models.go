@@ -7,9 +7,16 @@ type HTTPRequestData struct {
 	Body string
 }
 
+type HTTPResponseData struct {
+	StatusCode string
+	Headers map[string]string
+	Body string
+}
+
 type HTTPRequest struct {
 	Request HTTPRequestData
 	Assertions []Assertion
+	Response HTTPResponseData
 }
 
 type Assertion struct {

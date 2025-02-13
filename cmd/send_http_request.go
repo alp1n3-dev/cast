@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+
 	"github.com/spf13/cobra"
 
 	//"github.com/spf13/viper"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/alp1n3-eth/cast/extractors/http_extractors"
 	"github.com/alp1n3-eth/cast/models"
+	"github.com/alp1n3-eth/cast/output"
 	//"github.com/alp1n3-eth/cast/models"
 )
 
@@ -33,13 +35,13 @@ func init() {
 	}
 }
 
-func SendHTTPRequest(r models.HTTPRequest) (*http.Response, error) {
+func SendHTTPRequest(r models.HTTPRequest) (models.HTTPRequest, error) {
 	client := &http.Client{}
 
 	req, err := http.NewRequest(r.Request.Method, r.Request.URL, nil)
 	if err != nil {
 			fmt.Println("Error creating request:", err)
-			return nil, nil
+			return r, nil
 	}
 
 	resp, err := client.Do(req)
@@ -49,9 +51,11 @@ func SendHTTPRequest(r models.HTTPRequest) (*http.Response, error) {
 		}
 	defer resp.Body.Close()
 
+
+	rPair, err := http_extractors.BuildHTTPResponse(r, resp)
 	// Print the Response
 	// Returns *http.Response & error
-	resp, err = PrintResponse(resp)
+	err = output.PrintResponse(rPair)
 
-	return resp, nil
+	return rPair, nil
 }
