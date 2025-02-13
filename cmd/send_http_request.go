@@ -1,13 +1,49 @@
 package cmd
 
 import (
-	"net/http"
 	"fmt"
+	"net/http"
 	"os"
+
+	"github.com/spf13/cobra"
+
+	//"github.com/spf13/viper"
+	"strings"
+
+	"github.com/alp1n3-eth/cast/extractors/http_extractors"
+	"github.com/alp1n3-eth/cast/models"
+	//"github.com/alp1n3-eth/cast/models"
 )
 
-func SendHTTPRequest(req *http.Request) {
+func init() {
+	rootCmd.Args = cobra.MinimumNArgs(2)
+	rootCmd.Run = func(cmd *cobra.Command, args []string) {
+
+		method := strings.ToUpper(args[0])
+		url := args[1]
+		fmt.Println(method)
+		fmt.Println(url)
+
+
+		//http_extractors.ValidateHTTP(method, url)
+		request := http_extractors.BuildHTTPRequest(method, url)
+		SendHTTPRequest(request)
+
+
+		//makeRequest(method, url)
+
+	}
+}
+
+
+func SendHTTPRequest(r models.HTTPRequest) (*http.Response, error) {
 	client := &http.Client{}
+
+	req, err := http.NewRequest(r.Request.Method, r.Request.URL, nil)
+	if err != nil {
+			fmt.Println("Error creating request:", err)
+			return nil, nil
+	}
 
 	resp, err := client.Do(req)
 		if err != nil {
@@ -16,6 +52,9 @@ func SendHTTPRequest(req *http.Request) {
 		}
 	defer resp.Body.Close()
 
-	PrintResponse(resp)
+	// Print the Response
+	// Returns *http.Response & error
+	resp, err = PrintResponse(resp)
 
+	return resp, nil
 }

@@ -22,6 +22,7 @@ var rootCmd = &cobra.Command{
 examples and usage of using your application. For example:
 
 Cast is a Go program that allows users to make dead-simple HTTP requests. It closely relies on the HTTP standard and is extremely intuitive to read to without being too verbose.`,
+
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
