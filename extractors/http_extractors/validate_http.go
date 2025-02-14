@@ -1,22 +1,24 @@
 package http_extractors
 
 import (
-	"log"
+	//"log"
 	"errors"
 	"net/url"
+	"github.com/charmbracelet/log"
 )
 
 func ValidateHTTP(method, url string) {
 	validMethod := isValidMethod(method)
 	if validMethod != true {
+
 		err := errors.New("Invalid Method.")
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 
 	validURL := isHTTPURL(url)
 	if validURL != true {
 		err := errors.New("Invalid URL.")
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 }
 
