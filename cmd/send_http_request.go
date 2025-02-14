@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"slices"
 
 
 	"github.com/spf13/cobra"
@@ -18,20 +19,28 @@ import (
 )
 
 func init() {
-	rootCmd.Args = cobra.MinimumNArgs(2)
+	rootCmd.Args = cobra.MatchAll(cobra.OnlyValidArgs, cobra.MinimumNArgs(1))
 	rootCmd.Run = func(cmd *cobra.Command, args []string) {
 
-		method := strings.ToUpper(args[0])
-		url := args[1]
-		//fmt.Println(method)
-		//fmt.Println(url)
+		methodList := []string{"GET", "POST", "PUT", "DELETE", "HEAD", "OPTION", "TRACE"}
+		argZero := strings.ToLower(args[0])
 
-		//http_extractors.ValidateHTTP(method, url)
-		request := http_extractors.BuildHTTPRequest(method, url)
-		SendHTTPRequest(request)
+		if slices.Contains(methodList, strings.ToUpper(argZero)) {
+			fmt.Println("[!] Method and URL Provided")
+			method := strings.ToUpper(args[0])
+			url := args[1]
+			// TODO: Parse and send custom headers
+			// TODO: Double-check that multiple cookies being set doesn't run into any issues
+			// TODO: Add the ability to add a custom body to POSTS
+			request := http_extractors.BuildHTTPRequest(method, url)
+     		SendHTTPRequest(request)
+		} else if argZero[len(argZero)-5:] == ".http"{
+			fmt.Println("[!] HTTP File Provided")
 
-		//makeRequest(method, url)
+			// Parse the provided file.
 
+			// Using the ParsedHTTPFile struct, create an array of HTTP Requests
+		}
 	}
 }
 
