@@ -15,7 +15,7 @@ import (
 	"github.com/alp1n3-eth/cast/extractors/http_extractors"
 	"github.com/alp1n3-eth/cast/models"
 	"github.com/alp1n3-eth/cast/output"
-	"github.com/charmbracelet/log"
+
 	//"github.com/alp1n3-eth/cast/models"
 )
 
@@ -28,7 +28,7 @@ func init() {
 
 		if slices.Contains(methodList, strings.ToUpper(argZero)) {
 			//fmt.Println("[!] Method and URL Provided")
-			log.Info("Method and URL Provided")
+			models.Logger.Info("Method and URL Provided")
 			method := strings.ToUpper(args[0])
 			url := args[1]
 			// TODO: Parse and send custom headers
@@ -38,14 +38,14 @@ func init() {
      		SendHTTPRequest(request)
 		} else if len(argZero) > 5 && argZero[len(argZero)-5:] == ".http"{
 			//fmt.Println("[!] HTTP File Provided")
-			log.Info("HTTP File Provided")
+			models.Logger.Info("HTTP File Provided")
 
 			// Parse the provided file.
 
 			// Using the ParsedHTTPFile struct, create an array of HTTP Requests
+		} else {
+			models.Logger.Fatal("Error reading user args. Initial arg user provided: " + args[0])
 		}
-		log.Info("First User Argument Provided: " + args[0])
-		log.Fatal("Error reading user-inputs in 'send_http_request.go'. Please check your arguments.")
 	}
 }
 

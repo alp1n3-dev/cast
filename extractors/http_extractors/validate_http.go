@@ -4,7 +4,7 @@ import (
 	//"log"
 	"errors"
 	"net/url"
-	"github.com/charmbracelet/log"
+	"github.com/alp1n3-eth/cast/models"
 )
 
 func ValidateHTTP(method, url string) {
@@ -12,13 +12,13 @@ func ValidateHTTP(method, url string) {
 	if validMethod != true {
 
 		err := errors.New("Invalid Method.")
-		log.Fatal(err)
+		models.Logger.Fatal(err)
 	}
 
 	validURL := isHTTPURL(url)
 	if validURL != true {
 		err := errors.New("Invalid URL.")
-		log.Fatal(err)
+		models.Logger.Fatal(err)
 	}
 }
 
