@@ -19,11 +19,6 @@ type HTTPRequest struct {
 	Response HTTPResponseData
 }
 
-type Assertion struct {
-	Type string
-	Value string
-}
-
 type ParsedHTTPFile struct {
 	Requests []HTTPRequest
 }
