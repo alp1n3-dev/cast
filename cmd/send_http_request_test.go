@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 
-	"github.com/alp1n3-eth/cast/models"
+	"github.com/alp1n3-eth/cast/pkg/logging"
+	"github.com/alp1n3-eth/cast/pkg/models"
 )
 
 // TestSendRequest using a mock HTTP server
@@ -27,10 +29,14 @@ func TestSendRequest(t *testing.T) {
 		//}
 
 	// Call function (note: it prints output instead of returning values)
-	var request models.HTTPRequest
-	request.Request.URL = mockServer.URL
+	var request models.ExecutionResult
+	var err error
+	request.Request.URL, err = url.Parse(mockServer.URL)
+	if err != nil {
+		logging.Logger.Fatal("Unable to assign mock server URL to request.")
+	}
 	request.Request.Method = "GET"
-	request, err := SendHTTPRequest(request)
+	request, err = SendHTTPRequest(request)
 	if err != nil {
 		t.Fatalf("Error sending request: %v", err)
 	}

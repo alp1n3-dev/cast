@@ -2,20 +2,19 @@ package output
 
 import (
 	"fmt"
-	"strconv"
 
-	"github.com/alp1n3-eth/cast/models"
+	"github.com/alp1n3-eth/cast/pkg/models"
 	"github.com/fatih/color"
 )
 
 // PrintResponse will format and highlight the response
-func PrintResponse(r models.HTTPRequest) error {
+func PrintResponse(r models.ExecutionResult) error {
 	// Print the status code in green for success and red for failure
-	respStatusChar := r.Response.StatusCode[0:3]
-	respStatusInt, err := strconv.Atoi(respStatusChar)
-	if err != nil {
-		fmt.Println("Error converting status code from char to int.")
-	}
+	respStatusInt := r.Response.StatusCode
+	//respStatusInt, err := strconv.Atoi(respStatusChar)
+	//if err != nil {
+		//fmt.Println("Error converting status code from char to int.")
+		//}
 	if respStatusInt >= 200 && respStatusInt < 300 {
 		color.Set(color.FgGreen)
 	} else {
@@ -24,14 +23,18 @@ func PrintResponse(r models.HTTPRequest) error {
 	defer color.Unset()
 
 	// Print the Status Code with status
-	fmt.Printf("%s\n", r.Response.StatusCode)
+	fmt.Printf("%s\n", r.Response.Status)
 
 	// Print headers (key-value)
-	for key, value := range r.Response.Headers {
-
-		fmt.Printf("%s: %s\n", key, value)
-
-	}
+	//for key, value := range r.Response.Headers {
+		//fmt.Printf("%s: %s\n", key, value)
+		//}
+		for name, values := range r.Response.Headers {
+    // Loop over all values for the name.
+    for _, value := range values {
+        fmt.Printf("%s: %s\n", name, value)
+    }
+}
 
 	// Read and print the body (if any)
 	//body, err := io.ReadAll(r.Response.Body)
@@ -44,7 +47,7 @@ func PrintResponse(r models.HTTPRequest) error {
 
 	// Print the body in blue
 	color.Set(color.FgBlue)
-	fmt.Println("\n" + r.Response.Body)
+	fmt.Println("\n" + string(r.Response.Body[:]))
 	color.Unset() // Unset the color formatting
 
 	return nil

@@ -13,9 +13,10 @@ import (
 	"strings"
 
 	"github.com/alp1n3-eth/cast/extractors/http_extractors"
-	"github.com/alp1n3-eth/cast/models"
+	"github.com/alp1n3-eth/cast/pkg/models"
 	"github.com/alp1n3-eth/cast/output"
 	"github.com/alp1n3-eth/cast/pkg/logging"
+	//"github.com/alp1n3-eth/cast/pkg/apperrors"
 
 	//"github.com/alp1n3-eth/cast/models"
 )
@@ -25,6 +26,11 @@ func init() {
 	rootCmd.Run = func(cmd *cobra.Command, args []string) {
 
 		logging.Init(true) // Debug mode is TRUE
+
+		// TODO: Fix panic caused by apperrors.HandleExecutionError
+		//apperrors.HandleExecutionError(
+                //apperrors.Wrap(apperrors.ErrInvalidHeaderFormat, "random-header"))
+
 
 		methodList := []string{"GET", "POST", "PUT", "DELETE", "HEAD", "OPTION", "TRACE"}
 		argZero := strings.ToLower(args[0])
@@ -52,10 +58,10 @@ func init() {
 	}
 }
 
-func SendHTTPRequest(r models.HTTPRequest) (models.HTTPRequest, error) {
+func SendHTTPRequest(r models.ExecutionResult) (models.ExecutionResult, error) {
 	client := &http.Client{}
 
-	req, err := http.NewRequest(r.Request.Method, r.Request.URL, nil)
+	req, err := http.NewRequest(r.Request.Method, r.Request.URL.String(), nil)
 	if err != nil {
 			fmt.Println("Error creating request:", err)
 			return r, nil
