@@ -11,7 +11,7 @@ import (
 
 	"github.com/alp1n3-eth/cast/internal/http/parse"
 	"github.com/alp1n3-eth/cast/pkg/models"
-	"github.com/alp1n3-eth/cast/pkg/logging"
+	//"github.com/alp1n3-eth/cast/pkg/logging"
 )
 
 // Should assume all fields have been created and validated by the time they get here.
@@ -49,14 +49,14 @@ func SendHTTPRequest(r models.ExecutionResult) (models.ExecutionResult, error) {
 }
 
 func SendFastHTTPRequest(r models.ExecutionResult) (models.ExecutionResult, error) {
-	logging.Logger.Debug("SendFastHTTPRequest - Point 1")
+	//logging.Logger.Debug("SendFastHTTPRequest - Point 1")
 
 	var body []byte
 
 	req := fasthttp.AcquireRequest()
     defer fasthttp.ReleaseRequest(req)
 
-    logging.Logger.Debug("SendFastHTTPRequest - Point 2")
+    //logging.Logger.Debug("SendFastHTTPRequest - Point 2")
 
     req.SetRequestURI(r.Request.URL.String())
     req.Header.SetMethod(r.Request.Method)
@@ -67,7 +67,7 @@ func SendFastHTTPRequest(r models.ExecutionResult) (models.ExecutionResult, erro
     }
 
 
-    logging.Logger.Debug("SendFastHTTPRequest - Point 3")
+    //logging.Logger.Debug("SendFastHTTPRequest - Point 3")
 
     for name, values := range r.Request.Headers {
        // Loop over all values for the name.
@@ -77,7 +77,7 @@ func SendFastHTTPRequest(r models.ExecutionResult) (models.ExecutionResult, erro
         	}
 	}
 
-	logging.Logger.Debug("SendFastHTTPRequest - Point 4")
+	//logging.Logger.Debug("SendFastHTTPRequest - Point 4")
 
 	resp := fasthttp.AcquireResponse()
     defer fasthttp.ReleaseResponse(resp)
@@ -88,20 +88,17 @@ func SendFastHTTPRequest(r models.ExecutionResult) (models.ExecutionResult, erro
         return r, err
     }
 
-    logging.Logger.Debug("SendFastHTTPRequest - Point 5")
+    //logging.Logger.Debug("SendFastHTTPRequest - Point 5")
 
 
    	//body = resp.Body()
     //fmt.Println(string(body[:]))
 
-
-    logging.Logger.Debug("SendFastHTTPRequest - Point 6")
-
-    //
+    //logging.Logger.Debug("SendFastHTTPRequest - Point 6")
 
     r.Response = parse.BuildFastHTTPResponse(resp)
 
-    logging.Logger.Debug("SendFastHTTPRequest - Point 7")
+    //logging.Logger.Debug("SendFastHTTPRequest - Point 7")
 
 	return r, nil
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/alp1n3-eth/cast/pkg/models"
-	"github.com/alp1n3-eth/cast/pkg/logging"
+	//"github.com/alp1n3-eth/cast/pkg/logging"
 
 	"github.com/fatih/color"
 )
@@ -14,7 +14,7 @@ func PrintResponse(r models.ExecutionResult) error {
 	// Print the status code in green for success and red for failure
 	respStatusInt := r.Response.StatusCode
 
-	logging.Logger.Debug(respStatusInt)
+	//logging.Logger.Debug(respStatusInt)
 	//respStatusInt, err := strconv.Atoi(respStatusChar)
 	//if err != nil {
 		//fmt.Println("Error converting status code from char to int.")

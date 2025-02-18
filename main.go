@@ -6,24 +6,18 @@ package main
 
 import (
     "os"
-    "fmt"
+    //"fmt"
     "log"
     "context"
-    "net/http"
-    _ "net/http/pprof"
+    //"net/http"
 
     "github.com/urfave/cli/v3"
 
     "github.com/alp1n3-eth/cast/cmd/http"
-
 )
 
 func main() {
-
-
     app := &cli.Command{
-
-
         Commands: []*cli.Command{
             {
                 Name:    "get",
@@ -36,16 +30,23 @@ func main() {
                      	Usage: "HTTP request body",
                       	Aliases: []string{"b"},
                  },
+                 	&cli.StringFlag{
+                  		Name: "header",
+                    	Value: "",
+                     	Usage: "HTTP headers to include in the request",
+                      	//Aliases: []string{"h"},
+                  },
                 },
                 Action: func(ctx context.Context, command *cli.Command) error {
-                    fmt.Println("added task: ", command.Args().First())
-                    fmt.Println("Debug - All args:", os.Args)
-                                        fmt.Println("Debug - First arg:", os.Args[1])
-                                        fmt.Println("Debug - Context args:", command.Args().Slice())
-                                        fmt.Println("Debug - Body flag:", command.String("body"))
+                    //fmt.Println("added task: ", command.Args().First())
+                    //fmt.Println("Debug - All args:", os.Args)
+                    //fmt.Println("Debug - First arg:", os.Args[1])
+                    //fmt.Println("Debug - Context args:", command.Args().Slice())
+                    //fmt.Println("Debug - Body flag:", command.String("body"))
                     body := command.String("body")
-                    fmt.Println(body)
-                    cmd.SendHTTP(os.Args[1], command.Args().First(), body)
+                    headers := command.StringMap("header")
+                    //fmt.Println(body)
+                    cmd.SendHTTP(os.Args[1], command.Args().First(), body, headers)
                     return nil
                 },
             },
@@ -55,12 +56,4 @@ func main() {
     if err := app.Run(context.Background(), os.Args); err != nil {
         log.Fatal(err)
     }
-}
-
-
-
-func init() {
-	go func() {
-		log.Println(http.ListenAndServe("localhost:6060", nil))
-	}()
 }

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"fmt"
+	//"fmt"
 	"net/http"
 
 	"strings"
@@ -20,7 +20,7 @@ import (
 	//"github.com/alp1n3-eth/cast/models"
 )
 
-func SendHTTP(methodVar, urlVar, requestBody string) {
+func SendHTTP(methodVar, urlVar, requestBody string, headers map[string]string) {
 
 	// TODO: Fix panic caused by apperrors.HandleExecutionError
 	//apperrors.HandleExecutionError(
@@ -34,7 +34,7 @@ func SendHTTP(methodVar, urlVar, requestBody string) {
 
 
 		methodVar = strings.ToUpper(methodVar)
-		logging.Logger.Debug(requestBody)
+		//logging.Logger.Debug(requestBody)
 		//validMethod := parse.ValidateMethod(methodVar)
 		/*
 		if !validMethod {
@@ -66,7 +66,7 @@ func SendHTTP(methodVar, urlVar, requestBody string) {
 			result.Request = parse.BuildRequest(method, url, body, headers)
 
 			// TODO: Get sendhttprequqest working again
-			logging.Logger.Debug("Request headers: ")
+			//logging.Logger.Debug("Request headers: ")
 			//for k, v := range result.Request.Headers {
         		//fmt.Printf("Header field %q, Value %q\n", k, v)
         		//} // TODO: will panic if no headers provided
@@ -76,14 +76,16 @@ func SendHTTP(methodVar, urlVar, requestBody string) {
 			}
 
 			// TODO: Get printout of response working again
-			fmt.Println(result.Response.Status)
-			fmt.Println(result.Response.Headers)
-			fmt.Println(result.Response.Body)
+			//fmt.Println(result.Response.Status)
+			//fmt.Println(result.Response.Headers)
+			//fmt.Println(result.Response.Body)
 
 			output.PrintResponse(result)
 			// TODO: Get flags tied-in in order to provide body.
+			return
 
 		} else {
 			logging.Logger.Fatal("Invalid command provided")
+			return
 		}
 }

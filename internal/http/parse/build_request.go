@@ -32,7 +32,7 @@ func BuildRequest (method, urlVal string, body io.Reader, headers http.Header) m
 	}
 
 	if req.Headers == nil {
-		logging.Logger.Debug("Adding Content-Type header")
+		//logging.Logger.Debug("Adding Content-Type header")
 
 		req.Headers = make(http.Header)
 		req.Headers.Add("Content-Type", "text/html")
