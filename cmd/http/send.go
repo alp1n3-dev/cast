@@ -1,19 +1,21 @@
 package cmd
 
 import (
-
+	"fmt"
 	"net/http"
 
 	"strings"
 	//"fmt"
-	"io"
 	"bytes"
+	"io"
 
-	"github.com/alp1n3-eth/cast/pkg/models"
+	//"fmt"
+
+	"github.com/alp1n3-eth/cast/internal/http/executor"
+	"github.com/alp1n3-eth/cast/internal/http/parse"
 	"github.com/alp1n3-eth/cast/output/http"
 	"github.com/alp1n3-eth/cast/pkg/logging"
-	"github.com/alp1n3-eth/cast/internal/http/parse"
-	"github.com/alp1n3-eth/cast/internal/http/executor"
+	"github.com/alp1n3-eth/cast/pkg/models"
 	//"github.com/alp1n3-eth/cast/pkg/apperrors"
 	//"github.com/alp1n3-eth/cast/models"
 )
@@ -33,14 +35,18 @@ func SendHTTP(methodVar, urlVar, requestBody string) {
 
 		methodVar = strings.ToUpper(methodVar)
 		logging.Logger.Debug(requestBody)
-		validMethod := parse.ValidateMethod(methodVar)
-
+		//validMethod := parse.ValidateMethod(methodVar)
+		/*
 		if !validMethod {
 			// Perform file-based actions.
 			if !parse.ValidateFile(methodVar) {
 				logging.Logger.Fatal("No file extension detected")
 			}
-		} else if urlVar != "" {
+	 	*/
+		//if !validMethod {
+
+		//}
+		if urlVar != "" {
 			// Perform cli-based actions.
 			//logging.Logger.Debug("Cli-Based Route")
 
@@ -60,12 +66,20 @@ func SendHTTP(methodVar, urlVar, requestBody string) {
 			result.Request = parse.BuildRequest(method, url, body, headers)
 
 			// TODO: Get sendhttprequqest working again
-			result, err = executor.SendHTTPRequest(result)
+			logging.Logger.Debug("Request headers: ")
+			//for k, v := range result.Request.Headers {
+        		//fmt.Printf("Header field %q, Value %q\n", k, v)
+        		//} // TODO: will panic if no headers provided
+			result, err = executor.SendFastHTTPRequest(result)
 			if err != nil {
 				logging.Logger.Fatal("Error sending HTTP request")
 			}
 
 			// TODO: Get printout of response working again
+			fmt.Println(result.Response.Status)
+			fmt.Println(result.Response.Headers)
+			fmt.Println(result.Response.Body)
+
 			output.PrintResponse(result)
 			// TODO: Get flags tied-in in order to provide body.
 

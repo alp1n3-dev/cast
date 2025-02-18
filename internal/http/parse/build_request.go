@@ -16,7 +16,12 @@ func BuildRequest (method, urlVal string, body io.Reader, headers http.Header) m
 
 	req.Method = method
 	req.Body = body
-	req.Headers = headers
+
+	if headers != nil {
+		req.Headers = make(http.Header)
+		req.Headers = headers // http.Headers will panic if nil.
+	}
+
 
 	//logging.Logger.Debug("Assigned request method, body headers. About to assign the URL")
 
@@ -24,6 +29,13 @@ func BuildRequest (method, urlVal string, body io.Reader, headers http.Header) m
 	if err != nil {
 		fmt.Printf("%s", err)
 		logging.Logger.Fatal("Unable to parse provided URL")
+	}
+
+	if req.Headers == nil {
+		logging.Logger.Debug("Adding Content-Type header")
+
+		req.Headers = make(http.Header)
+		req.Headers.Add("Content-Type", "text/html")
 	}
 
 	logging.Logger.Debug("Assigned request URL successfully")
