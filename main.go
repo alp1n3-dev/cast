@@ -8,62 +8,49 @@ import (
     "os"
     "fmt"
     "log"
+    "context"
 
-    "github.com/urfave/cli/v2"
+    "github.com/urfave/cli/v3"
 
-    "github.com/alp1n3-eth/cast/cmd"
+    "github.com/alp1n3-eth/cast/cmd/http"
 
 )
 
 func main() {
-    app := &cli.App{
+
+
+    app := &cli.Command{
+
+
         Commands: []*cli.Command{
             {
                 Name:    "get",
-                Aliases: []string{"GET"},
-                Usage:   "send a get request to a url.",
-                Action: func(cCtx *cli.Context) error {
-                    fmt.Println("added task: ", cCtx.Args().First())
-                    cmd.SendHTTP("get", cCtx.Args().First(), "test2")
-                    return nil
+                Aliases: []string{"GET", "post", "put", "delete", "patch", "options", "trace", "head", "connect"},
+                Usage:   "send an HTTP request to a url.",
+                Flags: []cli.Flag{
+                	&cli.StringFlag{
+                 		Name: "body",
+                   		Value: "",
+                     	Usage: "HTTP request body",
+                      	Aliases: []string{"b"},
+                 },
                 },
-            },
-            {
-                Name:    "complete",
-                Aliases: []string{"c"},
-                Usage:   "complete a task on the list",
-                Action: func(cCtx *cli.Context) error {
-                    fmt.Println("completed task: ", cCtx.Args().First())
+                Action: func(ctx context.Context, command *cli.Command) error {
+                    fmt.Println("added task: ", command.Args().First())
+                    fmt.Println("Debug - All args:", os.Args)
+                                        fmt.Println("Debug - First arg:", os.Args[1])
+                                        fmt.Println("Debug - Context args:", command.Args().Slice())
+                                        fmt.Println("Debug - Body flag:", command.String("body"))
+                    body := command.String("body")
+                    fmt.Println(body)
+                    cmd.SendHTTP(os.Args[1], command.Args().First(), body)
                     return nil
-                },
-            },
-            {
-                Name:    "template",
-                Aliases: []string{"t"},
-                Usage:   "options for task templates",
-                Subcommands: []*cli.Command{
-                    {
-                        Name:  "add",
-                        Usage: "add a new template",
-                        Action: func(cCtx *cli.Context) error {
-                            fmt.Println("new task template: ", cCtx.Args().First())
-                            return nil
-                        },
-                    },
-                    {
-                        Name:  "remove",
-                        Usage: "remove an existing template",
-                        Action: func(cCtx *cli.Context) error {
-                            fmt.Println("removed task template: ", cCtx.Args().First())
-                            return nil
-                        },
-                    },
                 },
             },
         },
     }
 
-    if err := app.Run(os.Args); err != nil {
+    if err := app.Run(context.Background(), os.Args); err != nil {
         log.Fatal(err)
     }
 }

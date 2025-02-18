@@ -12,7 +12,7 @@ func ValidateMethod(method string) bool {
 	if slices.Contains(methodList, method) {
 		//fmt.Println("[!] Method and URL Provided")
 		//logging.Logger.Info("Method Provided")
-		logging.Logger.Debug("Method provided")
+		//logging.Logger.Debug("Method provided")
 		// TODO: Parse and send custom headers
 		// TODO: Double-check that multiple cookies being set doesn't run into any issues
 		// TODO: Add the ability to add a custom body to POSTS

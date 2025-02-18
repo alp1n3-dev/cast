@@ -18,7 +18,7 @@ func BuildRequest (method, urlVal string, body io.Reader, headers http.Header) m
 	req.Body = body
 	req.Headers = headers
 
-	logging.Logger.Debug("Assigned request method, body headers. About to assign the URL")
+	//logging.Logger.Debug("Assigned request method, body headers. About to assign the URL")
 
 	req.URL, err = url.Parse(urlVal)
 	if err != nil {
