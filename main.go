@@ -13,6 +13,9 @@ import (
 	"bytes"
 	"io"
 
+	"runtime/pprof"
+	"runtime/trace"
+
 	//"net/http"
 
 	"github.com/urfave/cli/v3" // docs: https://cli.urfave.org/v3/examples/subcommands/
@@ -21,6 +24,14 @@ import (
 )
 
 func main() {
+	f, _ := os.Create("cpu.prof")
+	pprof.StartCPUProfile(f)
+	defer pprof.StopCPUProfile()
+
+	s, _ := os.Create("trace.out")
+	trace.Start(s)
+	defer trace.Stop()
+
 	headers := &http.Header{}
 	//bodyReader := &io.Reader
 	var body io.Reader
@@ -95,10 +106,15 @@ func main() {
 
                     //fmt.Println(body)
                     cmd.SendHTTP(os.Args[1], command.Args().First(), bodyReader, headers, debug, highlight)
+
+                    f, _ := os.Create("mem.prof")
+                    pprof.WriteHeapProfile(f)
                     return nil
                 },
             },
         },
+
+
     }
 
     if err := app.Run(context.Background(), os.Args); err != nil {

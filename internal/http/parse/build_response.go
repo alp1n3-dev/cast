@@ -46,7 +46,9 @@ func BuildFastHTTPResponse(response *fasthttp.Response) models.Response {
 	//logging.Logger.Debug(response.StatusCode())
 
 	builtResponse.Status = string(response.Header.StatusMessage())
+
 	builtResponse.Body = response.Body()
+
     //fmt.Println(string(body[:]))
 	//if err != nil {
 		//fmt.Println("Problem reading response body in BuildResponse")

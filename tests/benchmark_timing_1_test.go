@@ -17,7 +17,7 @@ type CommandBenchmark struct {
 func BenchmarkHTTPClients(b *testing.B) {
 	commands := []CommandBenchmark{
 		//{"httpie", []string{"/opt/homebrew/bin/http", "POST", "https://echo.free.beeceptor.com", "test=test1"}},
-		{"http_get", []string{"/opt/homebrew/bin/http", "GET", "https://www.google.com/"} },
+		{"httpie_get", []string{"/opt/homebrew/bin/http", "GET", "https://www.google.com/"} },
 		{"xh_get", []string{"/opt/homebrew/bin/xh", "GET", "https://www.google.com/"}},
 		{"cast_get", []string{"../cast", "get", "https://www.google.com/"}},
 		//{"cast_post", []string{"../cast", "post", "https://echo.free.beeceptor.com", "test=test1"}},

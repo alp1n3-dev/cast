@@ -6,6 +6,8 @@ import (
 	"net/url"
 	"fmt"
 
+	"sync"
+
 	"github.com/alp1n3-eth/cast/pkg/models"
 	"github.com/alp1n3-eth/cast/pkg/logging"
 )
@@ -14,14 +16,40 @@ func BuildRequest (method, urlVal *string, body *io.Reader, headers *http.Header
 	var req models.Request
 	var err error
 
-	req.Method = *method
-	req.Body = *body
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	wg.Add(2)
 
-	if headers != nil {
-		//req.Headers = make(http.Header)
+	go func() {
+		defer wg.Done()
+		req.Method = *method
+		req.Body = *body
+	}()
+
+	go func() {
+		defer wg.Done()
 		logging.Logger.Debug(headers)
-		req.Headers = *headers // http.Headers will panic if nil.
-	}
+		if headers != nil {
+			//req.Headers = make(http.Header)
+			logging.Logger.Debug(headers)
+			mu.Lock()
+			req.Headers = *headers // http.Headers will panic if nil.
+			mu.Unlock()
+
+			if _, ok := req.Headers["Content-Type"]; !ok {
+			mu.Lock()
+    		req.Headers.Add("Content-Type", "text/html")
+      		mu.Unlock()
+			}
+		}
+	}()
+
+	wg.Wait()
+
+
+
+
+	logging.Logger.Debug(req.Headers)
 
 
 	//logging.Logger.Debug("Assigned request method, body headers. About to assign the URL")
@@ -32,12 +60,17 @@ func BuildRequest (method, urlVal *string, body *io.Reader, headers *http.Header
 		logging.Logger.Fatal("Unable to parse provided URL")
 	}
 
+	/*
 	if req.Headers == nil {
 		//logging.Logger.Debug("Adding Content-Type header")
 
 		req.Headers = make(http.Header)
 		req.Headers.Add("Content-Type", "text/html")
 	}
+	*/
+
+
+
 
 	logging.Logger.Debug("Assigned request URL successfully")
 

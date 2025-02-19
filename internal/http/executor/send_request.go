@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	//"net/url"
-	"io"
+	//"io"
 	"os"
 
 	"github.com/valyala/fasthttp"
@@ -26,6 +26,7 @@ func SendHTTPRequest(r models.ExecutionResult) (models.ExecutionResult, error) {
 			return r, nil
 	}
 
+	logging.Logger.Debug(r.Request.Headers)
 	req.Header = r.Request.Headers
 
 	// TODO: Only way host can be set is req.Host = "domain.tld" apparently. Check into it.
@@ -53,7 +54,7 @@ func SendHTTPRequest(r models.ExecutionResult) (models.ExecutionResult, error) {
 func SendFastHTTPRequest(r models.ExecutionResult) (models.ExecutionResult, error) {
 	//logging.Logger.Debug("SendFastHTTPRequest - Point 1")
 
-	var body []byte
+	//var body []byte
 
 	req := fasthttp.AcquireRequest()
     defer fasthttp.ReleaseRequest(req)
@@ -64,8 +65,10 @@ func SendFastHTTPRequest(r models.ExecutionResult) (models.ExecutionResult, erro
     req.Header.SetMethod(r.Request.Method)
 
     if r.Request.Body != nil {
-   		body, _ = io.ReadAll(r.Request.Body)
-     	req.SetBody(body)
+   		//body, _ = io.ReadAll(r.Request.Body)
+     	//req.SetBody(body)
+
+      req.SetBodyStream(r.Request.Body, -1)
     }
 
 

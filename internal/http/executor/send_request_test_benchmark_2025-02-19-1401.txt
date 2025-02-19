@@ -1,0 +1,3 @@
+testing: warning: no tests to run
+PASS
+ok  	github.com/alp1n3-eth/cast/internal/http/executor	0.217s
