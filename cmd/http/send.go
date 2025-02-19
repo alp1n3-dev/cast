@@ -6,7 +6,7 @@ import (
 
 	"strings"
 	//"fmt"
-	"bytes"
+	//"bytes"
 	"io"
 
 	//"fmt"
@@ -20,20 +20,22 @@ import (
 	//"github.com/alp1n3-eth/cast/models"
 )
 
-func SendHTTP(methodVar, urlVar, requestBody string, headers map[string]string) {
+func SendHTTP(method, urlVar string, body *io.Reader, headers *http.Header) {
 
 	// TODO: Fix panic caused by apperrors.HandleExecutionError
 	//apperrors.HandleExecutionError(
     //apperrors.Wrap(apperrors.ErrInvalidHeaderFormat, "random-header"))
 
     //fmt.Println(debugMode)
+    var methodPtr string
+    var urlVarPtr string
 
     //if debugMode {
         logging.Init(true) // Debug mode is TRUE
     //}
 
 
-		methodVar = strings.ToUpper(methodVar)
+		methodPtr = strings.ToUpper(method)
 		//logging.Logger.Debug(requestBody)
 		//validMethod := parse.ValidateMethod(methodVar)
 		/*
@@ -50,20 +52,19 @@ func SendHTTP(methodVar, urlVar, requestBody string, headers map[string]string) 
 			// Perform cli-based actions.
 			//logging.Logger.Debug("Cli-Based Route")
 
-			method := methodVar
-			url := strings.ToLower(urlVar)
+			//method := methodVar
+			urlVarPtr = strings.ToLower(urlVar)
 
-			var headers http.Header
-			var body io.Reader
+			//var headers http.Header
+			//var body io.Reader
 			var err error
-
-			if requestBody != "" {
-				body = bytes.NewBufferString(requestBody)
-			}
-
 			var result models.ExecutionResult
 
-			result.Request = parse.BuildRequest(method, url, body, headers)
+			//if requestBody != "" {
+				//body = bytes.NewBufferString(requestBody)
+			//}
+
+			result.Request = parse.BuildRequest(&methodPtr, &urlVarPtr, body, headers)
 
 			// TODO: Get sendhttprequqest working again
 			//logging.Logger.Debug("Request headers: ")

@@ -3,6 +3,7 @@ package executor
 import (
 	"fmt"
 	"net/http"
+
 	//"net/url"
 	"io"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"github.com/valyala/fasthttp"
 
 	"github.com/alp1n3-eth/cast/internal/http/parse"
+	"github.com/alp1n3-eth/cast/pkg/logging"
 	"github.com/alp1n3-eth/cast/pkg/models"
 	//"github.com/alp1n3-eth/cast/pkg/logging"
 )
@@ -87,6 +89,8 @@ func SendFastHTTPRequest(r models.ExecutionResult) (models.ExecutionResult, erro
         fmt.Printf("Client get failed: %s\n", err)
         return r, err
     }
+
+    logging.Logger.Debug(req)
 
     //logging.Logger.Debug("SendFastHTTPRequest - Point 5")
 
