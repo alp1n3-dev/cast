@@ -39,6 +39,9 @@ func BuildFastHTTPResponse(response *fasthttp.Response) models.Response {
 
 	builtResponse.StatusCode = response.StatusCode()
 
+	builtResponse.Protocol = string(response.Header.Protocol())
+	builtResponse.ContentType = string(response.Header.ContentType())
+
 	//logging.Logger.Debug(builtResponse.StatusCode)
 	//logging.Logger.Debug(response.StatusCode())
 
@@ -52,6 +55,8 @@ func BuildFastHTTPResponse(response *fasthttp.Response) models.Response {
 	if builtResponse.Headers == nil {
 			builtResponse.Headers = http.Header{}
 		}
+
+
 
 	response.Header.VisitAll(func(key, value []byte){
 		//fmt.Printf("Adding header: %s: %s\n", string(key), string(value))

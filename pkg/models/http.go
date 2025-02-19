@@ -44,6 +44,8 @@ type Response struct {
     Status 	   string
     StatusCode int
     Headers    http.Header
+    Protocol   string
+    ContentType string
     Body       []byte
     Duration   time.Duration
     Assertions Assertion

@@ -23,8 +23,10 @@ func BenchmarkCastBinary(b *testing.B) {
 	//for i := 0; i < 5; i++ {
 		//cmd := exec.Command("/opt/homebrew/bin/http", "POST", "echo.free.beeceptor.com",  "test==test1")
 
-		//cmd := exec.Command("../cast", "get", "https://google.com")
-		cmd := exec.Command("../cast", "post", "https://echo.free.beeceptor.com",  "test=test1")
+		cmd := exec.Command("../cast", "get", "https://www.google.com/")
+		//cmd := exec.Command("../cast", "post", "https://echo.free.beeceptor.com",  "test=test1")
+
+		//cmd := exec.Command("xh", "get", "https://www.google.com/")
 
 		//cmd := exec.Command("hurl", "hurl_test.hurl")
 		//cmd := exec.Command("hurl", "hurl_test_google.hurl")
