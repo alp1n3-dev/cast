@@ -1,48 +1,72 @@
 package tests
 
 import (
+	"bytes"
+	"fmt"
 	"os/exec"
 	"testing"
-	"fmt"
-	"bytes"
+	"time"
 )
 
-func BenchmarkCastBinary(b *testing.B) {
-	//cmdPath := "../cast" // Path to your built binary
-	//args := []string{"post", "https://echo.free.beeceptor.com", "--body", "test=test1"}
+// CommandBenchmark defines a command to be benchmarked
+type CommandBenchmark struct {
+	Name string
+	Args []string
+}
 
-	//cmdPath := "http"
-	//args := []string{"POST", "https://echo.free.beeceptor.com", "test=test1"}
+func BenchmarkHTTPClients(b *testing.B) {
+	commands := []CommandBenchmark{
+		//{"httpie", []string{"/opt/homebrew/bin/http", "POST", "https://echo.free.beeceptor.com", "test=test1"}},
+		{"http_get", []string{"/opt/homebrew/bin/http", "GET", "https://www.google.com/"} },
+		{"xh_get", []string{"/opt/homebrew/bin/xh", "GET", "https://www.google.com/"}},
+		{"cast_get", []string{"../cast", "get", "https://www.google.com/"}},
+		//{"cast_post", []string{"../cast", "post", "https://echo.free.beeceptor.com", "test=test1"}},
+		//{"hurl", []string{"hurl", "hurl_test.hurl"}},
+		{"hurl_get", []string{"hurl", "hurl_test_google.hurl"}},
+	}
 
+	// Store results for comparison
+	results := make(map[string]time.Duration)
 
+	for _, cmdBenchmark := range commands {
+		b.Run(cmdBenchmark.Name, func(b *testing.B) {
+			b.ReportAllocs()
+			b.ResetTimer() // Reset timer to exclude setup time
 
+			start := time.Now()
+			for i := 0; i < b.N; i++ {
+				runCommand(b, cmdBenchmark.Name, cmdBenchmark.Args)
+			}
+			duration := time.Since(start)
 
-	b.ResetTimer() // Reset the timer to ignore setup time
+			results[cmdBenchmark.Name] = duration
+		})
+	}
 
-	for i := 0; i < b.N; i++ {
-	//for i := 0; i < 5; i++ {
-		//cmd := exec.Command("/opt/homebrew/bin/http", "POST", "echo.free.beeceptor.com",  "test==test1")
+	// Print summary of benchmark results
+	fmt.Println("\n=== Benchmark Results ===")
+	for name, duration := range results {
+		fmt.Printf("%-10s: %v per %d runs\n", name, duration, b.N)
+	}
+}
 
-		cmd := exec.Command("../cast", "get", "https://www.google.com/")
-		//cmd := exec.Command("../cast", "post", "https://echo.free.beeceptor.com",  "test=test1")
+// runCommand executes a command and reports errors
+func runCommand(b *testing.B, name string, args []string) {
+	if len(args) == 0 {
+		b.Fatalf("[%s] No command provided", name)
+	}
 
-		//cmd := exec.Command("xh", "get", "https://www.google.com/")
+	cmd := exec.Command(args[0], args[1:]...) // Create a new command instance
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
 
-		//cmd := exec.Command("hurl", "hurl_test.hurl")
-		//cmd := exec.Command("hurl", "hurl_test_google.hurl")
-
-
-		var out bytes.Buffer
-		var stderr bytes.Buffer
-		cmd.Stdout = &out
-		cmd.Stderr = &stderr
-
-		// Run the command and wait for completion
-		if err := cmd.Run(); err != nil {
-			fmt.Println("Error:", err)
-			fmt.Println("Stderr:", stderr.String())
-			fmt.Println("Output:", out.String())
-			b.Fatalf("Command: %v execution failed: %v", cmd, err)
-		}
+	// Run the command and check for errors
+	if err := cmd.Run(); err != nil {
+		b.Logf("[%s] Error: %v", name, err)
+		b.Logf("[%s] Stderr: %s", name, stderr.String())
+		b.Logf("[%s] Output: %s", name, out.String())
+		b.Fail()
 	}
 }
