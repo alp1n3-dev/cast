@@ -84,7 +84,7 @@ func PrintResponse(r models.ExecutionResult, highlight bool) {
 	//color.Unset() // Unset the color formatting
 
 	//fmt.Println(r.Response.ContentType)
-	completeResponse += string(r.Response.Body) + "\n"
+	completeResponse += string(r.Response.Body)
 
 	//mediaType, _, _ := mime.ParseMediaType(r.Response.ContentType)
 	//mediaType = strings.Split(mediaType, "/")[1]
