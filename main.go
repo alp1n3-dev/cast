@@ -69,6 +69,7 @@ func main() {
                             if len(parts) == 2 {
                                 key := strings.TrimSpace(parts[0])
                                 value := strings.TrimSpace(parts[1])
+
                                 headers.Add(key, value)
                             }
                         }
