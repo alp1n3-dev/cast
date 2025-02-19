@@ -20,7 +20,7 @@ import (
 	//"github.com/alp1n3-eth/cast/models"
 )
 
-func SendHTTP(method, urlVar string, body *io.Reader, headers *http.Header) {
+func SendHTTP(method, urlVar string, body *io.Reader, headers *http.Header, debug, highlight bool) {
 
 	// TODO: Fix panic caused by apperrors.HandleExecutionError
 	//apperrors.HandleExecutionError(
@@ -30,9 +30,11 @@ func SendHTTP(method, urlVar string, body *io.Reader, headers *http.Header) {
     var methodPtr string
     var urlVarPtr string
 
-    //if debugMode {
+    if debug == true {
         logging.Init(true) // Debug mode is TRUE
-    //}
+    } else if debug != true {
+    	logging.Init(false)
+    }
 
 
 		methodPtr = strings.ToUpper(method)
@@ -81,7 +83,7 @@ func SendHTTP(method, urlVar string, body *io.Reader, headers *http.Header) {
 			//fmt.Println(result.Response.Headers)
 			//fmt.Println(result.Response.Body)
 
-			output.PrintResponse(result)
+			output.PrintResponse(result, highlight)
 			// TODO: Get flags tied-in in order to provide body.
 			return
 

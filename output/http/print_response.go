@@ -16,9 +16,9 @@ import (
 )
 
 // PrintResponse will format and highlight the response
-func PrintResponse(r models.ExecutionResult) {
+func PrintResponse(r models.ExecutionResult, highlight bool) {
 	var completeResponse string
-	coloredOutput := false
+	//coloredOutput := false
 	var err error
 	err = nil
 	// Print the status code in green for success and red for failure
@@ -90,7 +90,7 @@ func PrintResponse(r models.ExecutionResult) {
 	//mediaType = strings.Split(mediaType, "/")[1]
 	//lexer := lexers.Get(mediaType)
 
-	if coloredOutput{ // if coloredOutput flag is specified. Can be changed to true by default in configs.
+	if highlight{ // if coloredOutput flag is specified. Can be changed to true by default in configs.
 		err = printResponseColor(&completeResponse)
 
 		if err != nil {

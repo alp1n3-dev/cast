@@ -44,6 +44,16 @@ func main() {
                      	Usage: "HTTP headers to include in the request",
                       	Aliases: []string{"H"},
                   },
+                  &cli.BoolFlag{
+                  		Name: "debug",
+                     	Usage: "Enable debug output for the application",
+                      	Aliases: []string{"D"},
+                  },
+                  &cli.BoolFlag{
+                  		Name: "highlight",
+                     	Usage: "Prettify the response body output with syntax highlighting",
+                      	Aliases: []string{"HL"},
+                  },
                 },
                 Action: func(ctx context.Context, command *cli.Command) error {
                     //fmt.Println("added task: ", command.Args().First())
@@ -53,6 +63,12 @@ func main() {
                     //fmt.Println("Debug - Body flag:", command.String("body"))
 
                     //var bodyReader io.Reader
+
+                    debug := command.Bool("debug")
+                    highlight := command.Bool("highlight")
+                    //fmt.Println(highlight)
+
+
                     bodyString := command.String("body")
                     if bodyString != "" {
                     	*bodyReader = bytes.NewBufferString(bodyString)
@@ -61,7 +77,7 @@ func main() {
 
                     headerSlice := command.StringSlice("header")
                     if headerSlice != nil {
-                    	fmt.Println("headers not nil")
+                    	//fmt.Println("headers not nil")
 
 
                       	for _, h := range headerSlice {
@@ -78,7 +94,7 @@ func main() {
                     //headers := make(http.Header)
 
                     //fmt.Println(body)
-                    cmd.SendHTTP(os.Args[1], command.Args().First(), bodyReader, headers)
+                    cmd.SendHTTP(os.Args[1], command.Args().First(), bodyReader, headers, debug, highlight)
                     return nil
                 },
             },
