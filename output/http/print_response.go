@@ -16,13 +16,13 @@ import (
 )
 
 // PrintResponse will format and highlight the response
-func PrintResponse(r models.ExecutionResult, highlight bool) {
+func PrintResponse(r *models.ExecutionResult, highlight bool) {
 	var completeResponse string
 	//coloredOutput := false
 	var err error
 	err = nil
 	// Print the status code in green for success and red for failure
-	respStatusInt := r.Response.StatusCode
+	//respStatusInt := r.Response.StatusCode
 
 	//logging.Logger.Debug(respStatusInt)
 	//respStatusInt, err := strconv.Atoi(respStatusChar)
@@ -35,11 +35,11 @@ func PrintResponse(r models.ExecutionResult, highlight bool) {
 	completeResponse += r.Response.Protocol + " "
 
 
-	if respStatusInt >= 200 && respStatusInt < 300 {
+	//if respStatusInt >= 200 && respStatusInt < 300 {
 		//color.Set(color.FgGreen)
-	} else {
+	//} else {
 		//color.Set(color.FgRed)
-	}
+	//}
 	//defer color.Unset()
 
 	// Print the Status Code with status
@@ -91,7 +91,7 @@ func PrintResponse(r models.ExecutionResult, highlight bool) {
 	//lexer := lexers.Get(mediaType)
 
 	if highlight{ // if coloredOutput flag is specified. Can be changed to true by default in configs.
-		err = printResponseColor(&completeResponse)
+		err = printHTTPColor(&completeResponse)
 
 		if err != nil {
 			// If highlighting fails, print the raw response
@@ -106,7 +106,7 @@ func PrintResponse(r models.ExecutionResult, highlight bool) {
 	return
 }
 
-func printResponseColor(completeResponse *string) error {
+func printHTTPColor(complete *string) error {
 	lexer := lexers.Get("http")
 	if lexer == nil {
 		// Default to plain text if no lexer is found
@@ -119,7 +119,7 @@ func printResponseColor(completeResponse *string) error {
 	err := quick.Highlight(
 		color.Output, // Use color-capable output
 		//string(r.Response.Body),
-		*completeResponse,
+		*complete,
 		lexer.Config().Name, // Lexer name (e.g., "json", "html")
 		"terminal256",          // Formatter for CLI output
 		"tokyonight-moon",           // Syntax highlighting style

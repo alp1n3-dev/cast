@@ -11,6 +11,7 @@ import (
 	"github.com/valyala/fasthttp"
 
 	"github.com/alp1n3-eth/cast/internal/http/parse"
+	output "github.com/alp1n3-eth/cast/output/http"
 	"github.com/alp1n3-eth/cast/pkg/logging"
 	"github.com/alp1n3-eth/cast/pkg/models"
 	//"github.com/alp1n3-eth/cast/pkg/logging"
@@ -51,7 +52,7 @@ func SendHTTPRequest(r models.ExecutionResult) (models.ExecutionResult, error) {
 	return r, nil
 }
 
-func SendFastHTTPRequest(r models.ExecutionResult) (models.ExecutionResult, error) {
+func SendFastHTTPRequest(r *models.ExecutionResult, debug, highlight *bool) (*models.ExecutionResult, error) {
 	//logging.Logger.Debug("SendFastHTTPRequest - Point 1")
 
 	//var body []byte
@@ -93,7 +94,12 @@ func SendFastHTTPRequest(r models.ExecutionResult) (models.ExecutionResult, erro
         return r, err
     }
 
-    logging.Logger.Debug(req)
+    if *debug {
+    	logging.Logger.Debug("Debug true, printing request")
+    	//logging.Logger.Debug(req)
+     	output.PrintRequest(req, highlight)
+    }
+
 
     //logging.Logger.Debug("SendFastHTTPRequest - Point 5")
 

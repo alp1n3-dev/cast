@@ -69,9 +69,6 @@ func BuildRequest (method, urlVal *string, body *io.Reader, headers *http.Header
 	}
 	*/
 
-
-
-
 	logging.Logger.Debug("Assigned request URL successfully")
 
 	return req

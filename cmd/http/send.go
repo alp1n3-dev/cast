@@ -60,7 +60,8 @@ func SendHTTP(method, urlVar string, body *io.Reader, headers *http.Header, debu
 			//var headers http.Header
 			//var body io.Reader
 			var err error
-			var result models.ExecutionResult
+			//var result *models.ExecutionResult
+			result := &models.ExecutionResult{}
 
 			//if requestBody != "" {
 				//body = bytes.NewBufferString(requestBody)
@@ -68,15 +69,20 @@ func SendHTTP(method, urlVar string, body *io.Reader, headers *http.Header, debu
 
 			result.Request = parse.BuildRequest(&methodPtr, &urlVarPtr, body, headers)
 
+			logging.Logger.Debug("BuildRequest returned successfully")
+
+
 			// TODO: Get sendhttprequqest working again
 			//logging.Logger.Debug("Request headers: ")
 			//for k, v := range result.Request.Headers {
         		//fmt.Printf("Header field %q, Value %q\n", k, v)
         		//} // TODO: will panic if no headers provided
-			result, err = executor.SendFastHTTPRequest(result)
+			result, err = executor.SendFastHTTPRequest(result, &debug, &highlight)
 			if err != nil {
 				logging.Logger.Fatal("Error sending HTTP request")
 			}
+
+
 
 			// TODO: Get printout of response working again
 			//fmt.Println(result.Response.Status)

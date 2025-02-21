@@ -2,7 +2,7 @@ goos: darwin
 goarch: arm64
 pkg: github.com/alp1n3-eth/cast/tests
 cpu: Apple M1
-BenchmarkHTTPClients/http_get-8         	       3	 384245014 ns/op	   72240 B/op	      60 allocs/op
+BenchmarkHTTPClients/httpie_get-8         	       3	 384245014 ns/op	   72240 B/op	      60 allocs/op
 BenchmarkHTTPClients/xh_get-8           	       4	 276944760 ns/op	   72224 B/op	      59 allocs/op
 BenchmarkHTTPClients/cast_get-8         	       6	 180291896 ns/op	   72109 B/op	      59 allocs/op
 BenchmarkHTTPClients/hurl_get-8         	      14	  95482223 ns/op	    9238 B/op	      63 allocs/op

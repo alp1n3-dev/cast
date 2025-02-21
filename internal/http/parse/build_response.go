@@ -49,6 +49,8 @@ func BuildFastHTTPResponse(response *fasthttp.Response) models.Response {
 
 	builtResponse.Body = response.Body()
 
+
+
     //fmt.Println(string(body[:]))
 	//if err != nil {
 		//fmt.Println("Problem reading response body in BuildResponse")
