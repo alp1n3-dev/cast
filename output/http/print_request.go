@@ -4,102 +4,53 @@ import (
 	"fmt"
 	//"io"
 
-	"github.com/valyala/fasthttp"
 	"github.com/fatih/color"
+	"github.com/valyala/fasthttp"
+
 	//"github.com/alecthomas/chroma/v2"
 	"github.com/alecthomas/chroma/v2/lexers"
 	"github.com/alecthomas/chroma/v2/quick"
 
 	//"github.com/alp1n3-eth/cast/pkg/models"
 	"github.com/alp1n3-eth/cast/pkg/logging"
+	//"github.com/alp1n3-eth/cast/pkg/models"
 )
 
 // PrintResponse will format and highlight the response
-func PrintRequest(r *fasthttp.Request, highlight *bool) {
-	logging.Logger.Debug("Reached PrintRequest() 1")
-	/*
-	var completeRequest string
-	request := r.Request
-	//coloredOutput := false
-	var err error
-	err = nil
+func PrintHTTP(req *fasthttp.Request, resp *fasthttp.Response, highlight *bool) {
+		var r string
 
-	logging.Logger.Debug("Reached PrintRequest() 2")
-
-	// Parse method & URL
-	completeRequest = request.Method + " "
-	completeRequest += request.URL.String() + "\n"
-
-	logging.Logger.Debug("Reached PrintRequest() 3")
-
-	// Parse headers
-	for name, values := range request.Headers {
-    	for _, value := range values {
-           	completeRequest += name + ": "
-            completeRequest += value + "\n"
-     	}
-	}
-
-	// Add break between headers and body (if it exists)
-	completeRequest += "\n"
-
-	logging.Logger.Debug("Reached PrintRequest() 4")
-
-	if request.Body != nil {
-		body, err := io.ReadAll(request.Body)
-		if err != nil {
-			logging.Logger.Error(err)
+		if req == nil {
+			r = resp.String()
+		} else if resp == nil {
+			r = req.String()
 		}
-		completeRequest += string(body)
-	}
-	*/
 
+		if *highlight {
+			lexer := lexers.Get("http")
+    		if lexer == nil {
+     		lexer = lexers.Fallback
+     		}
 
-	logging.Logger.Debug("Reached PrintRequest() 5")
+      		err := quick.Highlight(
+       			color.Output,
+         		r,
+          		lexer.Config().Name, // Lexer name (e.g., "json", "html")
+           		"terminal256",          // Formatter for CLI output
+             	"tokyonight-moon",           // Syntax highlighting style
+       		)
+       		if err != nil {
+       			logging.Logger.Warn("Colored output failed, printing response regularly. Error: %s", err)
 
-	//fmt.Println(request)
+         	} else {
+          		return
+          }
 
-	//mediaType, _, _ := mime.ParseMediaType(r.Response.ContentType)
-	//mediaType = strings.Split(mediaType, "/")[1]
-	//lexer := lexers.Get(mediaType)
-
-	if *highlight{ // if coloredOutput flag is specified. Can be changed to true by default in configs.
-		err := printFastHTTPColor(r)
-
-		if err != nil {
-			// If highlighting fails, print the raw response
-			logging.Logger.Warn("Colored output failed, printing response regularly. Error: %s", err)
-			fmt.Println(r)
 		}
-		return
-	}
 
-	fmt.Println(r)
+	fmt.Println(r) // printing it standard by default if highlight flag isn't passed.
+	fmt.Println()
 
-	return
-}
 
-func printFastHTTPColor(r *fasthttp.Request) error {
-	lexer := lexers.Get("http")
-	if lexer == nil {
-		// Default to plain text if no lexer is found
-		lexer = lexers.Fallback
-	}
-
-	//fmt.Println(mediaType)
-
-	// Use Chroma to highlight output
-	err := quick.Highlight(
-		color.Output, // Use color-capable output
-		//string(r.Response.Body),
-		r.String(),
-		lexer.Config().Name, // Lexer name (e.g., "json", "html")
-		"terminal256",          // Formatter for CLI output
-		"tokyonight-moon",           // Syntax highlighting style
-	)
-	if err != nil {
-		return err
-	}
-
-	return nil
+    return
 }

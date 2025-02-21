@@ -1,12 +1,16 @@
 package models
 
 import (
-	"time"
-	"net/http"
-	"io"
-	"net/url"
 	"fmt"
+	"io"
+	"net/http"
+	"net/url"
+	//"slices"
+	"time"
+
+	"github.com/valyala/fasthttp"
 )
+
 /*
 type HTTPRequestData struct {
 	Method string
@@ -30,14 +34,15 @@ type HTTPRequest struct {
 type ParsedHTTPFile struct {
 	Requests []HTTPRequest
 }
- */
+*/
 
 // TODO: Document and comment these more in-depth, especially ExecutionError.
 type Request struct {
     Method  string
     URL     *url.URL
-    Headers http.Header
+    Headers map[string]string
     Body    io.Reader
+    Req *fasthttp.Request
 }
 
 type Response struct {

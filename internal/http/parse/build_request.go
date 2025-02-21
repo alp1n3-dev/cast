@@ -1,17 +1,18 @@
 package parse
 
 import (
-	"net/http"
-	"io"
-	"net/url"
 	"fmt"
+	//"io"
+	//"net/http"
+	//"net/url"
 
-	"sync"
+	//"sync"
 
-	"github.com/alp1n3-eth/cast/pkg/models"
 	"github.com/alp1n3-eth/cast/pkg/logging"
+	//"github.com/alp1n3-eth/cast/pkg/models"
+	"github.com/valyala/fasthttp"
 )
-
+/*
 func BuildRequest (method, urlVal *string, body *io.Reader, headers *http.Header) models.Request {
 	var req models.Request
 	var err error
@@ -68,8 +69,52 @@ func BuildRequest (method, urlVal *string, body *io.Reader, headers *http.Header
 		req.Headers.Add("Content-Type", "text/html")
 	}
 	*/
-
+/*
 	logging.Logger.Debug("Assigned request URL successfully")
+
+	return req
+}
+*/
+func BuildRequest (method, urlStr *string, body *string, headers *map[string]string) (*fasthttp.Request) {
+	req := &fasthttp.Request{}
+	//var req *fasthttp.Request
+
+	logging.Logger.Debug("BuildRequest point 1")
+
+	req.Header.SetMethod(*method)
+
+	uri := fasthttp.AcquireURI()
+	defer fasthttp.ReleaseURI(uri)
+	uri.Parse(nil, []byte(*urlStr))
+	req.SetURI(uri)
+
+	logging.Logger.Debug("BuildRequest point 2")
+	fmt.Println(headers)
+
+	if headers != nil {
+		for key, value := range *headers {
+    		// Loop over all values for the name.
+
+            req.Header.Add(key, string(value))
+
+
+		}
+	}
+
+
+
+
+
+	logging.Logger.Debug("BuildRequest point 3")
+
+	if req.Header.Peek("Content-Type") == nil {
+		req.Header.Add("Content-Type", "text/html")
+	}
+
+	if body != nil {
+		req.SetBody([]byte(*body))
+		//req.SetBodyStream(body, -1)
+	}
 
 	return req
 }

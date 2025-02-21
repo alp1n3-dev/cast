@@ -4,14 +4,14 @@ Copyright © 2025 alp1n3 1@alp1n3.dev
 package main
 
 import (
-	"net/http"
+	//"net/http"
 	"os"
 	//"fmt"
 	"context"
 	"log"
 	"strings"
-	"bytes"
-	"io"
+	//"bytes"
+	//"io"
 
 	"runtime/pprof"
 	"runtime/trace"
@@ -32,10 +32,10 @@ func main() {
 	trace.Start(s)
 	defer trace.Stop()
 
-	headers := &http.Header{}
+	//headers := &http.Header{}
 	//bodyReader := &io.Reader
-	var body io.Reader
-	bodyReader := &body
+	//var body io.Reader
+	//bodyReader := &body
 
     app := &cli.Command{
         Commands: []*cli.Command{
@@ -80,32 +80,44 @@ func main() {
                     //fmt.Println(highlight)
 
 
-                    bodyString := command.String("body")
-                    if bodyString != "" {
-                    	*bodyReader = bytes.NewBufferString(bodyString)
-                    }
+                    bodyStr := command.String("body")
+                    //if bodyString != "" {
+                    	//*bodyReader = bytes.NewBufferString(bodyString)
+                     //}
 
 
+                    //headerSlice := command.StringSlice("header")
+                    //headerMap := command.StringMap("header")
                     headerSlice := command.StringSlice("header")
-                    if headerSlice != nil {
+                    headers := make(map[string]string)
+
+                    for _, h := range headerSlice {
+                        parts := strings.SplitN(h, ":", 2)
+                        if len(parts) == 2 {
+                            key := strings.TrimSpace(parts[0])
+                            value := strings.TrimSpace(parts[1])
+                            headers[key] = value
+                        }
+                    }
+                    //if headerSlice != nil {
                     	//fmt.Println("headers not nil")
 
 
-                      	for _, h := range headerSlice {
-                            parts := strings.SplitN(h, ":", 2)
-                            if len(parts) == 2 {
-                                key := strings.TrimSpace(parts[0])
-                                value := strings.TrimSpace(parts[1])
+                      	//for _, h := range headerSlice {
+                            //parts := strings.SplitN(h, ":", 2)
+                            //if len(parts) == 2 {
+                                //key := strings.TrimSpace(parts[0])
+                                //value := strings.TrimSpace(parts[1])
 
-                                headers.Add(key, value)
-                            }
-                        }
-                    }
+                                //headers.Add(key, value)
+                                //}
+                                //}
+                                //}
 
                     //headers := make(http.Header)
 
                     //fmt.Println(body)
-                    cmd.SendHTTP(os.Args[1], command.Args().First(), bodyReader, headers, debug, highlight)
+                    cmd.SendHTTP(os.Args[1], command.Args().First(), bodyStr, headers, debug, highlight)
 
                     f, _ := os.Create("mem.prof")
                     pprof.WriteHeapProfile(f)

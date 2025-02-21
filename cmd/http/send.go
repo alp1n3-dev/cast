@@ -1,34 +1,40 @@
 package cmd
 
 import (
-	//"fmt"
-	"net/http"
+	"fmt"
+	//"net/http"
 
 	"strings"
 	//"fmt"
 	//"bytes"
-	"io"
+	//"io"
 
 	//"fmt"
 
 	"github.com/alp1n3-eth/cast/internal/http/executor"
 	"github.com/alp1n3-eth/cast/internal/http/parse"
-	"github.com/alp1n3-eth/cast/output/http"
+	//"github.com/alp1n3-eth/cast/output/http"
 	"github.com/alp1n3-eth/cast/pkg/logging"
 	"github.com/alp1n3-eth/cast/pkg/models"
 	//"github.com/alp1n3-eth/cast/pkg/apperrors"
 	//"github.com/alp1n3-eth/cast/models"
 )
 
-func SendHTTP(method, urlVar string, body *io.Reader, headers *http.Header, debug, highlight bool) {
+func SendHTTP(method, urlVar string, body string, headers map[string]string, debug, highlight bool) {
 
 	// TODO: Fix panic caused by apperrors.HandleExecutionError
 	//apperrors.HandleExecutionError(
     //apperrors.Wrap(apperrors.ErrInvalidHeaderFormat, "random-header"))
 
+
     //fmt.Println(debugMode)
     var methodPtr string
     var urlVarPtr string
+
+    fmt.Println(headers)
+
+    // Placeholder value
+    printOption := ""
 
     if debug == true {
         logging.Init(true) // Debug mode is TRUE
@@ -67,17 +73,14 @@ func SendHTTP(method, urlVar string, body *io.Reader, headers *http.Header, debu
 				//body = bytes.NewBufferString(requestBody)
 			//}
 
-			result.Request = parse.BuildRequest(&methodPtr, &urlVarPtr, body, headers)
+			//result.Request = parse.BuildRequest(&methodPtr, &urlVarPtr, body, headers)
+			result.Request.Req = parse.BuildRequest(&methodPtr, &urlVarPtr, &body, &headers)
+			logging.Logger.Debug("Executed Successfully: BuildRequest()")
 
-			logging.Logger.Debug("BuildRequest returned successfully")
 
 
 			// TODO: Get sendhttprequqest working again
-			//logging.Logger.Debug("Request headers: ")
-			//for k, v := range result.Request.Headers {
-        		//fmt.Printf("Header field %q, Value %q\n", k, v)
-        		//} // TODO: will panic if no headers provided
-			result, err = executor.SendFastHTTPRequest(result, &debug, &highlight)
+			err = executor.SendRequest(result, &debug, &highlight, &printOption)
 			if err != nil {
 				logging.Logger.Fatal("Error sending HTTP request")
 			}
@@ -89,7 +92,8 @@ func SendHTTP(method, urlVar string, body *io.Reader, headers *http.Header, debu
 			//fmt.Println(result.Response.Headers)
 			//fmt.Println(result.Response.Body)
 
-			output.PrintResponse(result, highlight)
+			//output.PrintResponse(result, highlight)
+			//output.PrintHTTP(nil, result.Response, highlight)
 			// TODO: Get flags tied-in in order to provide body.
 			return
 

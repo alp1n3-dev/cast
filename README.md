@@ -139,6 +139,7 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 
 **v0.2**
 
+- [x] Print request if debug flag is `true`.
 - [ ] Track duration between request and response
 - [ ] Improved / useful logging with values being interacted with
 - [ ] `-UF` or `--uploadfile` to place a file in the request body
