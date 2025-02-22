@@ -43,7 +43,6 @@ type Request struct {
     //Headers map[string]string
     //Body    io.Reader
     Req *fasthttp.Request
-    Worldlist []Wordlist
 }
 
 type Response struct {
@@ -73,10 +72,4 @@ type ExecutionResult struct {
 
 func (e ExecutionError) Error() string {
     return fmt.Sprintf("[%s] %s: %s", e.Stage, e.Timestamp.Format(time.RFC3339), e.Message)
-}
-
-type Wordlist struct {
-	Filename string
-	TargetWord string
-	Words []string
 }

@@ -7,10 +7,11 @@ import (
 	"github.com/alp1n3-eth/cast/internal/http/parse"
 	"github.com/alp1n3-eth/cast/pkg/logging"
 	"github.com/alp1n3-eth/cast/pkg/models"
+	//"github.com/valyala/fasthttp"
 	//"github.com/alp1n3-eth/cast/pkg/apperrors"
 )
 
-func SendHTTP(method, urlVar string, body string, headers map[string]string, debug, highlight bool, wordlist map[string]string) {
+func SendHTTP(method, urlVar string, body string, headers map[string]string, debug, highlight bool, replacementVariables map[string]string) {
 
 	// TODO: Fix panic caused by apperrors.HandleExecutionError
 	//apperrors.HandleExecutionError(
@@ -36,8 +37,10 @@ func SendHTTP(method, urlVar string, body string, headers map[string]string, deb
 		var err error
 		result := &models.ExecutionResult{}
 
-		result.Request.Req = parse.BuildRequest(&methodPtr, &urlVarPtr, &body, &headers, &wordlist)
+		result.Request.Req = parse.BuildRequest(&methodPtr, &urlVarPtr, &body, &headers)
 		logging.Logger.Debug("Executed Successfully: BuildRequest()")
+
+		parse.SwapReqVals(result.Request.Req, &replacementVariables)
 
 		// TODO: Get sendhttprequqest working again
 		err = executor.SendRequest(result, &debug, &highlight, &printOption)

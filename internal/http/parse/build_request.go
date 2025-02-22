@@ -75,7 +75,7 @@ func BuildRequest (method, urlVal *string, body *io.Reader, headers *http.Header
 	return req
 }
 */
-func BuildRequest (method, urlStr, body *string, headers, wordlist *map[string]string) (*fasthttp.Request) {
+func BuildRequest (method, urlStr, body *string, headers *map[string]string) (*fasthttp.Request) {
 	req := &fasthttp.Request{}
 
 	logging.Logger.Debug("BuildRequest point 1")

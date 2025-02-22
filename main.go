@@ -10,6 +10,7 @@ import (
 	"context"
 	"log"
 	"strings"
+
 	//"bytes"
 	//"io"
 
@@ -21,6 +22,8 @@ import (
 	"github.com/urfave/cli/v3" // docs: https://cli.urfave.org/v3/examples/subcommands/
 
 	"github.com/alp1n3-eth/cast/cmd/http"
+	//"github.com/alp1n3-eth/cast/internal/http/parse"
+	//"github.com/alp1n3-eth/cast/pkg/logging"
 	//"github.com/alp1n3-eth/cast/parse"
 )
 
@@ -67,9 +70,9 @@ func main() {
                       	Aliases: []string{"HL"},
                   },
                   &cli.StringSliceFlag{
-                  		Name: "wordlist",
+                  		Name: "var",
                      	Usage: "A text file to be iteratively used in any portion of the request to insert values.",
-                      	Aliases: []string{"W"},
+                      	Aliases: []string{"V"},
                   },
                 },
                 Action: func(ctx context.Context, command *cli.Command) error {
@@ -106,18 +109,17 @@ func main() {
                         }
                     }
 
-                    wordlistSlice := command.StringSlice("wordlist")
-                    wordlist := make(map[string]string)
+                    replacementSlice := command.StringSlice("var")
+                    replacementPair := make(map[string]string)
 
-                    for _, h := range wordlistSlice {
-                        parts := strings.SplitN(h, ":", 2)
+                    for _, h := range replacementSlice {
+                        parts := strings.SplitN(h, "=", 2)
                         if len(parts) == 2 {
                             key := strings.TrimSpace(parts[0])
                             value := strings.TrimSpace(parts[1])
-                            headers[key] = value
+                            replacementPair[key] = value
                         }
                     }
-
 
 
 
@@ -139,7 +141,7 @@ func main() {
                     //headers := make(http.Header)
 
                     //fmt.Println(body)
-                    cmd.SendHTTP(os.Args[1], command.Args().First(), bodyStr, headers, debug, highlight, wordlist)
+                    cmd.SendHTTP(os.Args[1], command.Args().First(), bodyStr, headers, debug, highlight, replacementPair)
 
                     f, _ := os.Create("mem.prof")
                     pprof.WriteHeapProfile(f)
