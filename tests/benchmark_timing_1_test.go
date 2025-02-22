@@ -23,6 +23,8 @@ func BenchmarkHTTPClients(b *testing.B) {
 		//{"cast_post", []string{"../cast", "post", "https://echo.free.beeceptor.com", "test=test1"}},
 		//{"hurl", []string{"hurl", "hurl_test.hurl"}},
 		{"hurl_get", []string{"hurl", "hurl_test_google.hurl"}},
+		{"curl_get", []string{"curl", "https://google.com/"}},
+
 	}
 
 	// Store results for comparison

@@ -2,17 +2,15 @@ package parse
 
 import (
 	"net/http"
-	"fmt"
-	"io"
-
+	//"fmt"
+	//"io"
 
 	"github.com/valyala/fasthttp"
-
 
 	"github.com/alp1n3-eth/cast/pkg/models"
 	//"github.com/alp1n3-eth/cast/pkg/logging"
 )
-
+/*
 func BuildResponse(response *http.Response) models.Response {
 	var builtResponse models.Response
 	var err error
@@ -28,6 +26,7 @@ func BuildResponse(response *http.Response) models.Response {
 
 	return builtResponse
 }
+*/
 
 func BuildFastHTTPResponse(response *fasthttp.Response) models.Response {
 	var builtResponse models.Response

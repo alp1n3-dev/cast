@@ -43,14 +43,17 @@ func PrintHTTP(req *fasthttp.Request, resp *fasthttp.Response, highlight *bool) 
        			logging.Logger.Warn("Colored output failed, printing response regularly. Error: %s", err)
 
          	} else {
+          		fmt.Printf("\n")
+            	if resp == nil {
+             		fmt.Printf("\n")
+             	}
           		return
           }
 
 		}
 
 	fmt.Println(r) // printing it standard by default if highlight flag isn't passed.
-	fmt.Println()
-
+	fmt.Printf("\n")
 
     return
 }

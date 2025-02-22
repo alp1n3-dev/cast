@@ -2,9 +2,9 @@ package models
 
 import (
 	"fmt"
-	"io"
+	//"io"
 	"net/http"
-	"net/url"
+	//"net/url"
 	//"slices"
 	"time"
 
@@ -38,11 +38,12 @@ type ParsedHTTPFile struct {
 
 // TODO: Document and comment these more in-depth, especially ExecutionError.
 type Request struct {
-    Method  string
-    URL     *url.URL
-    Headers map[string]string
-    Body    io.Reader
+    //Method  string
+    //URL     *url.URL
+    //Headers map[string]string
+    //Body    io.Reader
     Req *fasthttp.Request
+    Worldlist []Wordlist
 }
 
 type Response struct {
@@ -72,4 +73,10 @@ type ExecutionResult struct {
 
 func (e ExecutionError) Error() string {
     return fmt.Sprintf("[%s] %s: %s", e.Stage, e.Timestamp.Format(time.RFC3339), e.Message)
+}
+
+type Wordlist struct {
+	Filename string
+	TargetWord string
+	Words []string
 }
