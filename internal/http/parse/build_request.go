@@ -6,7 +6,9 @@ import (
 	//"net/http"
 	//"net/url"
 
-	//"sync"
+
+	"sync"
+	//"sync/Mutex"
 
 	"github.com/alp1n3-eth/cast/pkg/logging"
 	//"github.com/alp1n3-eth/cast/pkg/models"
@@ -75,7 +77,62 @@ func BuildRequest (method, urlVal *string, body *io.Reader, headers *http.Header
 	return req
 }
 */
-func BuildRequest (method, urlStr, body *string, headers *map[string]string) (*fasthttp.Request) {
+func BuildRequest1 (method, urlStr, body *string, headers *map[string]string) (*fasthttp.Request) {
+	req := &fasthttp.Request{}
+
+	logging.Logger.Debug("BuildRequest point 1")
+
+	var wg sync.WaitGroup
+	//var mu sync.Mutex
+	wg.Add(4)
+
+	go func() {
+		defer wg.Done()
+		logging.Logger.Debug("Setting method")
+		req.Header.SetMethod(*method)
+	}()
+
+	go func() {
+		defer wg.Done()
+		logging.Logger.Debug("Setting body")
+		if body != nil {
+			req.SetBody([]byte(*body))
+			//req.SetBodyStream(body, -1)
+		}
+	}()
+
+
+
+	go func() {
+		defer wg.Done()
+		logging.Logger.Debug("Setting uri")
+		uri := fasthttp.AcquireURI()
+		defer fasthttp.ReleaseURI(uri)
+		uri.Parse(nil, []byte(*urlStr))
+		req.SetURI(uri)
+	}()
+
+	go func() {
+		defer wg.Done()
+		logging.Logger.Debug("Setting headers")
+		if headers != nil {
+			for key, value := range *headers {
+				fmt.Println("reached headers")
+    		// Loop over all values for the name.
+            req.Header.Add(key, string(value))
+			}
+		}
+		if req.Header.Peek("Content-Type") == nil {
+			req.Header.Add("Content-Type", "text/html")
+		}
+	}()
+
+	wg.Wait()
+
+	return req
+}
+
+func BuildRequest2 (method, urlStr, body *string, headers *map[string]string) (*fasthttp.Request) {
 	req := &fasthttp.Request{}
 
 	logging.Logger.Debug("BuildRequest point 1")
@@ -88,10 +145,11 @@ func BuildRequest (method, urlStr, body *string, headers *map[string]string) (*f
 	req.SetURI(uri)
 
 	logging.Logger.Debug("BuildRequest point 2")
-	fmt.Println(headers)
+	//fmt.Println(headers)
 
 	if headers != nil {
 		for key, value := range *headers {
+			fmt.Println("reached headers")
     		// Loop over all values for the name.
             req.Header.Add(key, string(value))
 		}

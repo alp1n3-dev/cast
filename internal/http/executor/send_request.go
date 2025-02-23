@@ -35,7 +35,13 @@ func SendRequest(result *models.ExecutionResult, debug, highlight *bool, printOp
     }
 
     output.PrintHTTP(nil, resp, highlight)
-    result.Response = parse.BuildFastHTTPResponse(resp)
+
+    var assertion string // Placeholder for if the response values need to be saved and filtered
+    if len(assertion) > 0 {
+    	//fmt.Printf("reached assertion spot")
+    	result.Response = parse.BuildFastHTTPResponse(resp)
+    }
+
 
 	return nil
 }

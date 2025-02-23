@@ -5,6 +5,7 @@ package main
 
 import (
 	//"net/http"
+	//"fmt"
 	"os"
 	//"fmt"
 	"context"
@@ -14,12 +15,13 @@ import (
 	//"bytes"
 	//"io"
 
-	"runtime/pprof"
-	"runtime/trace"
+	//"runtime/pprof"
+	//"runtime/trace"
 
 	//"net/http"
 
 	"github.com/urfave/cli/v3" // docs: https://cli.urfave.org/v3/examples/subcommands/
+	"github.com/valyala/fasthttp"
 
 	"github.com/alp1n3-eth/cast/cmd/http"
 	//"github.com/alp1n3-eth/cast/internal/http/parse"
@@ -28,13 +30,13 @@ import (
 )
 
 func main() {
-	f, _ := os.Create("cpu.prof")
-	pprof.StartCPUProfile(f)
-	defer pprof.StopCPUProfile()
+	//f, _ := os.Create("cpu.prof")
+	//pprof.StartCPUProfile(f)
+	//defer pprof.StopCPUProfile()
 
-	s, _ := os.Create("trace.out")
-	trace.Start(s)
-	defer trace.Stop()
+	//s, _ := os.Create("trace.out")
+	//trace.Start(s)
+	//defer trace.Stop()
 
 	//headers := &http.Header{}
 	//bodyReader := &io.Reader
@@ -82,26 +84,24 @@ func main() {
                     //fmt.Println("Debug - Context args:", command.Args().Slice())
                     //fmt.Println("Debug - Body flag:", command.String("body"))
 
-                    //var bodyReader io.Reader
+                    request := fasthttp.Request{}
 
+                    // Handle debug and highlight options
                     debug := command.Bool("debug")
                     highlight := command.Bool("highlight")
-                    //fmt.Println(highlight)
 
 
+                    // Handle custom body
                     bodyStr := command.String("body")
-                    //if bodyString != "" {
-                    	//*bodyReader = bytes.NewBufferString(bodyString)
-                     //}
+                    request.SetBody([]byte(bodyStr))
 
-
-                    //headerSlice := command.StringSlice("header")
-                    //headerMap := command.StringMap("header")
+                    // Handle custom headers
                     headerSlice := command.StringSlice("header")
                     headers := make(map[string]string)
 
                     for _, h := range headerSlice {
                         parts := strings.SplitN(h, ":", 2)
+                        //fmt.Print("reached headerslice main.go")
                         if len(parts) == 2 {
                             key := strings.TrimSpace(parts[0])
                             value := strings.TrimSpace(parts[1])
@@ -109,10 +109,12 @@ func main() {
                         }
                     }
 
+                    // Handle replacement variables
                     replacementSlice := command.StringSlice("var")
                     replacementPair := make(map[string]string)
 
                     for _, h := range replacementSlice {
+                    	//fmt.Print("reached replacementslice main.go")
                         parts := strings.SplitN(h, "=", 2)
                         if len(parts) == 2 {
                             key := strings.TrimSpace(parts[0])
@@ -121,30 +123,10 @@ func main() {
                         }
                     }
 
-
-
-                    //if headerSlice != nil {
-                    	//fmt.Println("headers not nil")
-
-
-                      	//for _, h := range headerSlice {
-                            //parts := strings.SplitN(h, ":", 2)
-                            //if len(parts) == 2 {
-                                //key := strings.TrimSpace(parts[0])
-                                //value := strings.TrimSpace(parts[1])
-
-                                //headers.Add(key, value)
-                                //}
-                                //}
-                                //}
-
-                    //headers := make(http.Header)
-
-                    //fmt.Println(body)
                     cmd.SendHTTP(os.Args[1], command.Args().First(), bodyStr, headers, debug, highlight, replacementPair)
 
-                    f, _ := os.Create("mem.prof")
-                    pprof.WriteHeapProfile(f)
+                    //f, _ := os.Create("mem.prof")
+                    //pprof.WriteHeapProfile(f)
                     return nil
                 },
             },

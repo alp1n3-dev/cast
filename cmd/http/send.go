@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"strings"
+	//"fmt"
 
 	"github.com/alp1n3-eth/cast/internal/http/executor"
 	"github.com/alp1n3-eth/cast/internal/http/parse"
@@ -17,8 +18,11 @@ func SendHTTP(method, urlVar string, body string, headers map[string]string, deb
 	//apperrors.HandleExecutionError(
     //apperrors.Wrap(apperrors.ErrInvalidHeaderFormat, "random-header"))
 
+    var err error
     var methodPtr string
     var urlVarPtr string
+    methodPtr = strings.ToUpper(method)
+    urlVarPtr = strings.ToLower(urlVar)
 
     printOption := "" // TODO: Placeholder currently, can be used to print response before request. Needs to have a flag created for it.
 
@@ -28,25 +32,26 @@ func SendHTTP(method, urlVar string, body string, headers map[string]string, deb
     	logging.Init(false)
     }
 
-    methodPtr = strings.ToUpper(method)
-
 	if urlVar != "" {
 		// Perform cli-based actions.
-		urlVarPtr = strings.ToLower(urlVar)
 
-		var err error
 		result := &models.ExecutionResult{}
 
-		result.Request.Req = parse.BuildRequest(&methodPtr, &urlVarPtr, &body, &headers)
+		result.Request.Req = parse.BuildRequest1(&methodPtr, &urlVarPtr, &body, &headers)
 		logging.Logger.Debug("Executed Successfully: BuildRequest()")
 
-		parse.SwapReqVals(result.Request.Req, &replacementVariables)
+		if len(replacementVariables) > 0 {
+			//fmt.Println(replacementVariables)
+			parse.SwapReqVals(result.Request.Req, &replacementVariables)
+			logging.Logger.Debug("Executed Successfully: SwapReqVals()")
+		}
 
 		// TODO: Get sendhttprequqest working again
 		err = executor.SendRequest(result, &debug, &highlight, &printOption)
 		if err != nil {
 			logging.Logger.Fatal("Error sending HTTP request")
 		}
+		logging.Logger.Debug("Executed Successfully: SendRequest")
 
 			// TODO: Get printout of response working again
 			// TODO: Get flags tied-in in order to provide body.

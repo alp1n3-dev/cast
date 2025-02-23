@@ -15,6 +15,7 @@ import (
 func SwapReqVals(req *fasthttp.Request, replacementVariables *map[string]string) {
 	// Regex pattern to match placeholders like {{ FUZZ }} or {{FUZZ}}
 		placeholderPattern := regexp.MustCompile(`{{\s*(\w+)\s*}}`)
+		//fmt.Println("reached swapreqvals")
 
 		// Replace in URI
 		uri := string(req.URI().FullURI())

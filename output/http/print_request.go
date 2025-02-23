@@ -53,7 +53,6 @@ func PrintHTTP(req *fasthttp.Request, resp *fasthttp.Response, highlight *bool) 
 		}
 
 	fmt.Println(r) // printing it standard by default if highlight flag isn't passed.
-	fmt.Printf("\n")
 
     return
 }

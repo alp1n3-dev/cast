@@ -155,7 +155,7 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 **v0.4**
 
 - [ ] Create tests & benchmark tests for all files.
-- [ ] Custom variables
+- [x] Custom variables
 - [ ] Interactive mode
 - [ ] Ability to query specific parts of the request and response in interactive mode (`print request.headers`, `retry request`, `print response.body`)
 
