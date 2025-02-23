@@ -99,12 +99,24 @@ func main() {
                     headerSlice := command.StringSlice("header")
                     headers := make(map[string]string)
 
+                    /*
                     for _, h := range headerSlice {
                         parts := strings.SplitN(h, ":", 2)
                         //fmt.Print("reached headerslice main.go")
                         if len(parts) == 2 {
                             key := strings.TrimSpace(parts[0])
                             value := strings.TrimSpace(parts[1])
+                            headers[key] = value
+                        }
+                    }
+                     */
+
+                    for _, h := range headerSlice {
+                        key, value, _ := strings.Cut(h, ":")
+                        //fmt.Print("reached headerslice main.go")
+                        if len(key) >= 1 {
+                            //key := strings.TrimSpace(parts[0])
+                            //value := strings.TrimSpace(parts[1])
                             headers[key] = value
                         }
                     }
