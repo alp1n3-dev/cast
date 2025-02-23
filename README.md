@@ -141,7 +141,7 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 
 - [x] Print request if debug flag is `true`.
 - [ ] Track duration between request and response
-- [ ] Improved / useful logging with values being interacted with
+- [x] Improved / useful logging with values being interacted with
 - [ ] `-UF` or `--uploadfile` to place a file in the request body
 - [ ] Short response support. Add a print option that just prints the response's status `200 OK`.
 - [ ] Add a print option that only prints specific headers in responses `--header-only`
@@ -154,10 +154,9 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 
 **v0.4**
 
+- [ ] Fix error returning structure and handle errors correctly and in better places.
 - [ ] Create tests & benchmark tests for all files.
 - [x] Custom variables
-- [ ] Interactive mode
-- [ ] Ability to query specific parts of the request and response in interactive mode (`print request.headers`, `retry request`, `print response.body`)
 
 **v0.5**
 
@@ -187,7 +186,7 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 **v0.8**
 
 - [ ] Reference files to include in the body via their path
-- [ ] Wordlist / fuzzing support via the provided vars
+- [ ] Wordlist / fuzzing support via the provided vars (`<% varName = ./tests/wordlist.txt %>` or something similar. Will resend the request enough times to iterate through the list. Can only be used in the request it is defined above.)
 
 **v0.9**
 

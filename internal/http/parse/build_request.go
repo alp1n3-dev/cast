@@ -1,7 +1,7 @@
 package parse
 
 import (
-	"fmt"
+	//"fmt"
 	//"io"
 	//"net/http"
 	//"net/url"
@@ -77,10 +77,8 @@ func BuildRequest (method, urlVal *string, body *io.Reader, headers *http.Header
 	return req
 }
 */
-func BuildRequest1 (method, urlStr, body *string, headers *map[string]string) (*fasthttp.Request) {
+func BuildRequest (method, urlStr, body *string, headers *map[string]string) (*fasthttp.Request) {
 	req := &fasthttp.Request{}
-
-	logging.Logger.Debug("BuildRequest point 1")
 
 	var wg sync.WaitGroup
 	//var mu sync.Mutex
@@ -88,7 +86,7 @@ func BuildRequest1 (method, urlStr, body *string, headers *map[string]string) (*
 
 	go func() {
 		defer wg.Done()
-		logging.Logger.Debug("Setting method")
+		logging.Logger.Debugf("Setting method: %s", *method)
 		req.Header.SetMethod(*method)
 	}()
 
@@ -101,11 +99,9 @@ func BuildRequest1 (method, urlStr, body *string, headers *map[string]string) (*
 		}
 	}()
 
-
-
 	go func() {
 		defer wg.Done()
-		logging.Logger.Debug("Setting uri")
+		logging.Logger.Debugf("Setting uri: %s", *urlStr)
 		uri := fasthttp.AcquireURI()
 		defer fasthttp.ReleaseURI(uri)
 		uri.Parse(nil, []byte(*urlStr))
@@ -117,8 +113,9 @@ func BuildRequest1 (method, urlStr, body *string, headers *map[string]string) (*
 		logging.Logger.Debug("Setting headers")
 		if headers != nil {
 			for key, value := range *headers {
-				fmt.Println("reached headers")
+				//fmt.Println("reached headers")
     		// Loop over all values for the name.
+      		logging.Logger.Debugf("Setting Header: Key: %s, Val: %s", key, value)
             req.Header.Add(key, string(value))
 			}
 		}
@@ -132,6 +129,7 @@ func BuildRequest1 (method, urlStr, body *string, headers *map[string]string) (*
 	return req
 }
 
+/*
 func BuildRequest2 (method, urlStr, body *string, headers *map[string]string) (*fasthttp.Request) {
 	req := &fasthttp.Request{}
 
@@ -168,3 +166,4 @@ func BuildRequest2 (method, urlStr, body *string, headers *map[string]string) (*
 
 	return req
 }
+*/

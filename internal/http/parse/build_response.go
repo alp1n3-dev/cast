@@ -7,9 +7,11 @@ import (
 
 	"github.com/valyala/fasthttp"
 
+	"github.com/alp1n3-eth/cast/pkg/logging"
 	"github.com/alp1n3-eth/cast/pkg/models"
 	//"github.com/alp1n3-eth/cast/pkg/logging"
 )
+
 /*
 func BuildResponse(response *http.Response) models.Response {
 	var builtResponse models.Response
@@ -57,14 +59,19 @@ func BuildFastHTTPResponse(response *fasthttp.Response) models.Response {
 	//fmt.Println(io.ReadAll(response.Body))
 	if builtResponse.Headers == nil {
 			builtResponse.Headers = http.Header{}
-		}
+	}
+
+	// why is the function above and below both here? Not 100% sure what I was doing here.
 
 
 
 	response.Header.VisitAll(func(key, value []byte){
 		//fmt.Printf("Adding header: %s: %s\n", string(key), string(value))
+		logging.Logger.Debugf("Building Response Header Key: %s, Value: %s", key, value)
 		builtResponse.Headers.Add(string(key), string(value))
 	})
+
+	logging.Logger.Debug("Reached end of BuildFastHTTPResponse")
 
 	return builtResponse
 }

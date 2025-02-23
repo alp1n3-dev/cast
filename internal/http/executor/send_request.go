@@ -13,10 +13,8 @@ import (
 
 // Should assume all fields have been created and validated by the time they get here.
 func SendRequest(result *models.ExecutionResult, debug, highlight *bool, printOption *string) error {
-
-	if *debug || *printOption == "request" {
-     	output.PrintHTTP(result.Request.Req, nil, highlight)
-    }
+	// Going to be a flag later, based on if asserts are detected in the file when read.
+	assertsRequired := false
 
 	req := fasthttp.AcquireRequest()
     defer fasthttp.ReleaseRequest(req)
@@ -35,6 +33,11 @@ func SendRequest(result *models.ExecutionResult, debug, highlight *bool, printOp
     }
 
     output.PrintHTTP(nil, resp, highlight)
+
+    // Blocking off the below section for later with a return that'll be hit
+    if !assertsRequired {
+    	return nil
+    }
 
     var assertion string // Placeholder for if the response values need to be saved and filtered
     if len(assertion) > 0 {

@@ -84,6 +84,10 @@ func main() {
                     //fmt.Println("Debug - Context args:", command.Args().Slice())
                     //fmt.Println("Debug - Body flag:", command.String("body"))
 
+                    // Can modify to make testing take longer. Send request multiple times. Currently hardcoded to send it
+
+                    //for i := 0; i <= 1; i++ {
+
                     request := fasthttp.Request{}
 
                     // Handle debug and highlight options
@@ -125,6 +129,7 @@ func main() {
                     replacementSlice := command.StringSlice("var")
                     replacementPair := make(map[string]string)
 
+                    /*
                     for _, h := range replacementSlice {
                     	//fmt.Print("reached replacementslice main.go")
                         parts := strings.SplitN(h, "=", 2)
@@ -134,8 +139,30 @@ func main() {
                             replacementPair[key] = value
                         }
                     }
+                    */
+
+                    for _, h := range replacementSlice {
+                        targetWord, value, _ := strings.Cut(h, "=")
+                        //fmt.Print("reached headerslice main.go")
+                        if len(targetWord) >= 1 {
+                            //key := strings.TrimSpace(parts[0])
+                            //value := strings.TrimSpace(parts[1])
+                            replacementPair[targetWord] = value
+                        }
+                    }
+
+
 
                     cmd.SendHTTP(os.Args[1], command.Args().First(), bodyStr, headers, debug, highlight, replacementPair)
+
+
+
+                     //}
+                    // ^ Ending brace for profiling pprof
+
+
+                    // KEEP THIS
+                    //cmd.SendHTTP(os.Args[1], command.Args().First(), bodyStr, headers, debug, highlight, replacementPair)
 
                     //f, _ := os.Create("mem.prof")
                     //pprof.WriteHeapProfile(f)
