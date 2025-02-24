@@ -11,6 +11,7 @@ import (
 	"context"
 	"log"
 	"strings"
+	"sync"
 
 	//"bytes"
 	//"io"
@@ -87,21 +88,71 @@ func main() {
                     // Can modify to make testing take longer. Send request multiple times. Currently hardcoded to send it
 
                     //for i := 0; i <= 1; i++ {
+                    var debug bool
+                    var highlight bool
+                    var bodyStr string
+
+                    replacementPair := make(map[string]string)
+                    headers := make(map[string]string)
 
                     request := fasthttp.Request{}
 
-                    // Handle debug and highlight options
-                    debug := command.Bool("debug")
-                    highlight := command.Bool("highlight")
+                    var wg sync.WaitGroup
+                    //var mu sync.Mutex
+                    wg.Add(4)
 
+                    go func() {
+                    	defer wg.Done()
 
-                    // Handle custom body
-                    bodyStr := command.String("body")
-                    request.SetBody([]byte(bodyStr))
+                     	// Handle debug and highlight options
+                      	debug = command.Bool("debug")
+                       	highlight = command.Bool("highlight")
+                    }()
 
-                    // Handle custom headers
-                    headerSlice := command.StringSlice("header")
-                    headers := make(map[string]string)
+                    go func() {
+                    	defer wg.Done()
+
+                     	// Handle custom body
+                      	bodyStr = command.String("body")
+                       	request.SetBody([]byte(bodyStr))
+                    }()
+
+                    go func() {
+                    	defer wg.Done()
+
+                     	// Handle custom headers
+                      	headerSlice := command.StringSlice("header")
+                       	//*headers = make(map[string]string)
+
+                        for _, h := range headerSlice {
+                            key, value, _ := strings.Cut(h, ":")
+                            //fmt.Print("reached headerslice main.go")
+                            if len(key) >= 1 {
+                                //key := strings.TrimSpace(parts[0])
+                                //value := strings.TrimSpace(parts[1])
+                                (headers)[key] = value
+                            }
+                        }
+                    }()
+
+                    go func() {
+                    	defer wg.Done()
+
+                     // Handle replacement variables
+                     replacementSlice := command.StringSlice("var")
+                     //*replacementPair = make(map[string]string)
+
+                     for _, h := range replacementSlice {
+                         targetWord, value, _ := strings.Cut(h, "=")
+                         //fmt.Print("reached headerslice main.go")
+                         if len(targetWord) >= 1 {
+                             //key := strings.TrimSpace(parts[0])
+                             //value := strings.TrimSpace(parts[1])
+                             (replacementPair)[targetWord] = value
+                         }
+                     }
+
+                    }()
 
                     /*
                     for _, h := range headerSlice {
@@ -115,20 +166,6 @@ func main() {
                     }
                      */
 
-                    for _, h := range headerSlice {
-                        key, value, _ := strings.Cut(h, ":")
-                        //fmt.Print("reached headerslice main.go")
-                        if len(key) >= 1 {
-                            //key := strings.TrimSpace(parts[0])
-                            //value := strings.TrimSpace(parts[1])
-                            headers[key] = value
-                        }
-                    }
-
-                    // Handle replacement variables
-                    replacementSlice := command.StringSlice("var")
-                    replacementPair := make(map[string]string)
-
                     /*
                     for _, h := range replacementSlice {
                     	//fmt.Print("reached replacementslice main.go")
@@ -141,21 +178,9 @@ func main() {
                     }
                     */
 
-                    for _, h := range replacementSlice {
-                        targetWord, value, _ := strings.Cut(h, "=")
-                        //fmt.Print("reached headerslice main.go")
-                        if len(targetWord) >= 1 {
-                            //key := strings.TrimSpace(parts[0])
-                            //value := strings.TrimSpace(parts[1])
-                            replacementPair[targetWord] = value
-                        }
-                    }
+                    wg.Wait()
 
-
-
-                    cmd.SendHTTP(os.Args[1], command.Args().First(), bodyStr, headers, debug, highlight, replacementPair)
-
-
+                    cmd.SendHTTP(os.Args[1], command.Args().First(), &bodyStr, &headers, &debug, &highlight, &replacementPair)
 
                      //}
                     // ^ Ending brace for profiling pprof

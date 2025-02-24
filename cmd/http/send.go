@@ -13,7 +13,7 @@ import (
 	//"github.com/alp1n3-eth/cast/pkg/apperrors"
 )
 
-func SendHTTP(method, urlVar string, body string, headers map[string]string, debug, highlight bool, replacementVariables map[string]string) {
+func SendHTTP(method, urlVar string, body *string, headers *map[string]string, debug, highlight *bool, replacementVariables *map[string]string) {
 
 	// TODO: Fix panic caused by apperrors.HandleExecutionError
 	//apperrors.HandleExecutionError(
@@ -26,9 +26,9 @@ func SendHTTP(method, urlVar string, body string, headers map[string]string, deb
 
     printOption := "" // TODO: Placeholder currently, can be used to print response before request. Needs to have a flag created for it.
 
-    if debug{
+    if *debug{
         logging.Init(true) // Activates debug mode.
-    } else if !debug{
+    } else if !*debug{
     	logging.Init(false)
     }
 
@@ -39,26 +39,26 @@ func SendHTTP(method, urlVar string, body string, headers map[string]string, deb
 
 		result := &models.ExecutionResult{}
 
-		result.Request.Req = parse.BuildRequest(&method, &urlVar, &body, &headers)
+		result.Request.Req = parse.BuildRequest(&method, &urlVar, body, headers)
 		logging.Logger.Debugf("BuildRequest: %s", result.Request.Req)
 
 
-		if len(replacementVariables) > 0 {
+		if len(*replacementVariables) > 0 {
 			//fmt.Println(replacementVariables)
 			logging.Logger.Debugf("Replacement Variables: %s", replacementVariables)
-			parse.SwapReqVals(result.Request.Req, &replacementVariables)
+			parse.SwapReqVals(result.Request.Req, replacementVariables)
 			logging.Logger.Debug("Executed Successfully: SwapReqVals()")
 		}
 
 		logging.Logger.Debugf("Request being sent: %s", result.Request.Req)
 		// Needs to be the one directly before sending it, as changes may happen in functions like SwapReqVals().
 		if printOption == "request" {
-     		output.PrintHTTP(result.Request.Req, nil, &highlight)
+     		output.PrintHTTP(result.Request.Req, nil, highlight)
     	}
 		// TODO: Get sendhttprequqest working again
-		err = executor.SendRequest(result, &debug, &highlight, &printOption)
+		err = executor.SendRequest(result, debug, highlight, &printOption)
 		if err != nil {
-			logging.Logger.Debugf("Result: %x, Highlight: %t, Print Option: %s", result, highlight, printOption)
+			logging.Logger.Debugf("Result: %x, Highlight: %t, Print Option: %s", *result, *highlight, printOption)
 			logging.Logger.Fatal("Error sending HTTP request")
 		}
 
