@@ -60,8 +60,6 @@ Comments can be included before methods, or after asserts. If you don't want to 
 
 Asserts are separated from each other by newlines, and from the body by two newlines. If, for whatever reason, the exact string `ASSERT` is needed in the body after two newlines, it can be escaped: `ASS\ERT`. The backslash will be auto-removed by the program post-assertions checks for any string that exactly matches that.
 
-If a `default` is used, a `WARN` is logged and shown to the user. Defaults are encouraged, but not required. They add context to requests if the collection is passed along and the next developer doesn't have access to the same variable values.
-
 A `Host` header **is required** for clarity. Even though in a normal HTTP interaction it technically wouldn't be required, for the scripts it is.
 
 - `save` works to temporarily save a value, and doubles as an `assert`.
@@ -72,14 +70,14 @@ A `Host` header **is required** for clarity. Even though in a normal HTTP intera
 
 ```bash
 ### Authentication Sequence
-var base_url = "https://api.example.com/v1"
-var uuid = "d2342-d4d23e-d232d3-df2f4f2"
-var env_token = env.get("API_TOKEN")
+base_url = "https://api.example.com/v1"
+uuid = "d2342-d4d23e-d232d3-df2f4f2"
+env_token = env.get("API_TOKEN")
 
 POST /auth HTTP/1.1
 Host: {{ base_url }}
 Content-Type: application/json
-X-Request-ID: {{ uuid or default = "54ff42-d2344d43-3f34f-43f3f4f" }}
+X-Request-ID: {{ uuid }}
 
 {
   "user": "{{ user || default = "test")}}",
@@ -88,8 +86,8 @@ X-Request-ID: {{ uuid or default = "54ff42-d2344d43-3f34f-43f3f4f" }}
 
 <% assert status 200 %>
 <% assert header "Location" %>
-<% assert header not "X-Rate-Limit" %>
-<% save body "$.token" as auth_token %>
+<% assert header NOT "X-Rate-Limit" %>
+<% save body "$.token" AS auth_token %>
 
 ### Resource Creation
 GET /resources HTTP/1.1
@@ -143,8 +141,7 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 - [ ] Track duration between request and response
 - [x] Improved / useful logging with values being interacted with
 - [ ] `-UF` or `--uploadfile` to place a file in the request body
-- [ ] Short response support. Add a print option that just prints the response's status `200 OK`.
-- [ ] Add a print option that only prints specific headers in responses `--header-only`
+- [x] Short response support. Add a print option that just prints the response's status `200 OK`.
 
 **v0.3**
 
@@ -157,6 +154,7 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 - [ ] Fix error returning structure and handle errors correctly and in better places.
 - [ ] Create tests & benchmark tests for all files.
 - [x] Custom variables
+- [ ] Cross-run variable storage / .env support
 
 **v0.5**
 
@@ -168,12 +166,10 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 
 - [ ] File input
 - [ ] Assertions
-- [ ] Default / fallback variable values `<% varVal, default=randomUser %>`
 
 **v0.6**
 
 - [ ] Config
-- [ ] Cross-run variable storage / .env support
 - [ ] Run a directory alphabetically option `cast --directory /tests/auth` (alias `-DIR`)
 
 **v0.7**
@@ -192,7 +188,7 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 
 - [ ] Create the docs site using Astro Starlight.
 - [ ] Get feedback from people who would make use of it.
-- [ ]
+- [ ] Syntax highlighting for editing in Zed or VSCode.
 
 **v1.0**
 
