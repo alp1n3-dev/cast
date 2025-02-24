@@ -77,6 +77,11 @@ func main() {
                      	Usage: "A text file to be iteratively used in any portion of the request to insert values.",
                       	Aliases: []string{"V"},
                   },
+                  &cli.StringSliceFlag{
+                  		Name: "print",
+                     	Usage: "A text file to be iteratively used in any portion of the request to insert values.",
+                      	Aliases: []string{"P"},
+                  },
                 },
                 Action: func(ctx context.Context, command *cli.Command) error {
                     //fmt.Println("added task: ", command.Args().First())
@@ -91,6 +96,8 @@ func main() {
                     var debug bool
                     var highlight bool
                     var bodyStr string
+
+                    printOption := command.StringSlice("print")
 
                     replacementPair := make(map[string]string)
                     headers := make(map[string]string)
@@ -180,7 +187,7 @@ func main() {
 
                     wg.Wait()
 
-                    cmd.SendHTTP(os.Args[1], command.Args().First(), &bodyStr, &headers, &debug, &highlight, &replacementPair)
+                    cmd.SendHTTP(os.Args[1], command.Args().First(), &bodyStr, &headers, &debug, &highlight, &replacementPair, &printOption)
 
                      //}
                     // ^ Ending brace for profiling pprof

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"strings"
+	"slices"
 	//"fmt"
 
 	"github.com/alp1n3-eth/cast/internal/http/executor"
@@ -13,7 +14,7 @@ import (
 	//"github.com/alp1n3-eth/cast/pkg/apperrors"
 )
 
-func SendHTTP(method, urlVar string, body *string, headers *map[string]string, debug, highlight *bool, replacementVariables *map[string]string) {
+func SendHTTP(method, urlVar string, body *string, headers *map[string]string, debug, highlight *bool, replacementVariables *map[string]string, printOption *[]string) {
 
 	// TODO: Fix panic caused by apperrors.HandleExecutionError
 	//apperrors.HandleExecutionError(
@@ -24,7 +25,7 @@ func SendHTTP(method, urlVar string, body *string, headers *map[string]string, d
     method = strings.ToUpper(method)
     urlVar = strings.ToLower(urlVar)
 
-    printOption := "" // TODO: Placeholder currently, can be used to print response before request. Needs to have a flag created for it.
+    //printOption := "" // TODO: Placeholder currently, can be used to print response before request. Needs to have a flag created for it.
 
     if *debug{
         logging.Init(true) // Activates debug mode.
@@ -52,13 +53,21 @@ func SendHTTP(method, urlVar string, body *string, headers *map[string]string, d
 
 		logging.Logger.Debugf("Request being sent: %s", result.Request.Req)
 		// Needs to be the one directly before sending it, as changes may happen in functions like SwapReqVals().
-		if printOption == "request" {
-     		output.PrintHTTP(result.Request.Req, nil, highlight)
-    	}
+		//if *printOption == "request" {
+     		//output.PrintHTTP(result.Request.Req, nil, highlight)
+      	//}
+     	if len(*printOption) > 0 {
+      		if slices.Contains(*printOption, "request") {
+        		output.PrintHTTP(result.Request.Req, nil, highlight, printOption)
+        	}
+      	}
+
+
+
 		// TODO: Get sendhttprequqest working again
-		err = executor.SendRequest(result, debug, highlight, &printOption)
+		err = executor.SendRequest(result, debug, highlight, printOption)
 		if err != nil {
-			logging.Logger.Debugf("Result: %x, Highlight: %t, Print Option: %s", *result, *highlight, printOption)
+			logging.Logger.Debugf("Result: %x, Highlight: %t, Print Option: %s", *result, *highlight, *printOption)
 			logging.Logger.Fatal("Error sending HTTP request")
 		}
 
