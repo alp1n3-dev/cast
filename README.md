@@ -144,19 +144,19 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 - [x] Print request if debug flag is `true`.
 - [ ] Track duration between request and response
 - [x] Improved / useful logging with values being interacted with
-- [ ] `-UF` or `--uploadfile` to place a file in the request body
+- [x] `-UF` or `--uploadfile` to place a file in the request body
 - [x] Short response support. Add a print option that just prints the response's status `200 OK`.
 
 **v0.3**
 
 - [x] `-P` flag with `request` argument to print the request as well. Support syntax highlighting of the request.
 - [ ] `--print` options similar to httpie: https://httpie.io/docs/cli/what-parts-of-the-http-exchange-should-be-printed
-- [ ] Flag to allow following redirects and only returning the "final" response.
+- [x] Flag to allow following redirects and only returning the "final" response.
 
 **v0.4**
 
 - [ ] Fix error returning structure and handle errors correctly and in better places.
-- [ ] Create tests & benchmark tests for all files.
+- [ ] Create tests & benchmark tests for all files, flags, args, etc.
 - [x] Custom variables
 - [ ] Cross-run variable storage / .env support (Look into YAML, koanf, etc.)
 
