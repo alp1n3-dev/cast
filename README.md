@@ -1,6 +1,9 @@
 # cast
 A CLI tool to enable easy HTTP requests to be completed via the CLI or file-based workflows.
 
+> [!NOTE]
+> This is under active development. It is unstable.
+
 **Using It:**
 ```bash
 cast post https://example.com/api/v1/userUpdate -B newName=Greg -H X-Api-Key:12320f-r434rf-g3tg45
@@ -124,9 +127,10 @@ Authorization: Bearer {{auth_token}}
 
 Generally the program *shouldn't* load / initiate / do anything that isn't involved in **only** the thing the user commands it. And the things it *does* do, shouldn't be done until they're needed.
 
-## roadmap
+## roadmap / to-do
 
-*Warning: Any version under v1.0 is going to be **very** unstable and subject to change (flags, syntax, etc.). Please report any bugs or issues.*
+> [!WARNING]
+> Any version under v1.0 is going to be **very** unstable and subject to change (flags, syntax, etc.). Please report any bugs or issues.
 
 ### cli focus (<= v0.5)
 
@@ -145,7 +149,7 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 
 **v0.3**
 
-- [ ] `-R` flag to print request as well
+- [x] `-P` flag with `request` argument to print the request as well. Support syntax highlighting of the request.
 - [ ] `--print` options similar to httpie: https://httpie.io/docs/cli/what-parts-of-the-http-exchange-should-be-printed
 - [ ] Flag to allow following redirects and only returning the "final" response.
 
@@ -154,7 +158,7 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 - [ ] Fix error returning structure and handle errors correctly and in better places.
 - [ ] Create tests & benchmark tests for all files.
 - [x] Custom variables
-- [ ] Cross-run variable storage / .env support
+- [ ] Cross-run variable storage / .env support (Look into YAML, koanf, etc.)
 
 **v0.5**
 
@@ -166,11 +170,14 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 
 - [ ] File input
 - [ ] Assertions
+- [ ] Re-work folders to increase clarity
+- [ ] Review `fasthttp` byte buffer tricks & best practices to ensure they're utilized correctly
 
 **v0.6**
 
 - [ ] Config
-- [ ] Run a directory alphabetically option `cast --directory /tests/auth` (alias `-DIR`)
+- [ ] Run a directory (alphabetically / in order) option `cast --directory /tests/auth` (alias `-DIR`). Runs each `.cast` file sequentially.
+- [ ] Folder-scoped .env & global-scoped .env support. (Probably a YAML in the folder, and a YAML kept in the `cast` main directory.)
 
 **v0.7**
 
@@ -186,6 +193,7 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 
 **v0.9**
 
+- [ ] Optimize and clarify `README.md`. Check other popular projects for examples.
 - [ ] Create the docs site using Astro Starlight.
 - [ ] Get feedback from people who would make use of it.
 - [ ] Syntax highlighting for editing in Zed or VSCode.
@@ -194,8 +202,8 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 
 - [ ] Create issue templates in GitHub and check labels
 - [ ] Ensure GitHub workflows are configured correctly and packaging is essentially automated
-- [ ] Run a SAST in the pipeline. Something like Semgrep. Get it plugged into github issues
-- [ ] Submit application to be an OWASP project (might require a license change?)
+- [ ] Run a SAST in the pipeline. Something like Semgrep. Get it plugged into github issues. Also ensure CodeQL is fully configured.
+- [ ] Submit application to be an OWASP project (might require a license change?) (evaluate)
 - [ ] Announcement posts. Reached the point of having enough features to be useful
 
 ### continuing (>= v1.0)
@@ -203,10 +211,26 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 - [ ] maintain. keep on top of package and language changes.
 
 ### *potential* future plans
+
+These may come about, in addition to others, if enough demand is seen. `cast` is intended to stay as lean as possible, so if only 1% of users want something, it will not be included. If any feature reworks / rollbacks occur, it will only be due to them not being used or causing issues with the application's main purpose (sending and receiving HTTP requests).
+
 - [ ] grpc support
+- [ ] graphql support / formatting
 
 ## writings about creating it
 
 I wrote a few blog posts on my personal blog about my experience and thoughts while developing `cast`. The are stream-of-thought and show how the scope of the project and its features changed over time. They can be read [here](), and exist under the `cast` tag.
+
+## pkgs utilized
+
+The packages doing the heavy lifting (other than the standard library) are:
+
+- [urfave/cli](https://github.com/urfave/cli) (v3)
+- [valyala/fasthttp](https://github.com/valyala/fasthttp)
+- [charmbracelet/log](github.com/charmbracelet/log)
+- [alecthomas/chroma](github.com/alecthomas/chroma/v2) (v2)
+- [fatih/color](github.com/fatih/color)
+
+A big thanks to the creators and contributors of them!
 
 ## license

@@ -6,7 +6,6 @@ import (
 	//"net/http"
 	//"net/url"
 
-
 	"sync"
 	//"sync/Mutex"
 
@@ -14,6 +13,7 @@ import (
 	//"github.com/alp1n3-eth/cast/pkg/models"
 	"github.com/valyala/fasthttp"
 )
+
 /*
 func BuildRequest (method, urlVal *string, body *io.Reader, headers *http.Header) models.Request {
 	var req models.Request
@@ -70,14 +70,14 @@ func BuildRequest (method, urlVal *string, body *io.Reader, headers *http.Header
 		req.Headers = make(http.Header)
 		req.Headers.Add("Content-Type", "text/html")
 	}
-	*/
+*/
 /*
 	logging.Logger.Debug("Assigned request URL successfully")
 
 	return req
 }
 */
-func BuildRequest (method, urlStr, body *string, headers *map[string]string) (*fasthttp.Request) {
+func BuildRequest(method, urlStr *string, body *[]byte, headers *map[string]string) *fasthttp.Request {
 	req := &fasthttp.Request{}
 
 	var wg sync.WaitGroup
@@ -92,11 +92,11 @@ func BuildRequest (method, urlStr, body *string, headers *map[string]string) (*f
 
 	go func() {
 		defer wg.Done()
-		logging.Logger.Debug("Setting body")
-		if body != nil {
-			req.SetBody([]byte(*body))
-			//req.SetBodyStream(body, -1)
-		}
+		logging.Logger.Debugf("Setting body: %x", *body)
+		//if body != nil {
+		req.SetBody(*body)
+		//req.SetBodyStream(body, -1)
+		//}
 	}()
 
 	go func() {
@@ -114,9 +114,9 @@ func BuildRequest (method, urlStr, body *string, headers *map[string]string) (*f
 		if headers != nil {
 			for key, value := range *headers {
 				//fmt.Println("reached headers")
-    		// Loop over all values for the name.
-      		logging.Logger.Debugf("Setting Header: Key: %s, Val: %s", key, value)
-            req.Header.Add(key, string(value))
+				// Loop over all values for the name.
+				logging.Logger.Debugf("Setting Header: Key: %s, Val: %s", key, value)
+				req.Header.Add(key, string(value))
 			}
 		}
 		if req.Header.Peek("Content-Type") == nil {

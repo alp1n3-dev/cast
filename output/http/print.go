@@ -1,7 +1,7 @@
 package output
 
 import (
-	//"fmt"
+	"fmt"
 	"strconv"
 	"os"
 	"slices"
@@ -68,6 +68,7 @@ func printIt (r *string, highlight *bool) {
        			logging.Logger.Warn("Colored output failed, printing response regularly. Error: %s", err)
 
          	} else {
+          		fmt.Println()
           		return
           }
 	}
