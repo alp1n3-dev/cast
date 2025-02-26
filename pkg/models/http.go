@@ -45,7 +45,7 @@ type Request struct {
 	Req *fasthttp.Request
 
 	Assertions Assertion
-	CLI        *CommandActions
+	CLI        CommandActions
 }
 
 type Response struct {
@@ -73,12 +73,17 @@ type ExecutionResult struct {
 }
 
 type CommandActions struct {
-	Debug           bool
-	Highlight       bool
-	VarReplacement  bool
-	PrintRequest    bool
-	PrintJustStatus bool
-	FollowRedirect  bool
+	Method  string
+	URL     string
+	Headers map[string]string
+	Body    []byte
+
+	Debug             bool
+	Highlight         bool
+	VarReplacement    bool
+	PrintOptions      []string // Just Request, Just Status, etc.
+	RedirectsToFollow int
+	FileUploadPath    string
 }
 
 func (e ExecutionError) Error() string {

@@ -4,64 +4,46 @@ import (
 	"io"
 	"os"
 	"slices"
-	"strings"
-
-	//"fmt"
 
 	"github.com/alp1n3-eth/cast/internal/http/executor"
 	"github.com/alp1n3-eth/cast/internal/http/parse"
 	output "github.com/alp1n3-eth/cast/output/http"
 	"github.com/alp1n3-eth/cast/pkg/logging"
 	"github.com/alp1n3-eth/cast/pkg/models"
-	//"github.com/valyala/fasthttp"
 	//"github.com/alp1n3-eth/cast/pkg/apperrors"
 )
 
-func SendHTTP(method, urlVar string, body *string, headers *map[string]string, debug, highlight *bool, replacementVariables *map[string]string, printOption *[]string, uploadFilePath *string) {
+func SendHTTP(headers, replacementVariables *map[string]string, CLIArgs *models.Request) {
 
 	// TODO: Fix panic caused by apperrors.HandleExecutionError
 	//apperrors.HandleExecutionError(
 	//apperrors.Wrap(apperrors.ErrInvalidHeaderFormat, "random-header"))
 
 	var err error
-	//var bodyByte *[]byte
-	var bodyByte []byte
 
-	method = strings.ToUpper(method)
-	urlVar = strings.ToLower(urlVar)
-
-	//printOption := "" // TODO: Placeholder currently, can be used to print response before request. Needs to have a flag created for it.
-
-	// TODO: Put flag in main.go and ensure a valid value is passed to this function.
-	//uploadFilePath := "tests/wordlists/random_endpoints.txt"
-
-	if *debug {
+	if CLIArgs.CLI.Debug {
 		logging.Init(true) // Activates debug mode.
-	} else if !*debug {
+	} else {
 		logging.Init(false)
 	}
 
-	logging.Logger.Debugf("Debug: %t, Method: %s, URI: %s", *debug, method, urlVar)
+	logging.Logger.Debugf("Debug: %t, Method: %s, URI: %s", CLIArgs.CLI.Debug, CLIArgs.CLI.Method, CLIArgs.CLI.URL)
 
-	if urlVar != "" {
+	if CLIArgs.CLI.URL != "" {
 		// Perform cli-based actions.
 
 		result := &models.ExecutionResult{}
 
-		if *uploadFilePath != "" {
-			logging.Logger.Debugf("Upload file path: %s", *uploadFilePath)
+		if CLIArgs.CLI.FileUploadPath != "" {
+			logging.Logger.Debugf("Upload file path: %s", CLIArgs.CLI.FileUploadPath)
 
-			bodyByte = readFileIntoBody(uploadFilePath)
-
-		} else {
-			bodyByte = []byte(*body)
+			CLIArgs.CLI.Body = readFileIntoBody(&CLIArgs.CLI.FileUploadPath)
 		}
 
-		result.Request.Req = parse.BuildRequest(&method, &urlVar, &bodyByte, headers)
+		result.Request.Req = parse.BuildRequest(&CLIArgs.CLI.Method, &CLIArgs.CLI.URL, &CLIArgs.CLI.Body, headers)
 		logging.Logger.Debugf("BuildRequest: %s", result.Request.Req)
 
 		if len(*replacementVariables) > 0 {
-			//fmt.Println(replacementVariables)
 			logging.Logger.Debugf("Replacement Variables: %s", replacementVariables)
 			parse.SwapReqVals(result.Request.Req, replacementVariables)
 			logging.Logger.Debug("Executed Successfully: SwapReqVals()")
@@ -69,26 +51,21 @@ func SendHTTP(method, urlVar string, body *string, headers *map[string]string, d
 
 		logging.Logger.Debugf("Request being sent: %s", result.Request.Req)
 		// Needs to be the one directly before sending it, as changes may happen in functions like SwapReqVals().
-		//if *printOption == "request" {
-		//output.PrintHTTP(result.Request.Req, nil, highlight)
-		//}
-		if len(*printOption) > 0 {
-			if slices.Contains(*printOption, "request") {
-				output.PrintHTTP(result.Request.Req, nil, highlight, printOption)
+
+		if len(CLIArgs.CLI.PrintOptions) > 0 {
+			if slices.Contains(CLIArgs.CLI.PrintOptions, "request") {
+				output.PrintHTTP(result.Request.Req, nil, &CLIArgs.CLI.Highlight, &CLIArgs.CLI.PrintOptions)
 			}
 		}
 
-		// TODO: Get sendhttprequqest working again
-		err = executor.SendRequest(result, debug, highlight, printOption)
+		err = executor.SendRequest(result, &CLIArgs.CLI.Debug, &CLIArgs.CLI.Highlight, &CLIArgs.CLI.PrintOptions, &CLIArgs.CLI.RedirectsToFollow)
 		if err != nil {
-			logging.Logger.Debugf("Result: %x, Highlight: %t, Print Option: %s", *result, *highlight, *printOption)
+			logging.Logger.Debugf("Result: %x, Highlight: %t, Print Option: %s", result, &CLIArgs.CLI.Debug, &CLIArgs.CLI.Highlight, &CLIArgs.CLI.PrintOptions)
 			logging.Logger.Fatal("Error sending HTTP request")
 		}
 
 		logging.Logger.Debug("Executed Successfully: SendRequest()")
 
-		// TODO: Get printout of response working again
-		// TODO: Get flags tied-in in order to provide body.
 		return
 
 	} else {

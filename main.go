@@ -22,9 +22,10 @@ import (
 	//"net/http"
 
 	"github.com/urfave/cli/v3" // docs: https://cli.urfave.org/v3/examples/subcommands/
-	"github.com/valyala/fasthttp"
+	//"github.com/valyala/fasthttp"
 
 	cmd "github.com/alp1n3-eth/cast/cmd/http"
+	"github.com/alp1n3-eth/cast/pkg/models"
 	//"github.com/alp1n3-eth/cast/internal/http/parse"
 	//"github.com/alp1n3-eth/cast/pkg/logging"
 	//"github.com/alp1n3-eth/cast/parse"
@@ -87,6 +88,11 @@ func main() {
 						Usage:   "A way to include a file in the request's body.",
 						Aliases: []string{"F"},
 					},
+					&cli.IntFlag{
+						Name:    "redirect",
+						Usage:   "A way to follow redirects up to < INT >.",
+						Aliases: []string{"RD"},
+					},
 				},
 				Action: func(ctx context.Context, command *cli.Command) error {
 					//fmt.Println("added task: ", command.Args().First())
@@ -98,17 +104,23 @@ func main() {
 					// Can modify to make testing take longer. Send request multiple times. Currently hardcoded to send it
 
 					//for i := 0; i <= 1; i++ {
-					var debug bool
-					var highlight bool
-					var bodyStr string
-					var uploadFilePath string
+					//var debug bool
+					//var highlight bool
+					//var bodyStr string
+					//var uploadFilePath string
 
-					printOption := command.StringSlice("print")
+					userInputs := models.Request{}
+
+					userInputs.CLI.Method = strings.ToUpper(os.Args[1])
+					userInputs.CLI.URL = strings.ToLower(command.Args().First())
+					//printOption := command.StringSlice("print")
+					userInputs.CLI.PrintOptions = command.StringSlice("print")
+					userInputs.CLI.RedirectsToFollow = int(command.Int("redirect"))
 
 					replacementPair := make(map[string]string)
 					headers := make(map[string]string)
 
-					request := fasthttp.Request{}
+					//request := fasthttp.Request{}
 
 					var wg sync.WaitGroup
 					wg.Add(4)
@@ -117,17 +129,24 @@ func main() {
 						defer wg.Done()
 
 						// Handle debug and highlight options
-						debug = command.Bool("debug")
-						highlight = command.Bool("highlight")
-						uploadFilePath = command.String("file")
+
+						//debug = command.Bool("debug")
+						userInputs.CLI.Debug = command.Bool("debug")
+
+						//highlight = command.Bool("highlight")
+						userInputs.CLI.Highlight = command.Bool("highlight")
+
+						//uploadFilePath = command.String("file")
+						userInputs.CLI.FileUploadPath = command.String("file")
 					}()
 
 					go func() {
 						defer wg.Done()
 
 						// Handle custom body
-						bodyStr = command.String("body")
-						request.SetBody([]byte(bodyStr)) // TODO: What's going on? Prebuilding request here?
+						//bodyStr = command.String("body")
+						//request.SetBody([]byte(bodyStr)) // TODO: What's going on? Prebuilding request here?
+						userInputs.CLI.Body = []byte(command.String("body"))
 					}()
 
 					go func() {
@@ -193,7 +212,7 @@ func main() {
 
 					wg.Wait()
 
-					cmd.SendHTTP(os.Args[1], command.Args().First(), &bodyStr, &headers, &debug, &highlight, &replacementPair, &printOption, &uploadFilePath)
+					cmd.SendHTTP(&headers, &replacementPair, &userInputs)
 
 					//}
 					// ^ Ending brace for profiling pprof
