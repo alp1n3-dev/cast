@@ -2,6 +2,8 @@ package executor
 
 import (
 	"fmt"
+	"strings"
+	"time"
 
 	"github.com/valyala/fasthttp"
 
@@ -27,6 +29,8 @@ func SendRequest(result *models.ExecutionResult, debug, highlight *bool, printOp
 	resp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(resp)
 
+	startTime := time.Now()
+
 	if *redirectsToFollow > 0 {
 		err = fasthttp.DoRedirects(result.Request.Req, resp, *redirectsToFollow)
 		logging.Logger.Info("Followed redirect\n")
@@ -38,12 +42,23 @@ func SendRequest(result *models.ExecutionResult, debug, highlight *bool, printOp
 		return err
 	}
 
+	endTime := time.Now()
+	duration := endTime.Sub(startTime)
+
+	result.Response.Duration = duration
+
 	// TODO: Implement no-response for printOption flag
 	//if *printOption == "no-response" {
 	//return nil
 	//}
 
 	output.PrintHTTP(nil, resp, highlight, printOption)
+
+	printOptions := "duration"
+
+	if strings.Contains(printOptions, "duration") {
+		fmt.Printf("\nRequest duration: %d ms\n", duration.Milliseconds())
+	}
 
 	// Blocking off the below section for later with a return that'll be hit
 	if !assertsRequired {

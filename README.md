@@ -1,15 +1,17 @@
 # cast
+
 A CLI tool to enable easy HTTP requests to be completed via the CLI or file-based workflows.
 
 > [!NOTE]
 > This is under active development. It is unstable.
 
 **Using It:**
+
 ```bash
 cast post https://example.com/api/v1/userUpdate -B newName=Greg -H X-Api-Key:12320f-r434rf-g3tg45
 ```
 
-HTTP and OpenAPI are great standards. **This tool revolves around *just* them.**
+HTTP and OpenAPI are great standards. **This tool revolves around _just_ them.**
 
 The focus of the CLI input and file-based scripting is to keep it simple and obvious, which requires being a little explicit. Things like:
 
@@ -44,8 +46,8 @@ cast [ method ] [ url ] <args>
 ```
 
 - anything after the url isn't required.
-- the method *then* url order cannot change.
-- output is *just* the full first response by default.
+- the method _then_ url order cannot change.
+- output is _just_ the full first response by default.
 
 **GET Request with Custom Headers and Syntax Highlighting:**
 
@@ -98,34 +100,27 @@ Host: {{ base_url }}
 Authorization: Bearer {{auth_token}}
 ```
 
-
-
 ## quick comparisons
 
 ### with httpie
 
-
 ### with hurl
-
 
 ### with xh
 
-
 ### with cURL
-
 
 ### benchmark
 
-
 ## issues, contributions, faqs
 
-*Warning: Not all issues or feature requests may be accepted.*
+_Warning: Not all issues or feature requests may be accepted._
 
 - `.md` on how to [submit an issue]()
 - `.md` on how to [contribute]()
 - `.md` containing [the faq]()
 
-Generally the program *shouldn't* load / initiate / do anything that isn't involved in **only** the thing the user commands it. And the things it *does* do, shouldn't be done until they're needed.
+Generally the program _shouldn't_ load / initiate / do anything that isn't involved in **only** the thing the user commands it. And the things it _does_ do, shouldn't be done until they're needed.
 
 ## roadmap / to-do
 
@@ -142,7 +137,7 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 **v0.2**
 
 - [x] Print request if debug flag is `true`.
-- [ ] Track duration between request and response
+- [x] Track duration between request and response
 - [x] Improved / useful logging with values being interacted with
 - [x] `-UF` or `--uploadfile` to place a file in the request body
 - [x] Short response support. Add a print option that just prints the response's status `200 OK`.
@@ -207,10 +202,11 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 - [ ] Announcement posts. Reached the point of having enough features to be useful
 
 ### continuing (>= v1.0)
+
 - [ ] optimize. find anti-patterns.
 - [ ] maintain. keep on top of package and language changes.
 
-### *potential* future plans
+### _potential_ future plans
 
 These may come about, in addition to others, if enough demand is seen. `cast` is intended to stay as lean as possible, so if only 1% of users want something, it will not be included. If any feature reworks / rollbacks occur, it will only be due to them not being used or causing issues with the application's main purpose (sending and receiving HTTP requests).
 
