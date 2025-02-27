@@ -156,7 +156,7 @@ Generally the program *shouldn't* load / initiate / do anything that isn't invol
 **v0.4**
 
 - [ ] Fix error returning structure and handle errors correctly and in better places.
-- [ ] Create tests & benchmark tests for all files, flags, args, etc.
+- [ ] Create tests & benchmark tests for all files, flags, args, etc. Have these also run in GitHub.
 - [x] Custom variables
 - [ ] Cross-run variable storage / .env support (Look into YAML, koanf, etc.)
 

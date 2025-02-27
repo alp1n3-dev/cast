@@ -1,3 +1,1 @@
 package assert
-
-func AssertExists()

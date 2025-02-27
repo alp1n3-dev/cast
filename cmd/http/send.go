@@ -60,7 +60,7 @@ func SendHTTP(headers, replacementVariables *map[string]string, CLIArgs *models.
 
 		err = executor.SendRequest(result, &CLIArgs.CLI.Debug, &CLIArgs.CLI.Highlight, &CLIArgs.CLI.PrintOptions, &CLIArgs.CLI.RedirectsToFollow)
 		if err != nil {
-			logging.Logger.Debugf("Result: %x, Highlight: %t, Print Option: %s", result, &CLIArgs.CLI.Debug, &CLIArgs.CLI.Highlight, &CLIArgs.CLI.PrintOptions)
+			//logging.Logger.Debugf("Highlight: %t, Print Option: %s", &CLIArgs.CLI.Highlight, &CLIArgs.CLI.PrintOptions)
 			logging.Logger.Fatal("Error sending HTTP request")
 		}
 
@@ -84,13 +84,13 @@ func readFileIntoBody(uploadFilePath *string) []byte {
 
 	file, err := os.Open(*uploadFilePath)
 	if err != nil {
-		logging.Logger.Fatalf("Error opening file: %w", err)
+		logging.Logger.Fatal("Error opening file")
 	}
 	defer file.Close()
 
 	fileContents, err = io.ReadAll(file)
 	if err != nil {
-		logging.Logger.Fatalf("Error reading file: %w", err)
+		logging.Logger.Fatal("Error reading file")
 	}
 
 	logging.Logger.Debugf("fileContents: %x", fileContents)
