@@ -1,14 +1,11 @@
 package tests
 
 import (
-
 	"fmt"
 
 	"testing"
 	"time"
 )
-
-
 
 func BenchmarkGETCast(b *testing.B) {
 	commands := []CommandBenchmark{

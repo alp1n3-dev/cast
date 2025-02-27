@@ -16,7 +16,7 @@ func ValidateMethod(method string) bool {
 		// TODO: Parse and send custom headers
 		// TODO: Double-check that multiple cookies being set doesn't run into any issues
 		// TODO: Add the ability to add a custom body to POSTS
-       return true
+		return true
 	}
 	logging.Logger.Debug("Method not provided, checking for file extension")
 	return false

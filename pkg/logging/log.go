@@ -9,19 +9,19 @@ import (
 var Logger *log.Logger
 
 func Init(debug bool) {
-    Logger = log.NewWithOptions(os.Stderr, log.Options{
-        ReportCaller:   true,
-        ReportTimestamp: true,
-        Formatter: log.TextFormatter,
-    })
-    if debug {
-        Logger.SetLevel(log.DebugLevel)
-    }
+	Logger = log.NewWithOptions(os.Stderr, log.Options{
+		ReportCaller:    true,
+		ReportTimestamp: true,
+		Formatter:       log.TextFormatter,
+	})
+	if debug {
+		Logger.SetLevel(log.DebugLevel)
+	}
 }
 
 //var Logger = log.NewWithOptions(os.Stderr, log.Options{
-    //ReportCaller:   true,
-    //ReportTimestamp: true,
+//ReportCaller:   true,
+//ReportTimestamp: true,
 //})
 
 /*

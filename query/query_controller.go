@@ -1,9 +1,5 @@
 package query
 
-import (
-
-)
-
 // The only difference between a capture and an assert is that one returns a bool, while the other returns a captured value or error.
 
 /*

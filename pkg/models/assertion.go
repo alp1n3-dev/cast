@@ -1,8 +1,8 @@
 package models
 
 type Assertion struct {
-	Type string // header, header.value, json.name, json.value, body; AKA the type of operation.
-	Target string // name of the header, json path,
+	Type     string // header, header.value, json.name, json.value, body; AKA the type of operation.
+	Target   string // name of the header, json path,
 	Operator string // Such as: ==, >=, <=, !=, ||, &&, <, >, contains
 	Expected string // value that is to be operated that is contained in the "Target".
 }

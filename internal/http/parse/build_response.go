@@ -50,22 +50,18 @@ func BuildFastHTTPResponse(response *fasthttp.Response) models.Response {
 
 	builtResponse.Body = response.Body()
 
-
-
-    //fmt.Println(string(body[:]))
+	//fmt.Println(string(body[:]))
 	//if err != nil {
-		//fmt.Println("Problem reading response body in BuildResponse")
-		//}
+	//fmt.Println("Problem reading response body in BuildResponse")
+	//}
 	//fmt.Println(io.ReadAll(response.Body))
 	if builtResponse.Headers == nil {
-			builtResponse.Headers = http.Header{}
+		builtResponse.Headers = http.Header{}
 	}
 
 	// why is the function above and below both here? Not 100% sure what I was doing here.
 
-
-
-	response.Header.VisitAll(func(key, value []byte){
+	response.Header.VisitAll(func(key, value []byte) {
 		//fmt.Printf("Adding header: %s: %s\n", string(key), string(value))
 		logging.Logger.Debugf("Building Response Header Key: %s, Value: %s", key, value)
 		builtResponse.Headers.Add(string(key), string(value))

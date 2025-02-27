@@ -1,9 +1,5 @@
 package tests
 
-import (
-
-)
-
 /*
 Test Example 1:
 

@@ -1,9 +1,5 @@
 package http_extractors
 
-import (
-
-)
-
 /*
 
 # Example 1:

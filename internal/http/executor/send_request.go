@@ -22,6 +22,8 @@ func SendRequest(result *models.ExecutionResult, debug, highlight *bool, printOp
 	assertsRequired := false
 	var err error
 
+	// TODO: Add the ability to track byte sizes of responses.
+
 	req := fasthttp.AcquireRequest()
 	defer fasthttp.ReleaseRequest(req)
 

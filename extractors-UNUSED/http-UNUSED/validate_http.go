@@ -3,8 +3,8 @@ package http_extractors
 import (
 	//"log"
 	"errors"
-	"net/url"
 	"github.com/alp1n3-eth/cast/pkg/logging"
+	"net/url"
 )
 
 func ValidateHTTP(method, url string) {
@@ -22,17 +22,17 @@ func ValidateHTTP(method, url string) {
 	}
 }
 
-func isValidMethod (method string) bool {
+func isValidMethod(method string) bool {
 	switch method {
-		case "GET", "POST", "PUT", "DELETE", "OPTION", "TRACE", "HEAD":
-    		// Valid method, do nothing
-    		return true
-    	default:
-   			return false
+	case "GET", "POST", "PUT", "DELETE", "OPTION", "TRACE", "HEAD":
+		// Valid method, do nothing
+		return true
+	default:
+		return false
 	}
 }
 
-func isHTTPURL (str string) bool {
+func isHTTPURL(str string) bool {
 	u, err := url.Parse(str)
-    return err == nil && u.Scheme != "" && u.Host != ""
+	return err == nil && u.Scheme != "" && u.Host != ""
 }
