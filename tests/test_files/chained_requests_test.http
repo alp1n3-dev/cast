@@ -1,1 +1,16 @@
+# Check non-existent endpoint for Google
+GET /testEndpoint HTTP/1.1
+Host: google.com
+Content-Type: text/html
 
+<% assert status=301 %>
+<% print response %>
+
+<% assert duration<400ms %>
+<% print duration %>
+
+POST /testEndpoint HTTP/1.1
+Host: google.com
+Content-Type: text/html
+
+test=TextFUZZText

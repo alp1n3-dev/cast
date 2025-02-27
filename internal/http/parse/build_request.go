@@ -7,7 +7,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func BuildRequest(method, urlStr *string, body *[]byte, headers *map[string]string) *fasthttp.Request {
+func BuildRequest(method, urlStr *string, body *[]byte, headers *map[string][]byte) *fasthttp.Request {
 	req := &fasthttp.Request{}
 
 	var wg sync.WaitGroup
@@ -45,7 +45,10 @@ func BuildRequest(method, urlStr *string, body *[]byte, headers *map[string]stri
 				//fmt.Println("reached headers")
 				// Loop over all values for the name.
 				logging.Logger.Debugf("Setting Header: Key: %s, Val: %s", key, value)
-				req.Header.Add(key, string(value))
+				//req.Header.Add(key, string(value))
+				//req.Header.Set(key, value)
+
+				req.Header.SetBytesV(key, value)
 			}
 		}
 		if req.Header.Peek("Content-Type") == nil {

@@ -21,6 +21,7 @@ type Request struct {
 }
 
 type Response struct {
+	Response    fasthttp.Response
 	Status      string
 	StatusCode  int
 	Headers     http.Header

@@ -4,46 +4,21 @@ Copyright © 2025 alp1n3 1@alp1n3.dev
 package main
 
 import (
-	//"net/http"
-	//"fmt"
 	"os"
-	//"fmt"
+
 	"context"
 	"log"
 	"strings"
-	"sync"
-
-	//"bytes"
-	//"io"
-
-	//"runtime/pprof"
-	//"runtime/trace"
-
-	//"net/http"
 
 	"github.com/urfave/cli/v3" // docs: https://cli.urfave.org/v3/examples/subcommands/
-	//"github.com/valyala/fasthttp"
+	"github.com/valyala/fasthttp"
 
 	cmd "github.com/alp1n3-eth/cast/cmd/http"
 	"github.com/alp1n3-eth/cast/pkg/models"
-	//"github.com/alp1n3-eth/cast/internal/http/parse"
-	//"github.com/alp1n3-eth/cast/pkg/logging"
-	//"github.com/alp1n3-eth/cast/parse"
 )
 
 func main() {
-	//f, _ := os.Create("cpu.prof")
-	//pprof.StartCPUProfile(f)
-	//defer pprof.StopCPUProfile()
 
-	//s, _ := os.Create("trace.out")
-	//trace.Start(s)
-	//defer trace.Stop()
-
-	//headers := &http.Header{}
-	//bodyReader := &io.Reader
-	//var body io.Reader
-	//bodyReader := &body
 
 	app := &cli.Command{
 		Commands: []*cli.Command{
@@ -95,133 +70,67 @@ func main() {
 					},
 				},
 				Action: func(ctx context.Context, command *cli.Command) error {
-					//fmt.Println("added task: ", command.Args().First())
-					//fmt.Println("Debug - All args:", os.Args)
-					//fmt.Println("Debug - First arg:", os.Args[1])
-					//fmt.Println("Debug - Context args:", command.Args().Slice())
-					//fmt.Println("Debug - Body flag:", command.String("body"))
+
 
 					// Can modify to make testing take longer. Send request multiple times. Currently hardcoded to send it
 
-					//for i := 0; i <= 1; i++ {
-					//var debug bool
-					//var highlight bool
-					//var bodyStr string
-					//var uploadFilePath string
 
-					userInputs := models.Request{}
+					userInputs := &models.Request{Req: fasthttp.AcquireRequest()}
+					defer fasthttp.ReleaseRequest(userInputs.Req)
 
-					userInputs.CLI.Method = strings.ToUpper(os.Args[1])
-					userInputs.CLI.URL = strings.ToLower(command.Args().First())
-					//printOption := command.StringSlice("print")
+					userInputs.Req.Header.SetMethod(strings.ToUpper(os.Args[1]))
+
+					userInputs.Req.SetRequestURI(command.Args().First())
+
 					userInputs.CLI.PrintOptions = command.StringSlice("print")
 					userInputs.CLI.RedirectsToFollow = int(command.Int("redirect"))
 
 					replacementPair := make(map[string]string)
-					headers := make(map[string]string)
 
-					//request := fasthttp.Request{}
+					userInputs.CLI.Debug = command.Bool("debug")
 
-					var wg sync.WaitGroup
-					wg.Add(4)
+					userInputs.CLI.Highlight = command.Bool("highlight")
 
-					go func() {
-						defer wg.Done()
+					userInputs.CLI.FileUploadPath = command.String("file")
 
-						// Handle debug and highlight options
+					// Handle custom body
 
-						//debug = command.Bool("debug")
-						userInputs.CLI.Debug = command.Bool("debug")
+					userInputs.Req.SetBodyString(command.String("body"))
 
-						//highlight = command.Bool("highlight")
-						userInputs.CLI.Highlight = command.Bool("highlight")
+					// Handle custom headers
+					headerSlice := command.StringSlice("header")
+					//*headers = make(map[string]string)
 
-						//uploadFilePath = command.String("file")
-						userInputs.CLI.FileUploadPath = command.String("file")
-					}()
+					for _, h := range headerSlice {
+						key, value, _ := strings.Cut(h, ":")
 
-					go func() {
-						defer wg.Done()
+						if len(key) >= 1 {
+							//(headers)[key] = value
+							//headers[key] = []byte(value)
 
-						// Handle custom body
-						//bodyStr = command.String("body")
-						//request.SetBody([]byte(bodyStr)) // TODO: What's going on? Prebuilding request here?
-						userInputs.CLI.Body = []byte(command.String("body"))
-					}()
-
-					go func() {
-						defer wg.Done()
-
-						// Handle custom headers
-						headerSlice := command.StringSlice("header")
-						//*headers = make(map[string]string)
-
-						for _, h := range headerSlice {
-							key, value, _ := strings.Cut(h, ":")
-							//fmt.Print("reached headerslice main.go")
-							if len(key) >= 1 {
-								//key := strings.TrimSpace(parts[0])
-								//value := strings.TrimSpace(parts[1])
-								(headers)[key] = value
-							}
+							userInputs.Req.Header.Set(key, value)
 						}
-					}()
+					}
+					if userInputs.Req.Header.Peek("Content-Type") == nil {
+						userInputs.Req.Header.Add("Content-Type", "text/html")
+					}
 
-					go func() {
-						defer wg.Done()
+					// Handle replacement variables
+					replacementSlice := command.StringSlice("var")
+					//*replacementPair = make(map[string]string)
 
-						// Handle replacement variables
-						replacementSlice := command.StringSlice("var")
-						//*replacementPair = make(map[string]string)
+					for _, h := range replacementSlice {
+						targetWord, value, _ := strings.Cut(h, "=")
 
-						for _, h := range replacementSlice {
-							targetWord, value, _ := strings.Cut(h, "=")
-							//fmt.Print("reached headerslice main.go")
-							if len(targetWord) >= 1 {
-								//key := strings.TrimSpace(parts[0])
-								//value := strings.TrimSpace(parts[1])
-								(replacementPair)[targetWord] = value
-							}
+						if len(targetWord) >= 1 {
+
+							(replacementPair)[targetWord] = value
+
 						}
+					}
 
-					}()
+					cmd.SendHTTP(&replacementPair, userInputs)
 
-					/*
-					   for _, h := range headerSlice {
-					       parts := strings.SplitN(h, ":", 2)
-					       //fmt.Print("reached headerslice main.go")
-					       if len(parts) == 2 {
-					           key := strings.TrimSpace(parts[0])
-					           value := strings.TrimSpace(parts[1])
-					           headers[key] = value
-					       }
-					   }
-					*/
-
-					/*
-					   for _, h := range replacementSlice {
-					   	//fmt.Print("reached replacementslice main.go")
-					       parts := strings.SplitN(h, "=", 2)
-					       if len(parts) == 2 {
-					           key := strings.TrimSpace(parts[0])
-					           value := strings.TrimSpace(parts[1])
-					           replacementPair[key] = value
-					       }
-					   }
-					*/
-
-					wg.Wait()
-
-					cmd.SendHTTP(&headers, &replacementPair, &userInputs)
-
-					//}
-					// ^ Ending brace for profiling pprof
-
-					// KEEP THIS
-					//cmd.SendHTTP(os.Args[1], command.Args().First(), bodyStr, headers, debug, highlight, replacementPair)
-
-					//f, _ := os.Create("mem.prof")
-					//pprof.WriteHeapProfile(f)
 					return nil
 				},
 			},

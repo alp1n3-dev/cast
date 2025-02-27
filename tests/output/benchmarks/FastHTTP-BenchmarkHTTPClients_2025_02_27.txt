@@ -1,0 +1,18 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/alp1n3-eth/cast/tests
+cpu: Apple M1
+BenchmarkHTTPClients/httpie_get-8         	       3	 375952264 ns/op	   72042 B/op	      59 allocs/op
+BenchmarkHTTPClients/xh_get-8             	       4	 291887771 ns/op	   72416 B/op	      60 allocs/op
+BenchmarkHTTPClients/cast_get-8           	       6	 184153792 ns/op	   72232 B/op	      59 allocs/op
+BenchmarkHTTPClients/hurl_get-8           	      14	  81998009 ns/op	    9338 B/op	      63 allocs/op
+BenchmarkHTTPClients/curl_get-8           	       9	 116829426 ns/op	   11589 B/op	      80 allocs/op
+
+=== Benchmark Results ===
+httpie_get: 1.127851833s per 1 runs
+xh_get    : 1.167545916s per 1 runs
+cast_get  : 1.104916042s per 1 runs
+hurl_get  : 1.147965417s per 1 runs
+curl_get  : 1.051460375s per 1 runs
+PASS
+ok  	github.com/alp1n3-eth/cast/tests	11.439s

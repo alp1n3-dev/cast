@@ -15,8 +15,8 @@ import (
 )
 
 // Should assume all fields have been created and validated by the time they get here.
-func SendRequest(result *models.ExecutionResult, debug, highlight *bool, printOption *[]string, redirectsToFollow *int) error {
-
+func SendRequest(request *models.Request) error {
+	response := &models.Response{}
 	// Going to be a flag later, based on if asserts are detected in the file when read.
 	assertsRequired := false
 	var err error
@@ -31,11 +31,11 @@ func SendRequest(result *models.ExecutionResult, debug, highlight *bool, printOp
 
 	startTime := time.Now()
 
-	if *redirectsToFollow > 0 {
-		err = fasthttp.DoRedirects(result.Request.Req, resp, *redirectsToFollow)
+	if request.CLI.RedirectsToFollow > 0 {
+		err = fasthttp.DoRedirects(request.Req, resp, request.CLI.RedirectsToFollow)
 		logging.Logger.Info("Followed redirect\n")
 	} else {
-		err = fasthttp.Do(result.Request.Req, resp)
+		err = fasthttp.Do(request.Req, resp)
 	}
 	if err != nil {
 		fmt.Printf("Client get failed: %s\n", err)
@@ -45,14 +45,14 @@ func SendRequest(result *models.ExecutionResult, debug, highlight *bool, printOp
 	endTime := time.Now()
 	duration := endTime.Sub(startTime)
 
-	result.Response.Duration = duration
+	response.Duration = duration
 
 	// TODO: Implement no-response for printOption flag
 	//if *printOption == "no-response" {
 	//return nil
 	//}
 
-	output.PrintHTTP(nil, resp, highlight, printOption)
+	output.PrintHTTP(nil, resp, &request.CLI.Highlight, &request.CLI.PrintOptions)
 
 	printOptions := "duration"
 
@@ -67,7 +67,7 @@ func SendRequest(result *models.ExecutionResult, debug, highlight *bool, printOp
 
 	var assertion string // Placeholder for if the response values need to be saved and filtered
 	if len(assertion) > 0 {
-		result.Response = parse.BuildFastHTTPResponse(resp)
+		*response = parse.BuildFastHTTPResponse(resp)
 	}
 
 	return nil
