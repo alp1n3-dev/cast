@@ -74,29 +74,36 @@ A `Host` header **is required** for clarity. Even though in a normal HTTP intera
 - Content-type will be auto-assigned if one isn't entered.
 
 ```bash
-### Authentication Sequence
+# Authentication Sequence
+[vars]
 base_url = "https://api.example.com/v1"
-uuid = "d2342-d4d23e-d232d3-df2f4f2"
+uuid = uuid()
 env_token = env.get("API_TOKEN")
+host_header = "Host: example.com"
 
+[request]
 POST /auth HTTP/1.1
-Host: {{ base_url }}
-Content-Type: application/json
+{{ host_header }} # The host header is required.
+# Content-Type: application/json - will be auto-detected and set
 X-Request-ID: {{ uuid }}
 
 {
-  "user": "{{ user || default = "test")}}",
+  "user": "{{ user }}",
   "pass": "{{ env_token }}"
 }
 
-<% assert status 200 %>
-<% assert header "Location" %>
-<% assert header NOT "X-Rate-Limit" %>
-<% save body "$.token" AS auth_token %>
+[assert]
+status 200
+header "Location"
+header NOT "X-Rate-Limit"
 
-### Resource Creation
+[vars]
+auth_token = "$.token"
+
+# Request Resources Endpoint
+[request]
 GET /resources HTTP/1.1
-Host: {{ base_url }}
+{{ host_header }}
 Authorization: Bearer {{auth_token}}
 ```
 

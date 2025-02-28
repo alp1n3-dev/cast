@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -31,20 +30,6 @@ type Response struct {
 	Duration    time.Duration
 }
 
-type ExecutionError struct {
-	Stage     string // "parsing", "connection", "validation"
-	Message   string
-	Source    error
-	Timestamp time.Time
-}
-
-type ExecutionResult struct {
-	Request   Request
-	Response  Response
-	Errors    []ExecutionError
-	Timestamp time.Time
-}
-
 type CommandActions struct {
 	Method  string
 	URL     string
@@ -60,6 +45,7 @@ type CommandActions struct {
 	DownloadPath      string
 }
 
-func (e ExecutionError) Error() string {
-	return fmt.Sprintf("[%s] %s: %s", e.Stage, e.Timestamp.Format(time.RFC3339), e.Message)
+type CastFile struct {
+	Variables map[string]string
+	Requests  map[*Request]Response
 }
