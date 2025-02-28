@@ -145,7 +145,7 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 **v0.3**
 
 - [x] `-P` flag with `request` argument to print the request as well. Support syntax highlighting of the request.
-- [ ] `--print` options similar to httpie: https://httpie.io/docs/cli/what-parts-of-the-http-exchange-should-be-printed
+- [x] `--download < file path >` to store the response body in a user-specified file.
 - [x] Flag to allow following redirects and only returning the "final" response.
 
 **v0.4**

@@ -2,6 +2,8 @@ package executor
 
 import (
 	"fmt"
+	"io"
+	"os"
 	"strings"
 	"time"
 
@@ -38,7 +40,8 @@ func SendRequest(request *models.Request) error {
 		err = fasthttp.Do(request.Req, resp)
 	}
 	if err != nil {
-		fmt.Printf("Client get failed: %s\n", err)
+		//fmt.Printf("Client get failed: %s\n", err)
+		logging.Logger.Error("Client get failed", "err", err)
 		return err
 	}
 
@@ -60,6 +63,15 @@ func SendRequest(request *models.Request) error {
 		fmt.Printf("\nRequest duration: %d ms\n", duration.Milliseconds())
 	}
 
+	if request.CLI.DownloadPath != "" {
+		err = saveResponseToFile(resp, request.CLI.DownloadPath)
+		if err != nil {
+			logging.Logger.Error("Error saving response to file", "err", err)
+			return err
+		}
+		logging.Logger.Info("Response saved to file", "path", request.CLI.DownloadPath)
+	}
+
 	// Blocking off the below section for later with a return that'll be hit
 	if !assertsRequired {
 		return nil
@@ -68,6 +80,21 @@ func SendRequest(request *models.Request) error {
 	var assertion string // Placeholder for if the response values need to be saved and filtered
 	if len(assertion) > 0 {
 		*response = parse.BuildFastHTTPResponse(resp)
+	}
+
+	return nil
+}
+
+func saveResponseToFile(resp *fasthttp.Response, outputPath string) error {
+	file, err := os.Create(outputPath)
+	if err != nil {
+		return fmt.Errorf("failed to create file: %w", err)
+	}
+	defer file.Close()
+
+	_, err = io.Copy(file, strings.NewReader(string(resp.Body()))) // Convert body to io.Reader
+	if err != nil {
+		return fmt.Errorf("failed to write response body to file: %w", err)
 	}
 
 	return nil

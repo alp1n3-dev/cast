@@ -21,7 +21,7 @@ type Request struct {
 }
 
 type Response struct {
-	Response    fasthttp.Response
+	//Response    fasthttp.Response
 	Status      string
 	StatusCode  int
 	Headers     http.Header
@@ -57,6 +57,7 @@ type CommandActions struct {
 	PrintOptions      []string // Just Request, Just Status, etc.
 	RedirectsToFollow int
 	FileUploadPath    string
+	DownloadPath      string
 }
 
 func (e ExecutionError) Error() string {

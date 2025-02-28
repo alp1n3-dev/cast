@@ -1,0 +1,10 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/alp1n3-eth/cast/tests
+cpu: Apple M1
+BenchmarkGETCast/cast_get-8         	       6	 189259896 ns/op	   72274 B/op	      60 allocs/op
+
+=== Benchmark Results ===
+cast_get  : 1.135554625s per 1 runs
+PASS
+ok  	github.com/alp1n3-eth/cast/tests	2.063s

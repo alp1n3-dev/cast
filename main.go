@@ -19,7 +19,6 @@ import (
 
 func main() {
 
-
 	app := &cli.Command{
 		Commands: []*cli.Command{
 			{
@@ -39,13 +38,14 @@ func main() {
 						Aliases: []string{"H"},
 					},
 					&cli.BoolFlag{
-						Name:    "debug",
-						Usage:   "Enable debug output for the application",
-						Aliases: []string{"D"},
+						Name:  "debug",
+						Usage: "Enable debug output for the application",
+						Value: false,
 					},
 					&cli.BoolFlag{
 						Name:    "highlight",
 						Usage:   "Prettify the response body output with syntax highlighting",
+						Value:   false,
 						Aliases: []string{"HL"},
 					},
 					&cli.StringSliceFlag{
@@ -61,19 +61,22 @@ func main() {
 					&cli.StringFlag{
 						Name:    "file",
 						Usage:   "A way to include a file in the request's body.",
-						Aliases: []string{"F"},
+						Aliases: []string{"FU"},
 					},
 					&cli.IntFlag{
 						Name:    "redirect",
 						Usage:   "A way to follow redirects up to < INT >.",
 						Aliases: []string{"RD"},
 					},
+					&cli.StringFlag{
+						Name:    "download",
+						Usage:   "Path to save the response body to a file.",
+						Aliases: []string{"DL"},
+					},
 				},
 				Action: func(ctx context.Context, command *cli.Command) error {
 
-
 					// Can modify to make testing take longer. Send request multiple times. Currently hardcoded to send it
-
 
 					userInputs := &models.Request{Req: fasthttp.AcquireRequest()}
 					defer fasthttp.ReleaseRequest(userInputs.Req)
@@ -91,7 +94,9 @@ func main() {
 
 					userInputs.CLI.Highlight = command.Bool("highlight")
 
-					userInputs.CLI.FileUploadPath = command.String("file")
+					userInputs.CLI.FileUploadPath = command.String("fileupload")
+
+					userInputs.CLI.DownloadPath = command.String("download")
 
 					// Handle custom body
 

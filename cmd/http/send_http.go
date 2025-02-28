@@ -56,7 +56,7 @@ func SendHTTP(replacementVariables *map[string]string, CLIArgs *models.Request) 
 	err = executor.SendRequest(CLIArgs)
 	if err != nil {
 		//logging.Logger.Debugf("Highlight: %t, Print Option: %s", &CLIArgs.CLI.Highlight, &CLIArgs.CLI.PrintOptions)
-		logging.Logger.Fatal("Error sending HTTP request")
+		logging.Logger.Error("Error sending HTTP request", "err", err)
 	}
 
 	logging.Logger.Debug("Executed Successfully: SendRequest()")
