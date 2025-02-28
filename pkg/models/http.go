@@ -2,7 +2,6 @@ package models
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/valyala/fasthttp"
 )
@@ -27,7 +26,7 @@ type Response struct {
 	Protocol    string
 	ContentType string
 	Body        []byte
-	Duration    time.Duration
+	Duration    int
 }
 
 type CommandActions struct {

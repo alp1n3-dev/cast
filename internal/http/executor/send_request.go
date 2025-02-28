@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 	"strings"
 	"time"
 
@@ -18,6 +19,8 @@ import (
 
 // Should assume all fields have been created and validated by the time they get here.
 func SendRequest(request *models.Request) error {
+	// TODO: Isolate unrelated logic to its own files. Find a better / more efficient way to "keep" / store the resp that isn't "expensive", so that printing doesn't need to be called from within this SendRequest().
+
 	response := &models.Response{}
 	// Going to be a flag later, based on if asserts are detected in the file when read.
 	assertsRequired := false
@@ -25,8 +28,8 @@ func SendRequest(request *models.Request) error {
 
 	// TODO: Add the ability to track byte sizes of responses.
 
-	req := fasthttp.AcquireRequest()
-	defer fasthttp.ReleaseRequest(req)
+	//req := fasthttp.AcquireRequest()
+	//defer fasthttp.ReleaseRequest(req)
 
 	resp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(resp)
@@ -34,42 +37,50 @@ func SendRequest(request *models.Request) error {
 	startTime := time.Now()
 
 	if request.CLI.RedirectsToFollow > 0 {
-		err = fasthttp.DoRedirects(request.Req, resp, request.CLI.RedirectsToFollow)
-		logging.Logger.Info("Followed redirect\n")
+		if err = fasthttp.DoRedirects(request.Req, resp, request.CLI.RedirectsToFollow); err != nil {
+			return err
+		}
+		logging.Logger.Info("Success: Followed redirect")
 	} else {
-		err = fasthttp.Do(request.Req, resp)
-	}
-	if err != nil {
-		//fmt.Printf("Client get failed: %s\n", err)
-		logging.Logger.Error("Client get failed", "err", err)
-		return err
+		if err = fasthttp.Do(request.Req, resp); err != nil {
+			return err
+		}
+		logging.Logger.Debug("Success: Request sent")
 	}
 
-	endTime := time.Now()
-	duration := endTime.Sub(startTime)
-
-	response.Duration = duration
+	duration := time.Since(startTime).Milliseconds()
+	response.Duration = int(duration)
 
 	// TODO: Implement no-response for printOption flag
 	//if *printOption == "no-response" {
 	//return nil
 	//}
+	if request.CLI.PrintOptions != nil {
+		if slices.Contains(request.CLI.PrintOptions, "response") {
+			output.PrintHTTP(nil, resp, &request.CLI.Highlight, &request.CLI.PrintOptions)
+		} else if slices.Contains(request.CLI.PrintOptions, "body") {
+			// TODO:
+		} else if slices.Contains(request.CLI.PrintOptions, "status") {
+			// TODO:
+		}
 
+		if slices.Contains(request.CLI.PrintOptions, "duration") {
+			fmt.Printf("\nRequest duration: %d ms\n", duration)
+		}
+	}
 	output.PrintHTTP(nil, resp, &request.CLI.Highlight, &request.CLI.PrintOptions)
 
-	printOptions := "duration"
-
-	if strings.Contains(printOptions, "duration") {
-		fmt.Printf("\nRequest duration: %d ms\n", duration.Milliseconds())
+	/*if request.CLI.DownloadPath != "" {
+	if err = saveResponseToFile(resp, request.CLI.DownloadPath); err != nil {
+		logging.Logger.Error("Error saving response to file", "err", err)
+		return err
 	}
-
+	logging.Logger.Info("Success: Response saved to file", "path", request.CLI.DownloadPath)
+	}*/
 	if request.CLI.DownloadPath != "" {
-		err = saveResponseToFile(resp, request.CLI.DownloadPath)
-		if err != nil {
-			logging.Logger.Error("Error saving response to file", "err", err)
+		if err := os.WriteFile(request.CLI.DownloadPath, resp.Body(), 0644); err != nil {
 			return err
 		}
-		logging.Logger.Info("Response saved to file", "path", request.CLI.DownloadPath)
 	}
 
 	// Blocking off the below section for later with a return that'll be hit

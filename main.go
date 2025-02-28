@@ -4,16 +4,18 @@ Copyright © 2025 alp1n3 1@alp1n3.dev
 package main
 
 import (
-	"os"
-
 	"context"
+	"fmt"
 	"log"
+	"maps"
+	"os"
 	"strings"
 
 	"github.com/urfave/cli/v3" // docs: https://cli.urfave.org/v3/examples/subcommands/
 	"github.com/valyala/fasthttp"
 
 	cmd "github.com/alp1n3-eth/cast/cmd/http"
+	"github.com/alp1n3-eth/cast/internal/env"
 	"github.com/alp1n3-eth/cast/pkg/models"
 )
 
@@ -43,10 +45,9 @@ func main() {
 						Value: false,
 					},
 					&cli.BoolFlag{
-						Name:    "highlight",
-						Usage:   "Prettify the response body output with syntax highlighting",
-						Value:   false,
-						Aliases: []string{"HL"},
+						Name:  "highlight",
+						Usage: "Prettify the response body output with syntax highlighting",
+						Value: false,
 					},
 					&cli.StringSliceFlag{
 						Name:    "var",
@@ -61,52 +62,77 @@ func main() {
 					&cli.StringFlag{
 						Name:    "file",
 						Usage:   "A way to include a file in the request's body.",
-						Aliases: []string{"FU"},
+						Aliases: []string{"F"},
 					},
 					&cli.IntFlag{
 						Name:    "redirect",
 						Usage:   "A way to follow redirects up to < INT >.",
-						Aliases: []string{"RD"},
+						Aliases: []string{"R"},
 					},
 					&cli.StringFlag{
 						Name:    "download",
 						Usage:   "Path to save the response body to a file.",
-						Aliases: []string{"DL"},
+						Aliases: []string{"D"},
+					},
+					&cli.BoolFlag{
+						Name:  "read-encrypted",
+						Usage: "Read an encrypted KV store using a password.",
 					},
 				},
 				Action: func(ctx context.Context, command *cli.Command) error {
 
 					// Can modify to make testing take longer. Send request multiple times. Currently hardcoded to send it
 
-					userInputs := &models.Request{Req: fasthttp.AcquireRequest()}
-					defer fasthttp.ReleaseRequest(userInputs.Req)
+					//userInputs := &models.Request{Req: fasthttp.AcquireRequest()}
+					//defer fasthttp.ReleaseRequest(userInputs.Req)
+					req := fasthttp.AcquireRequest()
+					defer fasthttp.ReleaseRequest(req)
+
+					userInputs := &models.Request{
+						Req: req,
+						CLI: models.CommandActions{
+							PrintOptions:      command.StringSlice("print"),
+							RedirectsToFollow: int(command.Int("redirect")),
+							Debug:             command.Bool("debug"),
+							Highlight:         command.Bool("highlight"),
+							FileUploadPath:    command.String("fileupload"),
+							DownloadPath:      command.String("download"),
+						},
+					}
 
 					userInputs.Req.Header.SetMethod(strings.ToUpper(os.Args[1]))
 
 					userInputs.Req.SetRequestURI(command.Args().First())
 
-					userInputs.CLI.PrintOptions = command.StringSlice("print")
-					userInputs.CLI.RedirectsToFollow = int(command.Int("redirect"))
+					if command.Bool("read-encrypted") {
+						fmt.Print("Enter password: ")
+						password, err := env.RetrievePasswordFromUser()
+						if err != nil {
+							fmt.Println("error retrieving password")
+						}
+						fmt.Println(password)
+					}
 
-					replacementPair := make(map[string]string)
+					//userInputs.CLI.PrintOptions = command.StringSlice("print")
+					//userInputs.CLI.RedirectsToFollow = int(command.Int("redirect"))
 
-					userInputs.CLI.Debug = command.Bool("debug")
+					//userInputs.CLI.Debug = command.Bool("debug")
 
-					userInputs.CLI.Highlight = command.Bool("highlight")
+					//serInputs.CLI.Highlight = command.Bool("highlight")
 
-					userInputs.CLI.FileUploadPath = command.String("fileupload")
+					//userInputs.CLI.FileUploadPath = command.String("fileupload")
 
-					userInputs.CLI.DownloadPath = command.String("download")
+					//userInputs.CLI.DownloadPath = command.String("download")
 
 					// Handle custom body
 
 					userInputs.Req.SetBodyString(command.String("body"))
 
 					// Handle custom headers
-					headerSlice := command.StringSlice("header")
+					//headerSlice := command.StringSlice("header")
 					//*headers = make(map[string]string)
 
-					for _, h := range headerSlice {
+					for _, h := range command.StringSlice("header") {
 						key, value, _ := strings.Cut(h, ":")
 
 						if len(key) >= 1 {
@@ -121,18 +147,29 @@ func main() {
 					}
 
 					// Handle replacement variables
-					replacementSlice := command.StringSlice("var")
+					// replacementSlice := command.StringSlice("var")
 					//*replacementPair = make(map[string]string)
+					//var kvFileMap map[string]string
+					replacementSlice := command.StringSlice("var")
+					replacementPair := make(map[string]string)
 
 					for _, h := range replacementSlice {
-						targetWord, value, _ := strings.Cut(h, "=")
+						if strings.Contains(h, ".env") {
+							kvFileMap, _ := env.ReadKVFile(h)
 
-						if len(targetWord) >= 1 {
+							maps.Copy(replacementPair, *kvFileMap)
+						} else {
+							targetWord, value, _ := strings.Cut(h, "=")
 
-							(replacementPair)[targetWord] = value
+							if len(targetWord) >= 1 {
 
+								replacementPair[targetWord] = value
+
+							}
 						}
+
 					}
+					fmt.Println(replacementPair)
 
 					cmd.SendHTTP(&replacementPair, userInputs)
 

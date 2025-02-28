@@ -166,7 +166,10 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 
 **v0.5**
 
+- [ ] Further standardize success, error, and commit messaging. Add a contribution guide with any styling notes to the repo.
 - [ ] Optimize. Review for helpful debug logging (esp. at the beginning, during, and before return).
+- [ ] Ensure reproducible and verifiable builds.
+- [ ] Make sure to build for both m-series & intel Macs, and verify the executable works on `Fedora` `Endeavour`, and `Alpine` Linux.
 - [ ] Make the repo public and set up `goreleaser`.
 - [ ] Setup packages with `brew` & `pacman`.
 
@@ -187,8 +190,8 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 
 - [ ] Support proxying
 - [ ] Support client certificates
-- [ ] Export as cURL command(s) `cast --curl-export -F auth.cast`
-- [ ] Export as OpenAPI v3.x (whatever is latest) `cast --openapi-export -DIR /tests/auth`
+- [ ] Export as cURL command(s) `cast --curl-export -F auth.cast` (Both file and one-off CLI commands)
+- [ ] Export as OpenAPI v3.x (whatever is latest) `cast --openapi-export -DIR /tests/auth` (??? needed ??? maybe just an import option ???)
 
 **v0.8**
 
@@ -200,7 +203,7 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 - [ ] Optimize and clarify `README.md`. Check other popular projects for examples.
 - [ ] Create the docs site using Astro Starlight.
 - [ ] Get feedback from people who would make use of it.
-- [ ] Syntax highlighting for editing in Zed or VSCode.
+- [ ] Syntax highlighting for editing in Zed.
 
 **v1.0**
 

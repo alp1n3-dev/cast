@@ -75,3 +75,7 @@ func printIt(r *string, highlight *bool) {
 	//fmt.Println(r) // printing it standard by default if highlight flag isn't passed.
 	os.Stdout.Write([]byte(*r))
 }
+
+func outputRaw() {
+
+}
