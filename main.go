@@ -88,9 +88,12 @@ func main() {
 					req := fasthttp.AcquireRequest()
 					defer fasthttp.ReleaseRequest(req)
 
-					userInputs := &models.Request{
-						Req: req,
-						CLI: models.CommandActions{
+					userInputs := &models.HTTPRequestContext{
+						Request: models.Request{
+							Req: req,
+						},
+
+						CmdArgs: models.CommandActions{
 							PrintOptions:      command.StringSlice("print"),
 							RedirectsToFollow: int(command.Int("redirect")),
 							Debug:             command.Bool("debug"),
@@ -100,9 +103,9 @@ func main() {
 						},
 					}
 
-					userInputs.Req.Header.SetMethod(strings.ToUpper(os.Args[1]))
+					userInputs.Request.Req.Header.SetMethod(strings.ToUpper(os.Args[1]))
 
-					userInputs.Req.SetRequestURI(command.Args().First())
+					userInputs.Request.Req.SetRequestURI(command.Args().First())
 
 					if command.Bool("read-encrypted") {
 						fmt.Print("Enter password: ")
@@ -126,7 +129,7 @@ func main() {
 
 					// Handle custom body
 
-					userInputs.Req.SetBodyString(command.String("body"))
+					userInputs.Request.Req.SetBodyRaw([]byte(command.String("body")))
 
 					// Handle custom headers
 					//headerSlice := command.StringSlice("header")
@@ -139,39 +142,24 @@ func main() {
 							//(headers)[key] = value
 							//headers[key] = []byte(value)
 
-							userInputs.Req.Header.Set(key, value)
+							userInputs.Request.Req.Header.Set(key, value)
 						}
 					}
-					if userInputs.Req.Header.Peek("Content-Type") == nil {
-						userInputs.Req.Header.Add("Content-Type", "text/html")
+					if userInputs.Request.Req.Header.Peek("Content-Type") == nil {
+						userInputs.Request.Req.Header.Add("Content-Type", "text/html")
 					}
 
 					// Handle replacement variables
 					// replacementSlice := command.StringSlice("var")
 					//*replacementPair = make(map[string]string)
 					//var kvFileMap map[string]string
-					replacementSlice := command.StringSlice("var")
-					replacementPair := make(map[string]string)
+					//replacementSlice := command.StringSlice("var")
 
-					for _, h := range replacementSlice {
-						if strings.Contains(h, ".env") {
-							kvFileMap, _ := env.ReadKVFile(h)
+					replacementPair := parseReplacementValues(command.StringSlice("var"))
 
-							maps.Copy(replacementPair, *kvFileMap)
-						} else {
-							targetWord, value, _ := strings.Cut(h, "=")
+					//fmt.Println(replacementPair)
 
-							if len(targetWord) >= 1 {
-
-								replacementPair[targetWord] = value
-
-							}
-						}
-
-					}
-					fmt.Println(replacementPair)
-
-					cmd.SendHTTP(&replacementPair, userInputs)
+					cmd.SendHTTP(replacementPair, userInputs)
 
 					return nil
 				},
@@ -182,4 +170,24 @@ func main() {
 	if err := app.Run(context.Background(), os.Args); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func parseReplacementValues(replacementSlice []string) *map[string]string {
+	replacementPair := make(map[string]string)
+
+	for _, h := range replacementSlice {
+		if strings.Contains(h, ".env") {
+			kvFileMap, _ := env.ReadKVFile(h)
+
+			maps.Copy(replacementPair, *kvFileMap)
+		} else {
+			targetWord, value, _ := strings.Cut(h, "=")
+
+			if len(targetWord) >= 1 {
+
+				replacementPair[targetWord] = value
+			}
+		}
+	}
+	return &replacementPair
 }

@@ -15,6 +15,7 @@ var k = koanf.New(".")
 // We are using the koanf file provider and dotenv parser.
 func ReadEnv() (*map[string]string, error) {
 	var envMap map[string]string
+	// TODO: Get env from memory
 
 	return &envMap, nil
 }
@@ -37,6 +38,7 @@ func ReadKVFile(filepath string) (*map[string]string, error) {
 
 func ReadEncryptedKV(password string) (*map[string]string, error) {
 	var envMap map[string]string
+	// TODO: Read from password-protected encrypted persistent .env file.
 
 	return &envMap, nil
 }

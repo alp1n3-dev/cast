@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	//"fmt"
+	"os"
 	"slices"
 
 	"github.com/alp1n3-eth/cast/internal/http/executor"
@@ -11,52 +13,49 @@ import (
 	//"github.com/alp1n3-eth/cast/pkg/apperrors"
 )
 
-func SendHTTP(replacementVariables *map[string]string, CLIArgs *models.Request) {
+func SendHTTP(replacementVariables *map[string]string, HTTPCtx *models.HTTPRequestContext) {
 
-	// TODO: Fix panic caused by apperrors.HandleExecutionError
-	//apperrors.HandleExecutionError(
-	//apperrors.Wrap(apperrors.ErrInvalidHeaderFormat, "random-header"))
+	logging.Init(HTTPCtx.CmdArgs.Debug)
 
-	var err error
-
-	if CLIArgs.CLI.Debug {
-		logging.Init(true) // Activates debug mode.
-	} else {
-		logging.Init(false)
-	}
-
-	logging.Logger.Debugf("Debug: %t, Method: %s, URI: %s", CLIArgs.CLI.Debug, CLIArgs.CLI.Method, CLIArgs.CLI.URL)
+	logging.Logger.Debugf("Debug: %t, Method: %s, URI: %s", HTTPCtx.CmdArgs.Debug, HTTPCtx.CmdArgs.Method, HTTPCtx.CmdArgs.URL)
 
 	//result := &models.ExecutionResult{}
 
-	if CLIArgs.CLI.FileUploadPath != "" {
-		logging.Logger.Debugf("Upload file path: %s", CLIArgs.CLI.FileUploadPath)
+	if HTTPCtx.CmdArgs.FileUploadPath != "" {
+		logging.Logger.Debugf("Upload file path: %s", HTTPCtx.CmdArgs.FileUploadPath)
 
-		CLIArgs.CLI.Body = parse.ReadFileIntoBody(&CLIArgs.CLI.FileUploadPath)
+		HTTPCtx.CmdArgs.Body = parse.ReadFileIntoBody(&HTTPCtx.CmdArgs.FileUploadPath)
 	}
-
-	//result.Request.Req = parse.BuildRequest(&CLIArgs.Req)
-	//logging.Logger.Debugf("BuildRequest: %s", result.Request.Req)
 
 	if len(*replacementVariables) > 0 {
 		logging.Logger.Debugf("Replacement Variables: %s", replacementVariables)
-		parse.SwapReqVals(CLIArgs.Req, replacementVariables)
+		parse.SwapReqVals(HTTPCtx.Request.Req, replacementVariables)
 		logging.Logger.Debug("Executed Successfully: SwapReqVals()")
 	}
 
-	logging.Logger.Debugf("Request being sent: %s", CLIArgs.Req)
+	logging.Logger.Debugf("Request being sent: %s", HTTPCtx.Request.Req)
 	// Needs to be the one directly before sending it, as changes may happen in functions like SwapReqVals().
 
-	if len(CLIArgs.CLI.PrintOptions) > 0 {
-		if slices.Contains(CLIArgs.CLI.PrintOptions, "request") {
-			output.PrintHTTP(CLIArgs.Req, nil, &CLIArgs.CLI.Highlight, &CLIArgs.CLI.PrintOptions)
+	if len(HTTPCtx.CmdArgs.PrintOptions) > 0 {
+		if slices.Contains(HTTPCtx.CmdArgs.PrintOptions, "request") {
+			output.OutputRequest(HTTPCtx.Request.Req, &HTTPCtx.CmdArgs)
 		}
 	}
 
-	err = executor.SendRequest(CLIArgs)
+	resp, err := executor.SendRequest(HTTPCtx)
 	if err != nil {
-		//logging.Logger.Debugf("Highlight: %t, Print Option: %s", &CLIArgs.CLI.Highlight, &CLIArgs.CLI.PrintOptions)
 		logging.Logger.Error("Error sending HTTP request", "err", err)
+	}
+	//defer fasthttp.ReleaseResponse(resp)
+	//fmt.Println(resp)
+
+	output.OutputResponse(resp, &HTTPCtx.CmdArgs)
+
+	if HTTPCtx.CmdArgs.DownloadPath != "" {
+		if err := os.WriteFile(HTTPCtx.CmdArgs.DownloadPath, resp.Body, 0644); err != nil {
+			logging.Logger.Error(err)
+			return
+		}
 	}
 
 	logging.Logger.Debug("Executed Successfully: SendRequest()")

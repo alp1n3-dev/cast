@@ -161,8 +161,9 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 
 - [ ] Fix error returning structure and handle errors correctly and in better places.
 - [ ] Create tests & benchmark tests for all files, flags, args, etc. Have these also run in GitHub.
+- [ ] Restructure CLI urfave/cli, main.go is messy.
 - [x] Custom variables
-- [ ] Cross-run variable storage / .env support (Look into YAML, koanf, etc.)
+- [x] Cross-run variable storage / .env support (koanf + dotenv)
 
 **v0.5**
 
@@ -178,13 +179,12 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 - [ ] File input
 - [ ] Assertions
 - [ ] Re-work folders to increase clarity
-- [ ] Review `fasthttp` byte buffer tricks & best practices to ensure they're utilized correctly
+- [ ] Review `fasthttp` byte buffer tricks & best practices to ensure they're utilized correctly, along with pooling (especially regarding multi-request scenarios)
 
 **v0.6**
 
 - [ ] Config
 - [ ] Run a directory (alphabetically / in order) option `cast --directory /tests/auth` (alias `-DIR`). Runs each `.cast` file sequentially.
-- [ ] Folder-scoped .env & global-scoped .env support. (Probably a YAML in the folder, and a YAML kept in the `cast` main directory.)
 
 **v0.7**
 

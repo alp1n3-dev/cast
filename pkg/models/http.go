@@ -1,8 +1,6 @@
 package models
 
 import (
-	"net/http"
-
 	"github.com/valyala/fasthttp"
 )
 
@@ -14,15 +12,14 @@ type Request struct {
 	//Body    io.Reader
 	Req *fasthttp.Request
 
-	Assertions Assertion
-	CLI        CommandActions
+	//CLI CommandActions
 }
 
 type Response struct {
 	//Response    fasthttp.Response
 	Status      string
 	StatusCode  int
-	Headers     http.Header
+	Headers     string
 	Protocol    string
 	ContentType string
 	Body        []byte
@@ -42,6 +39,13 @@ type CommandActions struct {
 	RedirectsToFollow int
 	FileUploadPath    string
 	DownloadPath      string
+}
+
+type HTTPRequestContext struct {
+	Request    Request
+	Response   Response
+	CmdArgs    CommandActions
+	Assertions Assertion
 }
 
 type CastFile struct {
