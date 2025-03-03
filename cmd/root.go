@@ -8,9 +8,10 @@ import (
 	"os"
 	"strings"
 
-	httpcmd "github.com/alp1n3-eth/cast/cmd/http"
+	//httpcmd "github.com/alp1n3-eth/cast/cmd/actions"
 	"github.com/alp1n3-eth/cast/internal/env"
-	"github.com/alp1n3-eth/cast/options"
+	"github.com/alp1n3-eth/cast/internal/flags"
+	"github.com/alp1n3-eth/cast/internal/http/executor"
 	"github.com/alp1n3-eth/cast/pkg/models"
 	"github.com/urfave/cli/v3"
 	"github.com/valyala/fasthttp"
@@ -21,13 +22,13 @@ var (
 		Name:    "get",
 		Aliases: []string{"GET", "post", "put", "delete", "patch", "options", "trace", "head", "connect"},
 		Usage:   "send an HTTP request to a url.",
-		Flags:   options.GetFlags,
+		Flags:   flags.GetFlags,
 		Action:  GetAction,
 	}
 	FileCommand = &cli.Command{
 		Name:   "file",
 		Usage:  "Run HTTP requests from a provided file.",
-		Flags:  options.FileFlags,
+		Flags:  flags.FileFlags,
 		Action: FileAction,
 	}
 )
@@ -65,6 +66,7 @@ func GetAction(ctx context.Context, command *cli.Command) error {
 	userInputs.Request.Req.Header.SetMethod(strings.ToUpper(os.Args[1]))
 	userInputs.Request.Req.SetRequestURI(command.Args().First())
 
+	// TODO: Create the ability to encrypt the persistent ENVs
 	if command.Bool("read-encrypted") {
 		fmt.Print("Enter password: ")
 		password, err := env.RetrievePasswordFromUser()
@@ -86,9 +88,9 @@ func GetAction(ctx context.Context, command *cli.Command) error {
 		userInputs.Request.Req.Header.Add("Content-Type", "text/html")
 	}
 
-	replacementPair := options.ParseReplacementValues(command.StringSlice("var"))
+	replacementPair := flags.ParseReplacementValues(command.StringSlice("var"))
 
-	httpcmd.SendHTTP(replacementPair, userInputs)
+	executor.SendHTTP(replacementPair, userInputs)
 
 	return nil
 }

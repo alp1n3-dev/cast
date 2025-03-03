@@ -1,13 +1,13 @@
-package cmd
+package executor
 
 import (
 	//"fmt"
 	"os"
 	"slices"
 
-	"github.com/alp1n3-eth/cast/internal/http/executor"
+	//"github.com/alp1n3-eth/cast/internal/http/executor"
 	"github.com/alp1n3-eth/cast/internal/http/parse"
-	output "github.com/alp1n3-eth/cast/output/http"
+	output "github.com/alp1n3-eth/cast/internal/output/http"
 	"github.com/alp1n3-eth/cast/pkg/logging"
 	"github.com/alp1n3-eth/cast/pkg/models"
 	"github.com/valyala/fasthttp"
@@ -50,7 +50,7 @@ func SendHTTP(replacementVariables *map[string]string, HTTPCtx *models.HTTPReque
 		}
 	}
 
-	resp, err := executor.SendRequest(HTTPCtx)
+	resp, err := SendRequest(HTTPCtx)
 	if err != nil {
 		logging.Logger.Error("Error sending HTTP request", "err", err)
 	}

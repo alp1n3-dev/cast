@@ -54,7 +54,9 @@ func OutputRequest(req *fasthttp.Request, args *models.CommandActions) error {
 }
 
 func OutputResponse(resp *models.Response, args *models.CommandActions) {
-	fmt.Println("reached outputresponse in print.go")
+	//fmt.Println("reached outputresponse in print.go")
+
+	// Should "waterfall" down, as users may want to print just status + body, or body + bytes, etc. Waterfalling allows them combos that eventually add back up to being a properly formatted response + bytes, duration, etc.
 	if len(args.PrintOptions) > 0 {
 		if slices.Contains(args.PrintOptions, "status") {
 			statusMsg := strconv.Itoa(resp.StatusCode)
@@ -75,11 +77,6 @@ func OutputResponse(resp *models.Response, args *models.CommandActions) {
 
 		}
 
-		if slices.Contains(args.PrintOptions, "status") {
-			// TODO: For later. Probably will require reworking it from a slice to a map.
-
-		}
-
 		if slices.Contains(args.PrintOptions, "no-response") {
 			// TODO: For later. Probably will require reworking it from a slice to a map.
 
@@ -89,8 +86,11 @@ func OutputResponse(resp *models.Response, args *models.CommandActions) {
 			fmt.Printf("\nRequest duration: %d ms\n", resp.Duration)
 		}
 
-		//print(resp, &args.Highlight)
+		if slices.Contains(args.PrintOptions, "bytes") {
+			// TODO: For later. Probably will require reworking it from a slice to a map.
 
+		}
+		//print(resp, &args.Highlight)
 		//os.Stdout.Write()
 
 	}
