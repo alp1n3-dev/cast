@@ -5,20 +5,34 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
-	"maps"
 	"os"
-	"strings"
 
-	"github.com/urfave/cli/v3" // docs: https://cli.urfave.org/v3/examples/subcommands/
-	"github.com/valyala/fasthttp"
-
-	cmd "github.com/alp1n3-eth/cast/cmd/http"
-	"github.com/alp1n3-eth/cast/internal/env"
-	"github.com/alp1n3-eth/cast/pkg/models"
+	"github.com/alp1n3-eth/cast/cmd"
 )
 
+/*
+"context"
+"fmt"
+"log"
+"maps"
+"os"
+"strings"
+
+"github.com/urfave/cli/v3" // docs: https://cli.urfave.org/v3/examples/subcommands/
+"github.com/valyala/fasthttp"
+
+cmd "github.com/alp1n3-eth/cast/cmd/http"
+"github.com/alp1n3-eth/cast/internal/env"
+"github.com/alp1n3-eth/cast/pkg/models"
+*/
+func main() {
+	if err := cmd.Execute(context.Background(), os.Args); err != nil {
+		log.Fatal(err)
+	}
+}
+
+/*
 func main() {
 
 	app := &cli.Command{
@@ -78,6 +92,10 @@ func main() {
 						Name:  "read-encrypted",
 						Usage: "Read an encrypted KV store using a password.",
 					},
+					&cli.BoolFlag{
+						Name:  "curl",
+						Usage: "Output the request as a curl command instead of sending it.",
+					},
 				},
 				Action: func(ctx context.Context, command *cli.Command) error {
 
@@ -100,6 +118,7 @@ func main() {
 							Highlight:         command.Bool("highlight"),
 							FileUploadPath:    command.String("fileupload"),
 							DownloadPath:      command.String("download"),
+							CurlOutput:        command.Bool("curl"),
 						},
 					}
 
@@ -149,11 +168,7 @@ func main() {
 						userInputs.Request.Req.Header.Add("Content-Type", "text/html")
 					}
 
-					// Handle replacement variables
-					// replacementSlice := command.StringSlice("var")
-					//*replacementPair = make(map[string]string)
-					//var kvFileMap map[string]string
-					//replacementSlice := command.StringSlice("var")
+
 
 					replacementPair := parseReplacementValues(command.StringSlice("var"))
 
@@ -191,3 +206,5 @@ func parseReplacementValues(replacementSlice []string) *map[string]string {
 	}
 	return &replacementPair
 }
+
+*/

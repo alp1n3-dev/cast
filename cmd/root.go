@@ -1,0 +1,98 @@
+package cmd
+
+import (
+	"context"
+	"fmt"
+
+	//"log"
+	"os"
+	"strings"
+
+	httpcmd "github.com/alp1n3-eth/cast/cmd/http"
+	"github.com/alp1n3-eth/cast/internal/env"
+	"github.com/alp1n3-eth/cast/options"
+	"github.com/alp1n3-eth/cast/pkg/models"
+	"github.com/urfave/cli/v3"
+	"github.com/valyala/fasthttp"
+)
+
+var (
+	GetCommand = &cli.Command{ // HTTP Methods
+		Name:    "get",
+		Aliases: []string{"GET", "post", "put", "delete", "patch", "options", "trace", "head", "connect"},
+		Usage:   "send an HTTP request to a url.",
+		Flags:   options.GetFlags,
+		Action:  GetAction,
+	}
+	FileCommand = &cli.Command{
+		Name:   "file",
+		Usage:  "Run HTTP requests from a provided file.",
+		Flags:  options.FileFlags,
+		Action: FileAction,
+	}
+)
+
+func Execute(ctx context.Context, args []string) error {
+	app := &cli.Command{
+		Commands: []*cli.Command{
+			GetCommand,
+			FileCommand,
+		},
+	}
+
+	return app.Run(ctx, args)
+}
+
+func GetAction(ctx context.Context, command *cli.Command) error {
+	req := fasthttp.AcquireRequest()
+	defer fasthttp.ReleaseRequest(req)
+
+	userInputs := &models.HTTPRequestContext{
+		Request: models.Request{
+			Req: req,
+		},
+		CmdArgs: models.CommandActions{
+			PrintOptions:      command.StringSlice("print"),
+			RedirectsToFollow: int(command.Int("redirect")),
+			Debug:             command.Bool("debug"),
+			Highlight:         command.Bool("highlight"),
+			FileUploadPath:    command.String("fileupload"),
+			DownloadPath:      command.String("download"),
+			CurlOutput:        command.Bool("curl"),
+		},
+	}
+
+	userInputs.Request.Req.Header.SetMethod(strings.ToUpper(os.Args[1]))
+	userInputs.Request.Req.SetRequestURI(command.Args().First())
+
+	if command.Bool("read-encrypted") {
+		fmt.Print("Enter password: ")
+		password, err := env.RetrievePasswordFromUser()
+		if err != nil {
+			fmt.Println("error retrieving password")
+		}
+		fmt.Println(password)
+	}
+
+	userInputs.Request.Req.SetBodyRaw([]byte(command.String("body")))
+
+	for _, h := range command.StringSlice("header") {
+		key, value, _ := strings.Cut(h, ":")
+		if len(key) >= 1 {
+			userInputs.Request.Req.Header.Set(key, value)
+		}
+	}
+	if userInputs.Request.Req.Header.Peek("Content-Type") == nil {
+		userInputs.Request.Req.Header.Add("Content-Type", "text/html")
+	}
+
+	replacementPair := options.ParseReplacementValues(command.StringSlice("var"))
+
+	httpcmd.SendHTTP(replacementPair, userInputs)
+
+	return nil
+}
+
+func FileAction(ctx context.Context, command *cli.Command) error {
+	return nil
+}

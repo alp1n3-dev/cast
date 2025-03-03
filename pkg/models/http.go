@@ -39,6 +39,7 @@ type CommandActions struct {
 	RedirectsToFollow int
 	FileUploadPath    string
 	DownloadPath      string
+	CurlOutput        bool
 }
 
 type HTTPRequestContext struct {

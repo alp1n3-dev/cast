@@ -10,6 +10,7 @@ import (
 	output "github.com/alp1n3-eth/cast/output/http"
 	"github.com/alp1n3-eth/cast/pkg/logging"
 	"github.com/alp1n3-eth/cast/pkg/models"
+	"github.com/valyala/fasthttp"
 	//"github.com/alp1n3-eth/cast/pkg/apperrors"
 )
 
@@ -18,6 +19,13 @@ func SendHTTP(replacementVariables *map[string]string, HTTPCtx *models.HTTPReque
 	logging.Init(HTTPCtx.CmdArgs.Debug)
 
 	logging.Logger.Debugf("Debug: %t, Method: %s, URI: %s", HTTPCtx.CmdArgs.Debug, HTTPCtx.CmdArgs.Method, HTTPCtx.CmdArgs.URL)
+
+	if HTTPCtx.CmdArgs.CurlOutput {
+		curlCmd := generateCurlCommand(HTTPCtx.Request.Req, replacementVariables)
+
+		logging.Logger.Debug(curlCmd)
+		return
+	}
 
 	//result := &models.ExecutionResult{}
 
@@ -62,4 +70,30 @@ func SendHTTP(replacementVariables *map[string]string, HTTPCtx *models.HTTPReque
 
 	return
 
+}
+
+func generateCurlCommand(req *fasthttp.Request, replacementVariables *map[string]string) string {
+	var curlCmdStr string
+
+	curlCmdStr = "curl -X " + (string(req.Header.Method())) + " " + (req.URI().String())
+
+	req.Header.VisitAll(func(key, value []byte) {
+		curlCmdStr += (" -H '") + string(key) + ": " + string(value) + "'"
+	})
+
+	if len(req.Body()) > 0 {
+		curlCmdStr += " -d '" + string(req.Body()) + "'"
+	}
+
+	/*
+
+		if replacementVariables != nil {
+			for key, value := range *replacementVariables {
+				curlCmdStr += "--variable '" + key + "=" + value + "'"
+			}
+		}
+
+	*/
+
+	return curlCmdStr
 }

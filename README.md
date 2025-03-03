@@ -162,7 +162,7 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 - [ ] Restructure CLI urfave/cli, abstract it from the singular main.go file as with file-based features it will grow even larger. Break it into functions in two primary files.
 - [x] Custom variables
 - [x] Cross-run variable storage / .env support (koanf + dotenv)
-- [ ] Export as cURL command flag.
+- [x] Basic export as cURL command flag.
 
 **v0.5**
 
@@ -219,6 +219,7 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 
 - [ ] optimize. find anti-patterns.
 - [ ] maintain. keep on top of package and language changes.
+- [ ] advanced cURL export, supports vars + other items.
 
 ### _potential_ future plans
 
