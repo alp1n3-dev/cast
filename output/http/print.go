@@ -47,7 +47,7 @@ func print(r *string, highlight *bool) {
 }
 
 func OutputRequest(req *fasthttp.Request, args *models.CommandActions) error {
-	reqStr := req.String()
+	reqStr := req.String() + "\n"
 	print(&reqStr, &args.Highlight)
 
 	return nil
@@ -104,7 +104,7 @@ func OutputResponse(resp *models.Response, args *models.CommandActions) {
 func respToStr(resp *models.Response) *string {
 	var output string
 
-	output = resp.Headers + string(resp.Body) + "\n"
+	output = resp.Headers + string(resp.Body)
 
 	return &output
 }

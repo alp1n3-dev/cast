@@ -1,7 +1,7 @@
 package parse
 
 import (
-	"regexp"
+	"fmt"
 	"strings"
 
 	"github.com/alp1n3-eth/cast/pkg/logging"
@@ -31,16 +31,27 @@ func SwapReqVals(req *fasthttp.Request, replacementVariables *map[string]string)
 }
 
 func replaceAllVariables(target string, replacementVariables *map[string]string) string {
-	placeholderPattern := regexp.MustCompile(`{{\s*(\w+)\s*}}`)
+	/*
+		placeholderPattern := regexp.MustCompile(`{{\s*(\w+)\s*}}`)
 
-	result := placeholderPattern.ReplaceAllStringFunc(target, func(match string) string {
-		key := strings.TrimSpace(match[2 : len(match)-2])
-		if value, exists := (*replacementVariables)[key]; exists {
 
-			return value
+		result := placeholderPattern.ReplaceAllStringFunc(target, func(match string) string {
+			key := strings.TrimSpace(match[2 : len(match)-2])
+			if value, exists := (*replacementVariables)[key]; exists {
+
+				return value
+			}
+			return match
+		})
+
+		return result
+	*/
+
+	for key, value := range *replacementVariables {
+		if strings.Contains(target, key) {
+			fmt.Println("replacing with strings.contains, key=", key, "value=", value)
+			target = strings.ReplaceAll(target, key, value)
 		}
-		return match
-	})
-
-	return result
+	}
+	return target
 }

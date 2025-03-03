@@ -159,20 +159,16 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 
 **v0.4**
 
-- [ ] Fix error returning structure and handle errors correctly and in better places.
-- [ ] Create tests & benchmark tests for all files, flags, args, etc. Have these also run in GitHub.
-- [ ] Restructure CLI urfave/cli, main.go is messy.
+- [ ] Restructure CLI urfave/cli, abstract it from the singular main.go file as with file-based features it will grow even larger. Break it into functions in two primary files.
 - [x] Custom variables
 - [x] Cross-run variable storage / .env support (koanf + dotenv)
+- [ ] Export as cURL command flag.
 
 **v0.5**
 
-- [ ] Further standardize success, error, and commit messaging. Add a contribution guide with any styling notes to the repo.
-- [ ] Optimize. Review for helpful debug logging (esp. at the beginning, during, and before return).
-- [ ] Ensure reproducible and verifiable builds.
-- [ ] Make sure to build for both m-series & intel Macs, and verify the executable works on `Fedora` `Endeavour`, and `Alpine` Linux.
-- [ ] Make the repo public and set up `goreleaser`.
-- [ ] Setup packages with `brew` & `pacman`.
+- [ ] Go through require semantic versioning, cli guidelines site, and polish off the cli book. Refactor and fix as issues are observed.
+- [ ] Fix error returning structure and handle errors correctly and in better places.
+- [ ] Create tests & benchmark tests for all files, flags, args, etc. Have these also run in GitHub.
 
 ### file focus (> v0.5)
 
@@ -197,6 +193,12 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 
 - [ ] Reference files to include in the body via their path
 - [ ] Wordlist / fuzzing support via the provided vars (`<% varName = ./tests/wordlist.txt %>` or something similar. Will resend the request enough times to iterate through the list. Can only be used in the request it is defined above.)
+- [ ] Further standardize success, error, and commit messaging. Add a contribution guide with any styling notes to the repo.
+- [ ] Optimize. Review for helpful debug logging (esp. at the beginning, during, and before return).
+- [ ] Ensure reproducible and verifiable builds.
+- [ ] Make sure to build for both m-series & intel Macs, and verify the executable works on `Fedora` `Endeavour`, and `Alpine` Linux.
+- [ ] Make the repo public and set up `goreleaser`.
+- [ ] Setup packages with `brew` & `pacman`.
 
 **v0.9**
 
@@ -227,7 +229,7 @@ These may come about, in addition to others, if enough demand is seen. `cast` is
 
 ## writings about creating it
 
-I wrote a few blog posts on my personal blog about my experience and thoughts while developing `cast`. The are stream-of-thought and show how the scope of the project and its features changed over time. They can be read [here](), and exist under the `cast` tag.
+I wrote a few blog posts on my personal blog about my experience and thoughts while developing `cast`. The are stream-of-thought and show how the scope of the project and its features changed over time. They can be read [here](https://alp1n3.dev/tags/cast/), and exist under the `cast` tag.
 
 ## pkgs utilized
 
