@@ -159,7 +159,7 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 
 **v0.4**
 
-- [ ] Restructure CLI urfave/cli, abstract it from the singular main.go file as with file-based features it will grow even larger. Break it into functions in two primary files.
+- [x] Restructure CLI urfave/cli, abstract it from the singular main.go file as with file-based features it will grow even larger. Break it into functions in two primary files.
 - [x] Custom variables
 - [x] Cross-run variable storage / .env support (koanf + dotenv)
 - [x] Basic export as cURL command flag.
