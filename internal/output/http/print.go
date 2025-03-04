@@ -58,6 +58,7 @@ func OutputResponse(resp *models.Response, args *models.CommandActions) {
 
 	// Should "waterfall" down, as users may want to print just status + body, or body + bytes, etc. Waterfalling allows them combos that eventually add back up to being a properly formatted response + bytes, duration, etc.
 	if len(args.PrintOptions) > 0 {
+		// If a print option is used, it essentially allows them to build their own response. If something isn't mentioned via the CLI, it won't be included in the printout when these options are used.
 		if slices.Contains(args.PrintOptions, "status") {
 			statusMsg := strconv.Itoa(resp.StatusCode)
 
@@ -67,7 +68,7 @@ func OutputResponse(resp *models.Response, args *models.CommandActions) {
 			//return
 		}
 
-		if slices.Contains(args.PrintOptions, "header-only") {
+		if slices.Contains(args.PrintOptions, "headers") {
 			// TODO: For later. Probably will require reworking it from a slice to a map.
 
 		}
@@ -77,12 +78,13 @@ func OutputResponse(resp *models.Response, args *models.CommandActions) {
 
 		}
 
-		if slices.Contains(args.PrintOptions, "no-response") {
+		if slices.Contains(args.PrintOptions, "nothing") {
 			// TODO: For later. Probably will require reworking it from a slice to a map.
 
 		}
 
 		if slices.Contains(args.PrintOptions, "duration") {
+			// TODO: These should be using the color-optional print function, not Printf via fmt.
 			fmt.Printf("\nRequest duration: %d ms\n", resp.Duration)
 		}
 

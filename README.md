@@ -172,6 +172,7 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 - [ ] Create tests & benchmark tests for all files, flags, args, etc. Have these also run in GitHub.
 - [ ] Fix logging, make it clearer. Make sure it handles errors well and is human-first and they are helpful to the user. Make sure that only the "advanced" errors bleed through if the debug flag is used. Include helpful suggestions with errors.
 - [ ] Get the standard no-common help page setup: https://clig.dev/#help
+- [ ] Add a link to where issues should be submitted to the help text. Make sure the issue form for bugs is customized and helpful.
 
 ### file focus (> v0.5)
 
@@ -195,6 +196,8 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 
 **v0.8**
 
+- [ ] Ensure that it easily integrates and performs well if chosen to be run in GitHub actions.
+- [ ] Setup goreleaser
 - [ ] Reference files to include in the body via their path
 - [ ] Wordlist / fuzzing support via the provided vars (`<% varName = ./tests/wordlist.txt %>` or something similar. Will resend the request enough times to iterate through the list. Can only be used in the request it is defined above.)
 - [ ] Further standardize success, error, and commit messaging. Add a contribution guide with any styling notes to the repo.

@@ -28,6 +28,7 @@ cmd "github.com/alp1n3-eth/cast/cmd/http"
 */
 func main() {
 	if err := cmd.Execute(context.Background(), os.Args); err != nil {
+		// TODO: Improve errors for if flag is provided but not defined + any other default texts. They may also be double-printing errors.
 		log.Fatal(err)
 	}
 }

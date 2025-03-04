@@ -13,13 +13,11 @@ var (
 		Name:     "body",
 		Value:    "",
 		Usage:    "HTTP request body",
-		Aliases:  []string{"B"},
 		Category: "http",
 	}
 	HeaderFlag = &cli.StringSliceFlag{
 		Name:     "header",
 		Usage:    "HTTP headers to include in the request",
-		Aliases:  []string{"H"},
 		Category: "http",
 	}
 	DebugFlag = &cli.BoolFlag{
@@ -46,19 +44,17 @@ var (
 	VarFlag = &cli.StringSliceFlag{
 		Name:     "var",
 		Usage:    "A text file to be iteratively used in any portion of the request to insert values.",
-		Aliases:  []string{"V"},
 		Category: "utility",
 	}
 	PrintFlag = &cli.StringSliceFlag{
 		Name:     "print",
 		Usage:    "A text file to be iteratively used in any portion of the request to insert values.",
-		Aliases:  []string{"P"},
+		Aliases:  []string{"p"},
 		Category: "utility",
 	}
 	FileFlag = &cli.StringFlag{
 		Name:      "file",
 		Usage:     "A way to include a file in the request's body.",
-		Aliases:   []string{"F"},
 		TakesFile: true,
 		OnlyOnce:  true,
 		Category:  "utility",
@@ -66,14 +62,12 @@ var (
 	RedirectFlag = &cli.IntFlag{
 		Name:     "redirect",
 		Usage:    "A way to follow redirects up to < INT >.",
-		Aliases:  []string{"R"},
 		OnlyOnce: true,
 		Category: "http",
 	}
 	DownloadFlag = &cli.StringFlag{
 		Name:      "download",
 		Usage:     "Path to save the response body to a file.",
-		Aliases:   []string{"D"},
 		TakesFile: true,
 		OnlyOnce:  true,
 	}
