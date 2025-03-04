@@ -48,7 +48,7 @@ func print(r *string, highlight *bool) {
 
 func OutputRequest(req *fasthttp.Request, args *models.CommandActions) error {
 	reqStr := req.String() + "\n"
-	print(&reqStr, &args.Highlight)
+	print(&reqStr, &args.Color)
 
 	return nil
 }
@@ -63,7 +63,7 @@ func OutputResponse(resp *models.Response, args *models.CommandActions) {
 
 			statusMsg += " " + resp.Status + "\n"
 
-			print(&statusMsg, &args.Highlight)
+			print(&statusMsg, &args.Color)
 			//return
 		}
 
@@ -95,8 +95,15 @@ func OutputResponse(resp *models.Response, args *models.CommandActions) {
 
 	}
 
-	fmt.Println("reached stdout in print.go")
-	print(respToStr(resp), &args.Highlight)
+	if !args.More {
+		//resp.Body = resp.Body[:100]
+		truncatedMsg := []byte("\n\033[36m[TRUNCATED]\033[0m\n")
+		resp.Body = append(resp.Body[:120], truncatedMsg...)
+		//resp.Body = resp.Body[:100] + []byte("\n[TRUNCATED]")
+	}
+
+	//fmt.Println("reached stdout in print.go")
+	print(respToStr(resp), &args.Color)
 
 	return
 }

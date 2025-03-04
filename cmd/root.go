@@ -20,21 +20,29 @@ import (
 var (
 	GetCommand = &cli.Command{ // HTTP Methods
 		Name:    "get",
-		Aliases: []string{"GET", "post", "put", "delete", "patch", "options", "trace", "head", "connect"},
-		Usage:   "send an HTTP request to a url.",
+		Aliases: []string{"post", "put", "delete", "patch", "options", "trace", "head", "connect"},
+		Usage:   "Send an HTTP request to a url.",
 		Flags:   flags.GetFlags,
 		Action:  GetAction,
+		//Suggest: true,
 	}
 	FileCommand = &cli.Command{
 		Name:   "file",
 		Usage:  "Run HTTP requests from a provided file.",
 		Flags:  flags.FileFlags,
 		Action: FileAction,
+		//Suggest: true,
 	}
 )
 
 func Execute(ctx context.Context, args []string) error {
 	app := &cli.Command{
+		Name:    "cast",
+		Version: "v0.4-alpha",
+		//Authors: any[],
+		Usage:     "make sending HTTP requests ezpz",
+		UsageText: "placeholder text",
+		ArgsUsage: "[Method] [Protocol + Host] <Flags>",
 		Commands: []*cli.Command{
 			GetCommand,
 			FileCommand,
@@ -56,7 +64,8 @@ func GetAction(ctx context.Context, command *cli.Command) error {
 			PrintOptions:      command.StringSlice("print"),
 			RedirectsToFollow: int(command.Int("redirect")),
 			Debug:             command.Bool("debug"),
-			Highlight:         command.Bool("highlight"),
+			Color:             command.Bool("color"),
+			More:              command.Bool("more"),
 			FileUploadPath:    command.String("fileupload"),
 			DownloadPath:      command.String("download"),
 			CurlOutput:        command.Bool("curl"),
@@ -97,4 +106,14 @@ func GetAction(ctx context.Context, command *cli.Command) error {
 
 func FileAction(ctx context.Context, command *cli.Command) error {
 	return nil
+}
+
+func EnvAction(ctx context.Context, command *cli.Command) error {
+	return nil
+}
+
+func init() {
+	//cli.CommandHelpTemplate = "get"
+	//cli.SuggestCommand
+
 }

@@ -5,13 +5,13 @@ import (
 )
 
 var (
-	IgnoreAssertsFlag = &cli.StringFlag{
-		Name:  "ignore-assertions",
+	NoAssertsFlag = &cli.StringFlag{
+		Name:  "no-asserts",
 		Value: "",
 		Usage: "Runs the file without checking existing assertions on each response.",
 	}
 
 	FileFlags = []cli.Flag{
-		IgnoreAssertsFlag,
+		NoAssertsFlag,
 	}
 )

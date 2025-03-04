@@ -33,7 +33,8 @@ type CommandActions struct {
 	Body    []byte
 
 	Debug             bool
-	Highlight         bool
+	Color             bool
+	More              bool
 	VarReplacement    bool
 	PrintOptions      []string // Just Request, Just Status, etc.
 	RedirectsToFollow int

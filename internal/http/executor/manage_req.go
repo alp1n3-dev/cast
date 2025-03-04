@@ -2,8 +2,10 @@ package executor
 
 import (
 	//"fmt"
+	"fmt"
 	"os"
 	"slices"
+	"strings"
 
 	//"github.com/alp1n3-eth/cast/internal/http/executor"
 	"github.com/alp1n3-eth/cast/internal/http/parse"
@@ -19,6 +21,23 @@ func SendHTTP(replacementVariables *map[string]string, HTTPCtx *models.HTTPReque
 	logging.Init(HTTPCtx.CmdArgs.Debug)
 
 	logging.Logger.Debugf("Debug: %t, Method: %s, URI: %s", HTTPCtx.CmdArgs.Debug, HTTPCtx.CmdArgs.Method, HTTPCtx.CmdArgs.URL)
+
+	requestURI := string(HTTPCtx.Request.Req.RequestURI())
+	if len(requestURI) <= 3 {
+		logging.Logger.Error("The request URI appears to be invalid", "err", requestURI)
+		return
+	}
+	if !strings.Contains(requestURI, "http") {
+		logging.Logger.Warnf("Did you want 'https://' inserted before the URI (%s)? [y/n]: ", requestURI)
+		var userChoice string
+		fmt.Scanln(&userChoice)
+		if userChoice == "y" {
+			http := "https://"
+			http += requestURI
+			HTTPCtx.Request.Req.SetRequestURI(http)
+		}
+
+	}
 
 	if HTTPCtx.CmdArgs.CurlOutput {
 		curlCmd := generateCurlCommand(HTTPCtx.Request.Req, replacementVariables)
@@ -52,7 +71,12 @@ func SendHTTP(replacementVariables *map[string]string, HTTPCtx *models.HTTPReque
 
 	resp, err := SendRequest(HTTPCtx)
 	if err != nil {
+		if strings.Contains(err.Error(), "no such host") {
+			logging.Logger.Error("Lookup failed: no such host. Double-check the entered URI & its extension.")
+			return
+		}
 		logging.Logger.Error("Error sending HTTP request", "err", err)
+		return
 	}
 	//defer fasthttp.ReleaseResponse(resp)
 	//fmt.Println(resp)
@@ -61,6 +85,7 @@ func SendHTTP(replacementVariables *map[string]string, HTTPCtx *models.HTTPReque
 
 	if HTTPCtx.CmdArgs.DownloadPath != "" {
 		if err := os.WriteFile(HTTPCtx.CmdArgs.DownloadPath, resp.Body, 0644); err != nil {
+			logging.Logger.Error("Problem writing body to download file", "err", requestURI)
 			logging.Logger.Error(err)
 			return
 		}

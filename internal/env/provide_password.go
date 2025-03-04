@@ -22,3 +22,19 @@ func RetrievePasswordFromUser() (string, error) {
 
 	return passwordStr, nil
 }
+
+func CreateNewPassword() (string, error) {
+	fmt.Print("Please provide a new password: ")
+	passOne, _ := RetrievePasswordFromUser()
+
+	fmt.Print("Please re-enter the password: ")
+	passTwo, _ := RetrievePasswordFromUser()
+
+	if passOne != passTwo {
+		logging.Logger.Warn("Passwords do not match")
+		// TODO: Implement error return here.
+		return "", nil
+	} else {
+		return passOne, nil
+	}
+}

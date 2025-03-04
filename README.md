@@ -166,9 +166,12 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 
 **v0.5**
 
+- [ ] Get command and flag suggestions working.
 - [ ] Go through require semantic versioning, cli guidelines site, and polish off the cli book. Refactor and fix as issues are observed.
 - [ ] Fix error returning structure and handle errors correctly and in better places.
 - [ ] Create tests & benchmark tests for all files, flags, args, etc. Have these also run in GitHub.
+- [ ] Fix logging, make it clearer. Make sure it handles errors well and is human-first and they are helpful to the user. Make sure that only the "advanced" errors bleed through if the debug flag is used. Include helpful suggestions with errors.
+- [ ] Get the standard no-common help page setup: https://clig.dev/#help
 
 ### file focus (> v0.5)
 
@@ -181,6 +184,7 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 
 - [ ] Config
 - [ ] Run a directory (alphabetically / in order) option `cast --directory /tests/auth` (alias `-DIR`). Runs each `.cast` file sequentially.
+- [ ] Verify and fill out all CLI help text, instructions, and usage in the flag `.go` files.
 
 **v0.7**
 
@@ -220,6 +224,8 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 - [ ] optimize. find anti-patterns.
 - [ ] maintain. keep on top of package and language changes.
 - [ ] advanced cURL export, supports vars + other items.
+- [ ] support JSON output for responses so that they can be parsed with tools such as `jq`.
+- [ ] add an option to not print info/warning/errors. Ensure it doesn't make the warnings with `y/n` options hang / not complete. (`-q` for quiet)
 
 ### _potential_ future plans
 
