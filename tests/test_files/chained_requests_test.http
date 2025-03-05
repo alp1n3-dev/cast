@@ -7,8 +7,8 @@ host_header = "Host: example.com"
 
 [request]
 POST /auth HTTP/1.1
-{{ host_header }} # The host header is required.
-# Content-Type: application/json - will be auto-detected and set
+{{ host_header }}
+# Content-Type: application/json
 X-Request-ID: {{ uuid }}
 
 {

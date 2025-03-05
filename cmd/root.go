@@ -37,10 +37,10 @@ var (
 
 func Execute(ctx context.Context, args []string) error {
 	app := &cli.Command{
-		Name:    "cast",
+		Name:    "Cast",
 		Version: "v0.4-alpha",
 		//Authors: any[],
-		Usage:     "make sending HTTP requests ezpz",
+		Usage:     "Make sending HTTP requests & testing APIs EZPZ.",
 		UsageText: "placeholder text",
 		ArgsUsage: "[Method] [Protocol + Host] <Flags>",
 		Commands: []*cli.Command{

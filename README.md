@@ -167,10 +167,10 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 **v0.5**
 
 - [ ] Get command and flag suggestions working.
-- [ ] Go through require semantic versioning, cli guidelines site, and polish off the cli book. Refactor and fix as issues are observed.
-- [ ] Fix error returning structure and handle errors correctly and in better places.
+- [ ] Go through require semantic versioning and then the cli guidelines site. Refactor and fix as issues are observed. (_Optional_: Finish the CLI book)
+- [x] Fix error returning structure and handle errors correctly and in better places.
 - [ ] Create tests & benchmark tests for all files, flags, args, etc. Have these also run in GitHub.
-- [ ] Fix logging, make it clearer. Make sure it handles errors well and is human-first and they are helpful to the user. Make sure that only the "advanced" errors bleed through if the debug flag is used. Include helpful suggestions with errors.
+- [x] Fix logging, make it clearer. Make sure it handles errors well and is human-first and they are helpful to the user. Make sure that only the "advanced" errors bleed through if the debug flag is used. Include helpful suggestions with errors.
 - [ ] Get the standard no-common help page setup: https://clig.dev/#help
 - [ ] Add a link to where issues should be submitted to the help text. Make sure the issue form for bugs is customized and helpful.
 

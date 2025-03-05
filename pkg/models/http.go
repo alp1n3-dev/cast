@@ -47,10 +47,9 @@ type HTTPRequestContext struct {
 	Request    Request
 	Response   Response
 	CmdArgs    CommandActions
-	Assertions Assertion
+	Assertions []Assertion
 }
 
 type CastFile struct {
-	Variables map[string]string
-	Requests  map[*Request]Response
+	CtxMap map[int]HTTPRequestContext
 }
