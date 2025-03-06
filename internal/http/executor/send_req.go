@@ -22,7 +22,7 @@ func SendRequest(HTTPCtx *models.HTTPRequestContext) (*models.Response, error) {
 
 	//response := &models.Response{}
 	// Going to be a flag later, based on if asserts are detected in the file when read.
-	assertsRequired := false
+	//assertsRequired := false
 	var err error
 
 	// TODO: Add the ability to track byte sizes of responses.
@@ -64,16 +64,16 @@ func SendRequest(HTTPCtx *models.HTTPRequestContext) (*models.Response, error) {
 	//fmt.Println(resp)
 
 	// Blocking off the below section for later with a return that'll be hit
-	if assertsRequired {
-		fmt.Println("reached inside of the if assertsReq")
-		return &storeResp, nil
-	}
+	//if assertsRequired {
+	//fmt.Println("reached inside of the if assertsReq")
+	//return &storeResp, nil
+	//}
 
-	var assertion string // Placeholder for if the response values need to be saved and filtered
-	if len(assertion) > 0 {
-		//*response = parse.BuildFastHTTPResponse(resp)
-		//TODO: do actions following assertion logic
-	}
+	//var assertion string // Placeholder for if the response values need to be saved and filtered
+	//if len(assertion) > 0 {
+	//*response = parse.BuildFastHTTPResponse(resp)
+	//TODO: do actions following assertion logic
+	//}
 
 	//var respStore fasthttp.Response
 	//respStore = *resp

@@ -18,9 +18,16 @@ import (
 
 func SendHTTP(replacementVariables *map[string]string, HTTPCtx *models.HTTPRequestContext) {
 
-	logging.Init(HTTPCtx.CmdArgs.Debug)
+	//logging.Init(HTTPCtx.CmdArgs.Debug)
+	logging.Init(true)                                                             // temporarily turning debug on
+	HTTPCtx.CmdArgs.PrintOptions = append(HTTPCtx.CmdArgs.PrintOptions, "request") // temporarily turning print request on as well
 
 	logging.Logger.Debugf("Debug: %t, Method: %s, URI: %s", HTTPCtx.CmdArgs.Debug, HTTPCtx.CmdArgs.Method, HTTPCtx.CmdArgs.URL)
+
+	hostHeader := HTTPCtx.Request.Req.Header.Peek("Host")
+	if len(hostHeader) > 4 {
+		HTTPCtx.Request.Req.SetRequestURI(string(hostHeader))
+	}
 
 	requestURI := string(HTTPCtx.Request.Req.RequestURI())
 	if len(requestURI) <= 3 {
@@ -80,6 +87,8 @@ func SendHTTP(replacementVariables *map[string]string, HTTPCtx *models.HTTPReque
 	}
 	//defer fasthttp.ReleaseResponse(resp)
 	//fmt.Println(resp)
+
+	HTTPCtx.Response = *resp
 
 	output.OutputResponse(resp, &HTTPCtx.CmdArgs)
 
