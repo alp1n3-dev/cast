@@ -14,15 +14,15 @@ import (
 )
 
 // Custom parser to handle the specified file format.
-type customParser struct{}
+type CustomParser struct{}
 
 // Unmarshal implements the koanf.Parser interface.
-func (p *customParser) Unmarshal(b []byte) (map[string]interface{}, error) {
+func (p *CustomParser) Unmarshal(b []byte) (map[string]interface{}, error) {
 	return p.Parse(b)
 }
 
 // Parse is internal parse function
-func (p *customParser) Parse(b []byte) (map[string]interface{}, error) {
+func (p *CustomParser) Parse(b []byte) (map[string]interface{}, error) {
 	castFile, err := p.ParseToCastFile(b)
 	if err != nil {
 		return nil, err
@@ -36,7 +36,7 @@ func (p *customParser) Parse(b []byte) (map[string]interface{}, error) {
 	return config, nil
 }
 
-func (p *customParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
+func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 	castFile := &models.CastFile{
 		CtxMap: make(map[int]models.HTTPRequestContext),
 	}
@@ -152,7 +152,7 @@ func (p *customParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 	return castFile, nil
 }
 
-func (p *customParser) parseRequest(
+func (p *CustomParser) parseRequest(
 	requestLines []string,
 	assertLines []string,
 	vars map[string]string,
@@ -206,7 +206,7 @@ func (p *customParser) parseRequest(
 	return reqCtx, nil
 }
 
-func (p *customParser) parseHTTPRequest(requestStr string, vars map[string]string) (models.Request, models.CommandActions, error) {
+func (p *CustomParser) parseHTTPRequest(requestStr string, vars map[string]string) (models.Request, models.CommandActions, error) {
 	// Split the request string into lines.
 	lines := strings.Split(requestStr, "\n")
 
@@ -307,7 +307,7 @@ func (p *customParser) parseHTTPRequest(requestStr string, vars map[string]strin
 	return request, cmdActions, nil
 }
 
-func (p *customParser) parseAssertions(assertLines []string) ([]models.Assertion, error) {
+func (p *CustomParser) parseAssertions(assertLines []string) ([]models.Assertion, error) {
 	assertions := make([]models.Assertion, 0) // Changed to a slice
 	for _, line := range assertLines {
 		parts := strings.SplitN(line, " ", 4) // Splitting into 4 parts: Type, Target, Operator, Expected
@@ -352,6 +352,6 @@ func (p *customParser) parseAssertions(assertLines []string) ([]models.Assertion
 }
 
 // Marshal marshals the given config map to bytes.
-func (p *customParser) Marshal(m map[string]interface{}) ([]byte, error) {
+func (p *CustomParser) Marshal(m map[string]interface{}) ([]byte, error) {
 	return []byte{}, nil
 }

@@ -54,7 +54,7 @@ func SendHTTP(replacementVariables *map[string]string, HTTPCtx *models.HTTPReque
 		HTTPCtx.CmdArgs.Body = parse.ReadFileIntoBody(&HTTPCtx.CmdArgs.FileUploadPath)
 	}
 
-	if len(*replacementVariables) > 0 {
+	if len(*replacementVariables) > 0 && (*replacementVariables != nil) {
 		logging.Logger.Debugf("Replacement Variables: %s", replacementVariables)
 		parse.SwapReqVals(HTTPCtx.Request.Req, replacementVariables)
 		logging.Logger.Debug("Executed Successfully: SwapReqVals()")
@@ -121,4 +121,15 @@ func generateCurlCommand(req *fasthttp.Request, replacementVariables *map[string
 	*/
 
 	return curlCmdStr
+}
+
+type customParser struct{}
+
+func (p *customParser) RequestSequence(castFile *models.CastFile) {
+	// The cast file is handed off to RequestSequence AFTER being read from the file via Koanf. No request building has been done.
+
+	// This function will handle loading the variables, building the requests, sending them, asserting on them, then loop. If syntax is incorrect, it won't be known until that specific request is hit and an error is produced.
+
+	// Use SendHTTP in a loop, pass it the individual requestCTX for each entry.
+
 }

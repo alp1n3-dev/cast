@@ -11,7 +11,9 @@ import (
 	//httpcmd "github.com/alp1n3-eth/cast/cmd/actions"
 	"github.com/alp1n3-eth/cast/internal/env"
 	"github.com/alp1n3-eth/cast/internal/flags"
+	"github.com/alp1n3-eth/cast/internal/http/assert"
 	"github.com/alp1n3-eth/cast/internal/http/executor"
+	"github.com/alp1n3-eth/cast/internal/http/parse"
 	"github.com/alp1n3-eth/cast/pkg/models"
 	"github.com/urfave/cli/v3"
 	"github.com/valyala/fasthttp"
@@ -105,6 +107,34 @@ func GetAction(ctx context.Context, command *cli.Command) error {
 }
 
 func FileAction(ctx context.Context, command *cli.Command) error {
+	filePath := command.Args().First()
+	if filePath == "" {
+		return fmt.Errorf("file path not provided")
+	}
+
+	fileContent, err := os.ReadFile(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to read file: %w", err)
+	}
+	//type customParser struct{}
+
+	parser := parse.CustomParser{}
+	castFile, err := parser.ParseToCastFile(fileContent)
+	if err != nil {
+		return fmt.Errorf("failed to parse file: %w", err)
+	}
+
+	for i := 0; i < len(castFile.CtxMap); i++ {
+		var reqCtx models.HTTPRequestContext
+		reqCtx = castFile.CtxMap[i]
+
+		var replacementPlaceholder map[string]string
+
+		executor.SendHTTP(&replacementPlaceholder, &reqCtx)
+
+		assert.ValidateAssertions(&reqCtx.Response, reqCtx.Assertions)
+	}
+
 	return nil
 }
 

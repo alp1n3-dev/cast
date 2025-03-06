@@ -51,5 +51,6 @@ type HTTPRequestContext struct {
 }
 
 type CastFile struct {
+	Vars   map[string]string
 	CtxMap map[int]HTTPRequestContext
 }

@@ -256,7 +256,7 @@ status 200
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			parser := &customParser{}
+			parser := &CustomParser{}
 			result, err := parser.ParseToCastFile([]byte(tc.fileContent))
 
 			if (err != nil) != tc.expectedError {
@@ -325,7 +325,7 @@ status 200
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			k := koanf.New(".")
-			parser := &customParser{}
+			parser := &CustomParser{}
 			// Load the configuration.
 			err := k.Load(rawbytes.Provider([]byte(tc.fileContent)), parser)
 			if (err != nil) != tc.expectedError {
@@ -401,7 +401,7 @@ status 200
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			parser := &customParser{}
+			parser := &CustomParser{}
 			// Load the configuration.
 			data, err := parser.Unmarshal([]byte(tc.fileContent))
 
@@ -495,7 +495,7 @@ Content-Type: application/json
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			parser := &customParser{}
+			parser := &CustomParser{}
 			req, cmd, err := parser.parseHTTPRequest(tc.requestString, map[string]string{})
 
 			if (err != nil) != tc.expectedError {
@@ -604,7 +604,7 @@ func TestParseAssertions(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			parser := &customParser{}
+			parser := &CustomParser{}
 			assertions, err := parser.parseAssertions(tc.assertionLines)
 
 			if (err != nil) != tc.expectedError {
@@ -620,7 +620,7 @@ func TestParseAssertions(t *testing.T) {
 	}
 }
 
-func (p *customParser) resolveVar(line string, vars map[string]string) string {
+func (p *CustomParser) resolveVar(line string, vars map[string]string) string {
 	uuidRegex := regexp.MustCompile(`uuid\(\)`)
 	envRegex := regexp.MustCompile(`env\.get\("([^"]+)"\)`)
 	varRegex := regexp.MustCompile(`{{\s*([a-zA-Z0-9_.]+)\s*}}`)
@@ -649,7 +649,7 @@ func (p *customParser) resolveVar(line string, vars map[string]string) string {
 }
 
 func TestResolveVar(t *testing.T) {
-	p := &customParser{}
+	p := &CustomParser{}
 	vars := map[string]string{
 		"myvar": "myvalue",
 	}

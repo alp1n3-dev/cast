@@ -5,6 +5,13 @@ import (
 )
 
 var (
+	FileDebugFlag = &cli.BoolFlag{
+		Name:     "fdebug",
+		Usage:    "Enable file debug output for the application",
+		Value:    false,
+		OnlyOnce: true,
+		Category: "utility",
+	}
 	NoAssertsFlag = &cli.StringFlag{
 		Name:  "no-asserts",
 		Value: "",
@@ -13,5 +20,6 @@ var (
 
 	FileFlags = []cli.Flag{
 		NoAssertsFlag,
+		FileDebugFlag,
 	}
 )
