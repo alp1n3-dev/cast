@@ -1,13 +1,8 @@
 # Authentication Sequence
-[vars]
-base_url = "https://api.example.com/v1"
-uuid = uuid()
-env_token = env.get("API_TOKEN")
-host_header = "Host: example.com"
 
 [request]
 POST /auth HTTP/1.1
-host_header
+Host: example.com
 Content-Type: application/json
 X-Request-ID: uuid
 
@@ -27,5 +22,5 @@ auth_token = "$.token"
 # Request Resources Endpoint
 [request]
 GET /resources HTTP/1.1
-host_header
+Host: example.com
 Authorization: Bearer auth_token

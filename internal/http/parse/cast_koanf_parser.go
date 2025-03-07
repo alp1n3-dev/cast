@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/alp1n3-eth/cast/pkg/logging"
 	"github.com/alp1n3-eth/cast/pkg/models"
 	"github.com/valyala/fasthttp"
 )
@@ -50,7 +51,7 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 	uuidRegex := regexp.MustCompile(`uuid\(\)`)
 	envRegex := regexp.MustCompile(`env\.get\("([^"]+)"\)`)
 	varRegex := regexp.MustCompile(`{{\s*([a-zA-Z0-9_.]+)\s*}}`)
-	jsonPathRegex := regexp.MustCompile(`\$\.([a-zA-Z0-9_]+)`)
+	//jsonPathRegex := regexp.MustCompile(`\$\.([a-zA-Z0-9_]+)`)
 
 	// Store variables in local scope instead of global scope.
 	vars := make(map[string]string)
@@ -95,7 +96,7 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 			case "request":
 				// Process previous request if exists
 				if len(requestLines) > 0 {
-					reqCtx, err := p.parseRequest(requestLines, assertLines, vars, resolveVar, jsonPathRegex)
+					reqCtx, err := p.parseRequest(requestLines, assertLines, vars, resolveVar) //jsonPathRegex)
 					if err != nil {
 						return nil, err
 					}
@@ -142,7 +143,7 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 
 	// Process the last request if exists
 	if len(requestLines) > 0 {
-		reqCtx, err := p.parseRequest(requestLines, assertLines, vars, resolveVar, jsonPathRegex)
+		reqCtx, err := p.parseRequest(requestLines, assertLines, vars, resolveVar) //, jsonPathRegex)
 		if err != nil {
 			return nil, err
 		}
@@ -157,43 +158,49 @@ func (p *CustomParser) parseRequest(
 	assertLines []string,
 	vars map[string]string,
 	resolveVar func(line string, vars map[string]string) string,
-	jsonPathRegex *regexp.Regexp,
+	//jsonPathRegex *regexp.Regexp,
 ) (*models.HTTPRequestContext, error) {
 	requestStr := strings.Join(requestLines, "\n")
 
 	// Preserve the newlines within the JSON body
 	var finalRequestLines []string
-	inJSON := false
+	//inJSON := false
 	for _, requestLine := range strings.Split(requestStr, "\n") {
-		if strings.Contains(requestLine, "{") {
-			inJSON = true
-		}
-		if inJSON {
-			finalRequestLines = append(finalRequestLines, requestLine)
-		} else {
-			finalRequestLines = append(finalRequestLines, strings.TrimSpace(requestLine))
-		}
-		if strings.Contains(requestLine, "}") {
-			inJSON = false
-		}
+		//if strings.Contains(requestLine, "{") {
+		//inJSON = true
+		//}
+		//if inJSON {
+		//finalRequestLines = append(finalRequestLines, requestLine)
+		//} else {
+
+		finalRequestLines = append(finalRequestLines, strings.TrimSpace(requestLine))
+
+		//}
+		//if strings.Contains(requestLine, "}") {
+		//inJSON = false
+		//}
 	}
 
 	requestStr = strings.Join(finalRequestLines, "\n")
 
 	requestStr = resolveVar(requestStr, vars)
-	requestStr = jsonPathRegex.ReplaceAllStringFunc(requestStr, func(s string) string {
-		return s // Placeholder for jsonpath replacement logic later.
-	})
+	//requestStr = jsonPathRegex.ReplaceAllStringFunc(requestStr, func(s string) string {
+	//return s // Placeholder for jsonpath replacement logic later.
+	//})
 
 	req, cmdArgs, err := p.parseHTTPRequest(requestStr, vars)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing HTTP request: %w", err)
 	}
 
+	logging.Logger.Debug(req)
+
 	assertions, err := p.parseAssertions(assertLines)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing assertions: %w", err)
 	}
+
+	logging.Logger.Debug(assertions)
 
 	reqCtx := &models.HTTPRequestContext{
 		Request:    req,
@@ -201,7 +208,8 @@ func (p *CustomParser) parseRequest(
 		CmdArgs:    cmdArgs,
 		Assertions: assertions,
 	}
-	fmt.Println(reqCtx)
+
+	logging.Logger.Debug(reqCtx)
 
 	return reqCtx, nil
 }
@@ -209,6 +217,8 @@ func (p *CustomParser) parseRequest(
 func (p *CustomParser) parseHTTPRequest(requestStr string, vars map[string]string) (models.Request, models.CommandActions, error) {
 	// Split the request string into lines.
 	lines := strings.Split(requestStr, "\n")
+	fmt.Println(lines)
+	fmt.Println("lines above")
 
 	// Extract method and URL from the first line.
 	methodURL := strings.SplitN(lines[0], " ", 2)
@@ -220,6 +230,10 @@ func (p *CustomParser) parseHTTPRequest(requestStr string, vars map[string]strin
 	if len(methodURL) > 1 {
 		fullURL = methodURL[1]
 	}
+
+	logging.Init(true)
+	logging.Logger.Debug(fullURL)
+	logging.Logger.Debug(method)
 
 	// Split the full URL by space to get only the URL path
 	urlParts := strings.SplitN(fullURL, " ", 2)
@@ -233,22 +247,27 @@ func (p *CustomParser) parseHTTPRequest(requestStr string, vars map[string]strin
 	urlStr := urlParts[0] // Takes only the path
 
 	parsedURL, err := url.Parse(urlStr)
-	fmt.Println(parsedURL)
-	fmt.Println(urlStr)
-	fmt.Println(fullURL)
+
+	logging.Logger.Debug(parsedURL)
+	logging.Logger.Debug(urlStr)
+	logging.Logger.Debug(fullURL)
+
 	if err != nil && urlStr != "" {
 		return models.Request{}, models.CommandActions{}, fmt.Errorf("invalid URL: %w", err)
 	}
 
+	// --- parsing headers and body below
 	// Parse headers and body.
 	headers := make(map[string]string)
 	var bodyBuilder strings.Builder
 	isBody := false
 
+	logging.Logger.Error(lines)
+
 	for i := 1; i < len(lines); i++ {
 		line := lines[i]
 
-		if line == "" {
+		if line == "" && !isBody {
 			// Empty line indicates the start of the body.
 			isBody = true
 			continue
@@ -263,11 +282,17 @@ func (p *CustomParser) parseHTTPRequest(requestStr string, vars map[string]strin
 				key := strings.TrimSpace(headerParts[0])
 				value := strings.TrimSpace(headerParts[1])
 				headers[key] = value
+			} else {
+				isBody = true
+				bodyBuilder.WriteString(line)
+				bodyBuilder.WriteString("\n")
 			}
 		}
 	}
 
 	body := bodyBuilder.String()
+
+	logging.Logger.Debug(body)
 
 	// Construct fasthttp request
 	req := fasthttp.AcquireRequest()
@@ -279,6 +304,7 @@ func (p *CustomParser) parseHTTPRequest(requestStr string, vars map[string]strin
 	}
 
 	hostHeader := req.Header.Peek("Host")
+
 	if len(hostHeader) < 4 {
 		return models.Request{}, models.CommandActions{}, fmt.Errorf("invalid host in host header: %w", err)
 	}
@@ -301,8 +327,8 @@ func (p *CustomParser) parseHTTPRequest(requestStr string, vars map[string]strin
 		Req: req,
 	}
 
-	fmt.Println(request)
-	fmt.Println(cmdActions)
+	logging.Logger.Debug(request)
+	logging.Logger.Debug(cmdActions)
 
 	return request, cmdActions, nil
 }
