@@ -1,6 +1,7 @@
 package parse
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/alp1n3-eth/cast/pkg/models"
@@ -24,6 +25,28 @@ func (p *CustomParser) parseAssertions(assertLines []string) ([]models.Assertion
 				Expected: parts[1],
 			}
 			assertions = append(assertions, assertion)
+		} else if parts[0] == "header" {
+			if len(parts) == 2 {
+				// Handle status code assertions
+				assertion := models.Assertion{
+					Type:     "header",
+					Target:   "", //status code doesn't have a target
+					Operator: "==",
+					Expected: parts[1],
+				}
+				assertions = append(assertions, assertion)
+			}
+			if len(parts) == 3 {
+				assertion := models.Assertion{
+					Type:     "header",
+					Target:   "", //status code doesn't have a target
+					Operator: parts[1],
+					Expected: parts[2],
+				}
+				fmt.Println(assertion)
+				assertions = append(assertions, assertion)
+			}
+
 		} else if parts[0] == "body" && len(parts) >= 3 {
 			// Handle body contains assertion where the length is greater or equal to three
 			assertion := models.Assertion{

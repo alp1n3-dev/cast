@@ -13,6 +13,7 @@ import (
 
 func ValidateAssertions(resp *models.Response, assertions []models.Assertion) {
 	var err error
+	logging.Logger.Debug(assertions)
 	for _, assertion := range assertions {
 		switch {
 		case assertion.Type == "status":
@@ -47,7 +48,6 @@ func ValidateAssertions(resp *models.Response, assertions []models.Assertion) {
 
 		}
 	}
-	return
 }
 
 func validateStatusCode(resp *models.Response, expectedStr *string) error {
@@ -66,13 +66,20 @@ func validateStatusCode(resp *models.Response, expectedStr *string) error {
 
 func validateHeader(resp *models.Response, assertion *models.Assertion) error {
 	//headerContents := resp.Header.PeekAll(assertion.Target)
+	if assertion.Operator == "NOT" {
+		if strings.Contains(resp.Headers, assertion.Target) {
+			return fmt.Errorf("header assertion failed. Expect '%s' to NOT be present", assertion.Expected)
+		}
+		return nil
+	}
+
 	if strings.Contains(resp.Headers, assertion.Target) {
 		if strings.Contains(resp.Headers, assertion.Expected) {
 			return nil
 		}
 	}
 
-	return fmt.Errorf("header assertion failed")
+	return fmt.Errorf("header assertion failed. Expect '%s' to be present", assertion.Expected)
 	/*
 		if headerContents == nil {
 			return fmt.Errorf("header validation target does not exist")
