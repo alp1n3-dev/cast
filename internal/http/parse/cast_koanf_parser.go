@@ -5,7 +5,8 @@ import (
 	"bytes"
 	"fmt"
 	"net/url"
-	"os"
+
+	//"os"
 	"regexp"
 	"strings"
 
@@ -22,6 +23,7 @@ func (p *CustomParser) Unmarshal(b []byte) (map[string]interface{}, error) {
 	return p.Parse(b)
 }
 
+// Runs first
 // Parse is internal parse function
 func (p *CustomParser) Parse(b []byte) (map[string]interface{}, error) {
 	castFile, err := p.ParseToCastFile(b)
@@ -48,33 +50,33 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 	var requestLines []string
 	var assertLines []string
 
-	uuidRegex := regexp.MustCompile(`uuid\(\)`)
-	envRegex := regexp.MustCompile(`env\.get\("([^"]+)"\)`)
-	varRegex := regexp.MustCompile(`{{\s*([a-zA-Z0-9_.]+)\s*}}`)
+	//uuidRegex := regexp.MustCompile(`uuid\(\)`)
+	//envRegex := regexp.MustCompile(`env\.get\("([^"]+)"\)`)
+	//varRegex := regexp.MustCompile(`{{\s*([a-zA-Z0-9_.]+)\s*}}`)
 	//jsonPathRegex := regexp.MustCompile(`\$\.([a-zA-Z0-9_]+)`)
+	regexString := fmt.Sprintf(`%s`, "auth_token")
+	re := regexp.MustCompile(regexString)
 
 	// Store variables in local scope instead of global scope.
 	vars := make(map[string]string)
 
 	resolveVar := func(line string, vars map[string]string) string {
-		line = uuidRegex.ReplaceAllStringFunc(line, func(s string) string {
-			return "generated-uuid" // Or generate a real UUID
-		})
-		line = envRegex.ReplaceAllStringFunc(line, func(s string) string {
-			matches := envRegex.FindStringSubmatch(s)
-			if len(matches) > 1 {
-				return os.Getenv(matches[1])
+		//line = re.ReplaceAllStringFunc(line, func(s string) string {
+		//return "generated-uuid" // Or generate a real UUID
+		//})
+		//line = envRegex.ReplaceAllStringFunc(line, func(s string) string {
+		//matches := envRegex.FindStringSubmatch(s)
+		//if len(matches) > 1 {
+		//return os.Getenv(matches[1])
+		//}
+		//return ""
+		//})
+		line = re.ReplaceAllStringFunc(line, func(s string) string {
+			if val, ok := vars["auth_token"]; ok { // Directly use the key "auth_token"
+				logging.Logger.Debugf("Replacing '%s' with '%s'", s, val)
+				return val
 			}
-			return ""
-		})
-		line = varRegex.ReplaceAllStringFunc(line, func(s string) string {
-			matches := varRegex.FindStringSubmatch(s)
-			if len(matches) > 1 {
-				varName := matches[1]
-				if val, ok := vars[varName]; ok {
-					return val
-				}
-			}
+			logging.Logger.Warnf("Variable 'auth_token' not found")
 			return s
 		})
 		return line
@@ -153,6 +155,7 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 	return castFile, nil
 }
 
+// Runs second
 func (p *CustomParser) parseRequest(
 	requestLines []string,
 	assertLines []string,
@@ -214,6 +217,7 @@ func (p *CustomParser) parseRequest(
 	return reqCtx, nil
 }
 
+// Runs third
 func (p *CustomParser) parseHTTPRequest(requestStr string, vars map[string]string) (models.Request, models.CommandActions, error) {
 	// Split the request string into lines.
 	lines := strings.Split(requestStr, "\n")
@@ -333,6 +337,7 @@ func (p *CustomParser) parseHTTPRequest(requestStr string, vars map[string]strin
 	return request, cmdActions, nil
 }
 
+// Runs fourth
 func (p *CustomParser) parseAssertions(assertLines []string) ([]models.Assertion, error) {
 	assertions := make([]models.Assertion, 0) // Changed to a slice
 	for _, line := range assertLines {

@@ -1,4 +1,6 @@
 # Authentication Sequence
+[vars]
+env_token = "$.token"
 
 [request]
 POST /auth HTTP/1.1
