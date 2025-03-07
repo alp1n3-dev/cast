@@ -1,6 +1,6 @@
 # Authentication Sequence
 [vars]
-env_token = "$.token"
+env_token = "$env.token$"
 
 [request]
 POST /auth HTTP/1.1
@@ -19,7 +19,7 @@ header "Location"
 header NOT "X-Rate-Limit"
 
 [vars]
-auth_token = "$.token"
+auth_token = "$.token$"
 
 # Request Resources Endpoint
 [request]

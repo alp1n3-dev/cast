@@ -54,8 +54,6 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 	//envRegex := regexp.MustCompile(`env\.get\("([^"]+)"\)`)
 	//varRegex := regexp.MustCompile(`{{\s*([a-zA-Z0-9_.]+)\s*}}`)
 	//jsonPathRegex := regexp.MustCompile(`\$\.([a-zA-Z0-9_]+)`)
-	regexString := fmt.Sprintf(`%s`, "auth_token")
-	re := regexp.MustCompile(regexString)
 
 	// Store variables in local scope instead of global scope.
 	vars := make(map[string]string)
@@ -71,12 +69,18 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 		//}
 		//return ""
 		//})
+
+		//regexString := fmt.Sprintf(`%s`, "auth_token")
+		//re := regexp.MustCompile(regexString)
+		re := regexp.MustCompile(`([a-zA-Z0-9_]+)`) // Regex to capture ANY variable name (alphanumeric and underscore)
 		line = re.ReplaceAllStringFunc(line, func(s string) string {
-			if val, ok := vars["auth_token"]; ok { // Directly use the key "auth_token"
-				logging.Logger.Debugf("Replacing '%s' with '%s'", s, val)
+			if val, ok := vars[s]; ok { // Directly use the key "auth_token"
+				//logging.Logger.Debugf("Replacing '%s' with '%s'", s, val)
+				fmt.Printf("Replacing '%s' with '%s'", s, val)
 				return val
 			}
-			logging.Logger.Warnf("Variable 'auth_token' not found")
+			//logging.Logger.Warnf("Variable '%s' not found", s)
+			fmt.Printf("Variable '%s' not found", s)
 			return s
 		})
 		return line
