@@ -67,17 +67,29 @@ func validateStatusCode(resp *models.Response, expectedStr *string) error {
 func validateHeader(resp *models.Response, assertion *models.Assertion) error {
 	//headerContents := resp.Header.PeekAll(assertion.Target)
 	if assertion.Operator == "NOT" {
-		if strings.Contains(resp.Headers, assertion.Target) {
-			return fmt.Errorf("header assertion failed. Expect '%s' to NOT be present", assertion.Expected)
+		for _, f := range resp.Headers {
+			if strings.Contains(f, assertion.Target) {
+
+				return fmt.Errorf("header assertion failed. Expect '%s' to NOT be present", assertion.Expected)
+			}
 		}
 		return nil
 	}
 
-	if strings.Contains(resp.Headers, assertion.Target) {
-		if strings.Contains(resp.Headers, assertion.Expected) {
+	if _, ok := resp.Headers[assertion.Target]; ok {
+		if _, ok := resp.Headers[assertion.Expected]; ok {
 			return nil
 		}
 	}
+
+	/*
+
+		if strings.Contains(resp.Headers, assertion.Target) {
+			if strings.Contains(resp.Headers, assertion.Expected) {
+				return nil
+			}
+		}
+	*/
 
 	return fmt.Errorf("header assertion failed. Expect '%s' to be present", assertion.Expected)
 	/*

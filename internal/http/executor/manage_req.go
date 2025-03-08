@@ -2,7 +2,7 @@ package executor
 
 import (
 	//"fmt"
-	"fmt"
+
 	"os"
 	"slices"
 	"strings"
@@ -35,9 +35,10 @@ func SendHTTP(replacementVariables *map[string]string, HTTPCtx *models.HTTPReque
 		return
 	}
 	if !strings.Contains(requestURI, "http") {
-		logging.Logger.Warnf("Did you want 'https://' inserted before the URI (%s)? [y/n]: ", requestURI)
-		var userChoice string
-		fmt.Scanln(&userChoice)
+		//logging.Logger.Warnf("Did you want 'https://' inserted before the URI (%s)? [y/n]: ", requestURI)
+		//var userChoice string
+		//fmt.Scanln(&userChoice)
+		userChoice := "y" // temporarily hardcoding it
 		if userChoice == "y" {
 			http := "https://"
 			http += requestURI

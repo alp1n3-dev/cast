@@ -4,16 +4,36 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/alp1n3-eth/cast/internal/http/capture"
 	"github.com/alp1n3-eth/cast/pkg/models"
 )
 
 // Runs fourth
 func (p *CustomParser) parseAssertions(assertLines []string) ([]models.Assertion, error) {
 	assertions := make([]models.Assertion, 0) // Changed to a slice
+	//captures := make([]models.Capture, 0)
+	//captures := &capture.GlobalCaptures
+
 	for _, line := range assertLines {
 		parts := strings.SplitN(line, " ", 4) // Splitting into 4 parts: Type, Target, Operator, Expected
 		if len(parts) < 2 {                   // if parts is less than 2 then skip
 			continue // Skip invalid assertion lines - must have all parts.
+		}
+
+		if parts[1] == "=" && len(parts) == 4 {
+			fmt.Printf("REACHED PARSING CAPTURE")
+
+			capture1 := models.Capture{
+				Location:  "resp",
+				Target:    parts[3],
+				VarName:   parts[0],
+				Operation: parts[2],
+			}
+
+			capture.GlobalCaptures = append(capture.GlobalCaptures, capture1)
+			fmt.Println(capture.GlobalCaptures)
+			//captures = append(captures, capture1)
+
 		}
 
 		if parts[0] == "status" && len(parts) == 2 {

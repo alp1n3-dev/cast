@@ -113,7 +113,15 @@ func OutputResponse(resp *models.Response, args *models.CommandActions) {
 func respToStr(resp *models.Response) *string {
 	var output string
 
-	output = resp.Headers + string(resp.Body)
+	output += strconv.Itoa(resp.StatusCode) + " " + resp.Status + "\n"
+
+	for key, value := range resp.Headers {
+		output += fmt.Sprintf("%s: %s\n", key, value)
+	}
+	output += "\n"
+
+	//output = resp.Headers + string(resp.Body)
+	output += string(resp.Body)
 
 	return &output
 }

@@ -18,6 +18,7 @@ X-Request-ID: uuid
 status 200
 header "Location"
 header NOT "X-Rate-Limit"
+captureVal = regex "(?i)\s*Access\s+Denied\s*"
 
 [vars]
 auth_token = "$.token$"

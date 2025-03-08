@@ -18,3 +18,10 @@ Examples:
 */
 
 //func (a Assertion) Validate(resp *http.Response) error
+
+type Capture struct {
+	Location  string // header, body
+	Target    string // name of header, the regex, etc.
+	VarName   string // name to save it as
+	Operation string // simple string, json, regex
+}

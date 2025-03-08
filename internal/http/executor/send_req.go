@@ -102,8 +102,15 @@ func SaveResponseToFile(resp *fasthttp.Response, outputPath string) error {
 
 func buildResp(resp *fasthttp.Response, duration int64, storeResp *models.Response) {
 
-	storeResp.Headers = resp.Header.String()
-	storeResp.StatusCode = resp.StatusCode()
+	//storeResp.Headers = resp.Header.VisitAll(func(key, value []byte) {
+	//storeResp.Headers[key][value]
+	//})
+	storeResp.Headers = make(map[string]string)
+
+	resp.Header.VisitAll(func(key, value []byte) {
+		storeResp.Headers[string(key)] = string(value)
+	})
+	storeResp.StatusCode = resp.Header.StatusCode()
 	storeResp.Status = string(resp.Header.StatusMessage())
 	storeResp.Body = resp.Body()
 	storeResp.Duration = int(duration)

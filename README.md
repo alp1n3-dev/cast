@@ -169,7 +169,6 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 - [ ] Get command and flag suggestions working.
 - [ ] Go through require semantic versioning and then the cli guidelines site. Refactor and fix as issues are observed. (_Optional_: Finish the CLI book)
 - [x] Fix error returning structure and handle errors correctly and in better places.
-- [ ] Create tests & benchmark tests for all files, flags, args, etc. Have these also run in GitHub.
 - [x] Fix logging, make it clearer. Make sure it handles errors well and is human-first and they are helpful to the user. Make sure that only the "advanced" errors bleed through if the debug flag is used. Include helpful suggestions with errors.
 - [ ] Get the standard no-common help page setup: https://clig.dev/#help
 - [ ] Add a link to where issues should be submitted to the help text. Make sure the issue form for bugs is customized and helpful.
@@ -184,8 +183,10 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 **v0.6**
 
 - [ ] Config
+- [ ] Add custom assertion errors to logger.
 - [ ] Run a directory (alphabetically / in order) option `cast --directory /tests/auth` (alias `-DIR`). Runs each `.cast` file sequentially.
 - [ ] Verify and fill out all CLI help text, instructions, and usage in the flag `.go` files.
+- [ ] Regex, size, json assertions.
 
 **v0.7**
 
@@ -193,6 +194,7 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 - [ ] Support client certificates
 - [ ] Export as cURL command(s) `cast --curl-export -F auth.cast` (Both file and one-off CLI commands)
 - [ ] Export as OpenAPI v3.x (whatever is latest) `cast --openapi-export -DIR /tests/auth` (??? needed ??? maybe just an import option ???)
+- [ ] Create tests & benchmark tests for all files, flags, args, etc. Have these also run in GitHub.
 
 **v0.8**
 

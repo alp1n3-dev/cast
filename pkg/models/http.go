@@ -19,7 +19,7 @@ type Response struct {
 	//Response    fasthttp.Response
 	Status      string
 	StatusCode  int
-	Headers     string
+	Headers     map[string]string
 	Protocol    string
 	ContentType string
 	Body        []byte
@@ -48,6 +48,7 @@ type HTTPRequestContext struct {
 	Response   Response
 	CmdArgs    CommandActions
 	Assertions []Assertion
+	Captures   []Capture
 }
 
 type CastFile struct {

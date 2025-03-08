@@ -12,6 +12,7 @@ import (
 	"github.com/alp1n3-eth/cast/internal/env"
 	"github.com/alp1n3-eth/cast/internal/flags"
 	"github.com/alp1n3-eth/cast/internal/http/assert"
+	"github.com/alp1n3-eth/cast/internal/http/capture"
 	"github.com/alp1n3-eth/cast/internal/http/executor"
 	"github.com/alp1n3-eth/cast/internal/http/parse"
 	"github.com/alp1n3-eth/cast/pkg/models"
@@ -133,6 +134,8 @@ func FileAction(ctx context.Context, command *cli.Command) error {
 		executor.SendHTTP(&replacementPlaceholder, &reqCtx)
 
 		assert.ValidateAssertions(&reqCtx.Response, reqCtx.Assertions)
+
+		capture.Capture(&reqCtx)
 	}
 
 	return nil
