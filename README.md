@@ -21,6 +21,11 @@ The focus of the CLI input and file-based scripting is to keep it simple and obv
 - The protocol is required. We don't assume what you're using.
 - Past that, the order doesn't matter, but it is broken up by flags to ensure it's obvious you're putting something in a header, vs. a body, vs. calling a different argument.
 
+**Guiding Ethos**
+
+- [Clear is better than clever](https://go-proverbs.github.io)
+- [Every tool is targeted towards a specific use and thrive in specific scenarios](https://news.ycombinator.com/item?id=43239153)
+
 ## install
 
 ### pkg repos
@@ -193,8 +198,6 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 - [ ] Support proxying
 - [ ] Support client certificates
 - [ ] Export as cURL command(s) `cast --curl-export -F auth.cast` (Both file and one-off CLI commands)
-- [ ] Export as OpenAPI v3.x (whatever is latest) `cast --openapi-export -DIR /tests/auth` (??? needed ??? maybe just an import option ???)
-- [ ] Create tests & benchmark tests for all files, flags, args, etc. Have these also run in GitHub.
 
 **v0.8**
 
@@ -208,9 +211,11 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 - [ ] Make sure to build for both m-series & intel Macs, and verify the executable works on `Fedora` `Endeavour`, and `Alpine` Linux.
 - [ ] Make the repo public and set up `goreleaser`.
 - [ ] Setup packages with `brew` & `pacman`.
+- [ ] Create tests & benchmark tests for all files, flags, args, etc. Have these also run in GitHub.
 
 **v0.9**
 
+- [ ] Dogfood it. Look @ the tests other similar apps run against specific self-hosted services, write them up in `cast`, then fix any issues that arise.
 - [ ] Optimize and clarify `README.md`. Check other popular projects for examples.
 - [ ] Create the docs site using Astro Starlight.
 - [ ] Get feedback from people who would make use of it.
@@ -231,6 +236,11 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 - [ ] advanced cURL export, supports vars + other items.
 - [ ] support JSON output for responses so that they can be parsed with tools such as `jq`.
 - [ ] add an option to not print info/warning/errors. Ensure it doesn't make the warnings with `y/n` options hang / not complete. (`-q` for quiet)
+
+### separate tooling (>= v1.0)
+
+- [ ] Splitting import / export cURL commands into its own tool
+- [ ] Making an OpenAPI import / export separate tool
 
 ### _potential_ future plans
 

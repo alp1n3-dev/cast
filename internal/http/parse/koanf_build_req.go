@@ -36,7 +36,7 @@ func (p *CustomParser) parseRequest(
 		return nil, fmt.Errorf("error parsing HTTP request: %w", err)
 	}
 
-	logging.Logger.Debug(req)
+	//logging.Logger.Debug(req)
 
 	assertions, err := p.parseAssertions(assertLines)
 	if err != nil {
@@ -52,7 +52,7 @@ func (p *CustomParser) parseRequest(
 		Assertions: assertions,
 	}
 
-	logging.Logger.Debug(reqCtx)
+	//logging.Logger.Debug(reqCtx)
 
 	return reqCtx, nil
 }
@@ -61,8 +61,8 @@ func (p *CustomParser) parseRequest(
 func (p *CustomParser) parseHTTPRequest(requestStr string, vars map[string]string) (models.Request, models.CommandActions, error) {
 	// Split the request string into lines.
 	lines := strings.Split(requestStr, "\n")
-	fmt.Println(lines)
-	fmt.Println("lines above")
+	//fmt.Println(lines)
+	//fmt.Println("lines above")
 
 	// Extract method and URL from the first line.
 	methodURL := strings.SplitN(lines[0], " ", 2)
@@ -101,7 +101,7 @@ func (p *CustomParser) parseHTTPRequest(requestStr string, vars map[string]strin
 	var bodyBuilder strings.Builder
 	isBody := false
 
-	logging.Logger.Error(lines)
+	//logging.Logger.Error(lines)
 
 	for i := 1; i < len(lines); i++ {
 		line := lines[i]
@@ -131,7 +131,7 @@ func (p *CustomParser) parseHTTPRequest(requestStr string, vars map[string]strin
 
 	body := bodyBuilder.String()
 
-	logging.Logger.Debug(body)
+	//logging.Logger.Debug(body)
 
 	// Construct fasthttp request
 	req := fasthttp.AcquireRequest()
@@ -167,7 +167,7 @@ func (p *CustomParser) parseHTTPRequest(requestStr string, vars map[string]strin
 	}
 
 	logging.Logger.Debug(request)
-	logging.Logger.Debug(cmdActions)
+	//logging.Logger.Debug(cmdActions)
 
 	return request, cmdActions, nil
 }

@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/alp1n3-eth/cast/internal/http/capture"
 	"github.com/alp1n3-eth/cast/pkg/models"
 )
 
@@ -53,6 +54,11 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 	vars := make(map[string]string)
 
 	resolveVar := func(line string, vars map[string]string) string {
+		if capture.GlobalVars != nil {
+			for k, v := range capture.GlobalVars {
+				vars[k] = v
+			}
+		}
 
 		re := regexp.MustCompile(`([a-zA-Z0-9_]+)`) // Regex to capture ANY variable name (alphanumeric and underscore)
 		line = re.ReplaceAllStringFunc(line, func(s string) string {

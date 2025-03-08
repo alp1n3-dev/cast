@@ -43,7 +43,7 @@ func Execute(ctx context.Context, args []string) error {
 		Name:    "Cast",
 		Version: "v0.4-alpha",
 		//Authors: any[],
-		Usage:     "Make sending HTTP requests & testing APIs EZPZ.",
+		Usage:     "Make sending HTTP requests & testing APIs EZPZ.\nSubmit any bugs as an issue in the repo: https://github.com/alp1n3-eth/cast/issues",
 		UsageText: "placeholder text",
 		ArgsUsage: "[Method] [Protocol + Host] <Flags>",
 		Commands: []*cli.Command{
@@ -136,6 +136,8 @@ func FileAction(ctx context.Context, command *cli.Command) error {
 		assert.ValidateAssertions(&reqCtx.Response, reqCtx.Assertions)
 
 		capture.Capture(&reqCtx)
+		fmt.Println("global vars")
+		fmt.Println(capture.GlobalVars)
 	}
 
 	return nil

@@ -10,18 +10,24 @@ import (
 var GlobalCaptures []models.Capture
 
 // can be grabbed by the koanf parsers
-var GlobalVars map[string]string
+var GlobalVars map[string]string = make(map[string]string) // initializing the map
+//var GlobalVars map[string]string
 
 func Capture(ctxHTTP *models.HTTPRequestContext) map[string]string {
 	fmt.Println("reached capture function")
 	ctxHTTP.Captures = GlobalCaptures
+	fmt.Println("global capture:")
+	fmt.Println(ctxHTTP.Captures)
 	for _, capture := range ctxHTTP.Captures {
 		switch {
 		case capture.Location == "header":
 			captureHeaderVal(&ctxHTTP.Response, &capture)
 		case capture.Location == "resp" && capture.Operation == "regex":
 			fmt.Println("reached regex capture.go switch")
-			captureRegex(&ctxHTTP.Response, &capture)
+			err := captureRegex(&ctxHTTP.Response, &capture)
+			if err != nil {
+				fmt.Printf("error: %s", err)
+			}
 
 		}
 	}
@@ -38,11 +44,16 @@ func captureHeaderVal(resp *models.Response, capture *models.Capture) error {
 }
 
 func captureRegex(resp *models.Response, capture *models.Capture) error {
+	fmt.Println("capture target")
+	fmt.Println(capture.Target)
 	re := regexp.MustCompile(capture.Target)
+	fmt.Println(string(resp.Body))
 	val := re.Find(resp.Body)
 	if val == nil {
 		return fmt.Errorf("no value found to capture from body: '%s'", capture.Target)
 	}
 	GlobalVars[capture.VarName] = string(val)
+	fmt.Println("globalvars from inside regex func")
+	fmt.Println(GlobalVars)
 	return nil
 }
