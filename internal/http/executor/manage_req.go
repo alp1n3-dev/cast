@@ -8,6 +8,8 @@ import (
 	"strings"
 
 	//"github.com/alp1n3-eth/cast/internal/http/executor"
+
+	"github.com/alp1n3-eth/cast/internal/http/capture"
 	"github.com/alp1n3-eth/cast/internal/http/parse"
 	output "github.com/alp1n3-eth/cast/internal/output/http"
 	"github.com/alp1n3-eth/cast/pkg/logging"
@@ -66,6 +68,12 @@ func SendHTTP(replacementVariables *map[string]string, HTTPCtx *models.HTTPReque
 		logging.Logger.Debugf("Replacement Variables: %s", replacementVariables)
 		parse.SwapReqVals(HTTPCtx.Request.Req, replacementVariables)
 		logging.Logger.Debug("Executed Successfully: SwapReqVals()")
+	}
+
+	if len(capture.GlobalVars) > 0 && (capture.GlobalVars != nil) {
+		logging.Logger.Debugf("Global Replacement Variables: %s", capture.GlobalVars)
+		parse.SwapReqVals(HTTPCtx.Request.Req, &capture.GlobalVars)
+		logging.Logger.Debug("Executed Successfully: SwapReqVals() - Global Replacement")
 	}
 
 	logging.Logger.Debugf("Request being sent: %s", HTTPCtx.Request.Req)
