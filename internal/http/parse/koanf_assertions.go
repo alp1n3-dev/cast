@@ -20,8 +20,12 @@ func (p *CustomParser) parseAssertions(assertLines []string) ([]models.Assertion
 			continue // Skip invalid assertion lines - must have all parts.
 		}
 
+		//if len(parts[1]) == 1 {
+		//logging.Logger.Debug("CAPTURE DETECTED CAPTURE DETECTED")
+		//}
+
 		if parts[1] == "=" && len(parts) == 4 {
-			fmt.Printf("REACHED PARSING CAPTURE")
+			//fmt.Printf("REACHED PARSING CAPTURE")
 
 			capture1 := models.Capture{
 				Location:  "resp",
@@ -36,13 +40,13 @@ func (p *CustomParser) parseAssertions(assertLines []string) ([]models.Assertion
 
 		}
 
-		if parts[0] == "status" && len(parts) == 2 {
+		if parts[0] == "status" {
 			// Handle status code assertions
 			assertion := models.Assertion{
 				Type:     "status",
 				Target:   "", //status code doesn't have a target
-				Operator: "==",
-				Expected: parts[1],
+				Operator: parts[1],
+				Expected: parts[2],
 			}
 			assertions = append(assertions, assertion)
 		} else if parts[0] == "header" {
@@ -56,14 +60,14 @@ func (p *CustomParser) parseAssertions(assertLines []string) ([]models.Assertion
 				}
 				assertions = append(assertions, assertion)
 			}
-			if len(parts) == 3 {
+			if parts[0] == "header" && len(parts) == 3 {
 				assertion := models.Assertion{
 					Type:     "header",
 					Target:   "", //status code doesn't have a target
 					Operator: parts[1],
 					Expected: parts[2],
 				}
-				fmt.Println(assertion)
+				//fmt.Println(assertion)
 				assertions = append(assertions, assertion)
 			}
 

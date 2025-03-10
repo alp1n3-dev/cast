@@ -62,6 +62,8 @@ func validateStatusCode(resp *models.Response, expectedStr *string) error {
 		return fmt.Errorf("status assertion failed. expected: %d, actual: %d", expectedInt, resp.StatusCode)
 	}
 
+	logging.Logger.Info("status assertion successful")
+
 	return nil
 }
 
