@@ -1,5 +1,5 @@
 # Authentication Sequence
-[vars]
+[pre]
 env_token = "$env.token$"
 host_header = "Host: example.com"
 
@@ -14,13 +14,14 @@ X-Request-ID: uuid
   "pass": "env_token"
 }
 
-[assert]
-status 200
-header "Location"
-header NOT "X-Rate-Limit"
+[post]
+status == 200
+header == "Location"
+header == Cache-Control
+header != "X-Rate-Limit"
 captureVal = regex (?i)\s*Access\s+Denied\s*
 
-[vars]
+[pre]
 auth_token = "$.token$"
 
 # Request Resources Endpoint

@@ -8,7 +8,6 @@ import (
 
 	"github.com/alp1n3-eth/cast/pkg/logging"
 	"github.com/alp1n3-eth/cast/pkg/models"
-	"github.com/valyala/fasthttp"
 )
 
 func ValidateAssertions(resp *models.Response, assertions []models.Assertion) {
@@ -41,8 +40,10 @@ func ValidateAssertions(resp *models.Response, assertions []models.Assertion) {
 		// regex
 
 		case assertion.Type == "size":
-		// size
-
+			err = validateSize(resp, &assertion)
+			if err != nil {
+				logging.Logger.Error(err)
+			}
 		case assertion.Type == "json":
 			// json body
 
@@ -66,45 +67,27 @@ func validateStatusCode(resp *models.Response, expectedStr *string) error {
 
 func validateHeader(resp *models.Response, assertion *models.Assertion) error {
 	//headerContents := resp.Header.PeekAll(assertion.Target)
-	if assertion.Operator == "NOT" {
+	if assertion.Operator == "!=" {
 		for _, f := range resp.Headers {
 			if strings.Contains(f, assertion.Target) {
 
 				return fmt.Errorf("header assertion failed. Expect '%s' to NOT be present", assertion.Expected)
 			}
 		}
+
 		return nil
 	}
 
-	if _, ok := resp.Headers[assertion.Target]; ok {
-		if _, ok := resp.Headers[assertion.Expected]; ok {
-			return nil
-		}
+	//fmt.Println(resp.Headers)
+	//fmt.Println(assertion.Target)
+	//fmt.Println(assertion.Expected)
+
+	if value, ok := resp.Headers[assertion.Expected]; ok {
+		logging.Logger.Infof("Assertion successful. Expected %s, present %s", assertion.Expected, value)
+		return nil
 	}
-
-	/*
-
-		if strings.Contains(resp.Headers, assertion.Target) {
-			if strings.Contains(resp.Headers, assertion.Expected) {
-				return nil
-			}
-		}
-	*/
 
 	return fmt.Errorf("header assertion failed. Expect '%s' to be present", assertion.Expected)
-	/*
-		if headerContents == nil {
-			return fmt.Errorf("header validation target does not exist")
-		}
-
-		searchBytes := []byte(assertion.Expected)
-		for _, row := range headerContents {
-			if bytes.Contains(row, searchBytes) {
-				return nil
-			}
-		}
-		return nil
-	*/
 }
 
 func validateBody(resp *models.Response, expectedStr string) error {
@@ -115,18 +98,63 @@ func validateBody(resp *models.Response, expectedStr string) error {
 	return fmt.Errorf("body assertion failed")
 }
 
-func validateRegex(resp *fasthttp.Response, expectedStr string) error {
+func validateRegex(resp *models.Response, expectedStr string) error {
 
 	return nil
 }
 
-func validateSize(resp *fasthttp.Response, expectedInt int) error {
-	//
+func validateSize(resp *models.Response, assertion *models.Assertion) error {
+	expected, err := strconv.Atoi(assertion.Expected)
+	if err != nil {
+		return fmt.Errorf("error attempting to convert expected to int. Expected: %s", assertion.Expected)
+	}
 
-	return nil
+	if assertion.Operator == ">" {
+		if resp.Size > expected {
+			logging.Logger.Info("response size assertion successful")
+			return nil
+		}
+	}
+
+	if assertion.Operator == ">=" {
+		if resp.Size >= expected {
+			logging.Logger.Info("response size assertion successful")
+			return nil
+		}
+	}
+
+	if assertion.Operator == "<" {
+		if resp.Size < expected {
+			logging.Logger.Info("response size assertion successful")
+			return nil
+		}
+	}
+
+	if assertion.Operator == "<=" {
+		if resp.Size <= expected {
+			logging.Logger.Info("response size assertion successful")
+			return nil
+		}
+	}
+
+	if assertion.Operator == "==" {
+		if resp.Size == expected {
+			logging.Logger.Info("response size assertion successful")
+			return nil
+		}
+	}
+
+	if assertion.Operator == "!=" {
+		if resp.Size != expected {
+			logging.Logger.Info("response size assertion successful")
+			return nil
+		}
+	}
+
+	return fmt.Errorf("error parsing response size assertion. Expected: %s, Operator: %s", assertion.Expected, assertion.Operator)
 }
 
-func validateJSON(resp *fasthttp.Response, expectedStr string) error {
+func validateJSON(resp *models.Response, expectedStr string) error {
 	//
 
 	return nil

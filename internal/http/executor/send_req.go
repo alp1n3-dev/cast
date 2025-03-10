@@ -115,5 +115,8 @@ func buildResp(resp *fasthttp.Response, duration int64, storeResp *models.Respon
 	storeResp.Body = resp.Body()
 	storeResp.Duration = int(duration)
 
+	storeResp.Size = len(resp.Body()) + len(resp.Header.Header())
+	fmt.Println(storeResp.Size)
+
 	return
 }

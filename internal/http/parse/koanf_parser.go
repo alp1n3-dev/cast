@@ -83,8 +83,8 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 		if strings.HasPrefix(line, "[") && strings.HasSuffix(line, "]") {
 			sectionName := strings.Trim(line, "[]")
 			switch sectionName {
-			case "vars":
-				currentSection = "vars"
+			case "pre":
+				currentSection = "pre"
 			case "request":
 				// Process previous request if exists
 				if len(requestLines) > 0 {
@@ -101,8 +101,8 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 					// Keep vars for chained requests
 				}
 				currentSection = "request"
-			case "assert":
-				currentSection = "assert"
+			case "post":
+				currentSection = "post"
 			default:
 				currentSection = "" // Unknown section
 			}
@@ -110,7 +110,7 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 		}
 
 		switch currentSection {
-		case "vars":
+		case "pre":
 			parts := strings.SplitN(line, "=", 2)
 			if len(parts) == 2 {
 				key := strings.TrimSpace(parts[0])
@@ -122,7 +122,7 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 			if !strings.HasPrefix(line, "#") {
 				requestLines = append(requestLines, line)
 			}
-		case "assert":
+		case "post":
 			if !strings.HasPrefix(line, "#") {
 				assertLines = append(assertLines, line)
 			}

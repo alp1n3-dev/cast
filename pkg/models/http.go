@@ -24,6 +24,7 @@ type Response struct {
 	ContentType string
 	Body        []byte
 	Duration    int
+	Size        int
 }
 
 type CommandActions struct {
