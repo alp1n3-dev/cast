@@ -26,6 +26,9 @@ func (p *CustomParser) parseAssertions(assertLines []string) ([]models.Assertion
 
 		if parts[1] == "=" && len(parts) == 4 {
 			//fmt.Printf("REACHED PARSING CAPTURE")
+			parts[3] = strings.TrimSuffix(parts[3], `"`)
+
+			parts[3] = strings.TrimPrefix(parts[3], `"`)
 
 			capture1 := models.Capture{
 				Location:  "resp",

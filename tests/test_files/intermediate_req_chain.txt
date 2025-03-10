@@ -16,10 +16,11 @@ X-Request-ID: uuid
 
 [post]
 status == 200
-header == "Location"
-header == Cache-Control
+header == "Cache-Control"
+header "Cache-Control" == "max-age=0"
 header != "X-Rate-Limit"
 captureVal = regex (?i)\s*Access\s+Denied\s*
+captureHeaderVal = header "Content-Type"
 
 [pre]
 auth_token = "$.token$"
@@ -30,3 +31,4 @@ GET /resources HTTP/1.1
 host_header
 Authorization: Bearer auth_token
 captureTarg: captureVal
+testTwo: captureHeaderVal

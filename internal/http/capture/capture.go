@@ -20,8 +20,12 @@ func Capture(ctxHTTP *models.HTTPRequestContext) map[string]string {
 	fmt.Println(ctxHTTP.Captures)
 	for _, capture := range ctxHTTP.Captures {
 		switch {
-		case capture.Location == "header":
-			captureHeaderVal(&ctxHTTP.Response, &capture)
+		case capture.Operation == "header":
+			fmt.Println("reached inside header capture operation")
+			err := captureHeaderVal(&ctxHTTP.Response, &capture)
+			if err != nil {
+				fmt.Printf("error: %s", err)
+			}
 		case capture.Location == "resp" && capture.Operation == "regex":
 			fmt.Println("reached regex capture.go switch")
 			err := captureRegex(&ctxHTTP.Response, &capture)
