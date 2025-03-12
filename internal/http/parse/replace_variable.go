@@ -50,7 +50,7 @@ func replaceAllVariables(target string, replacementVariables *map[string]string)
 	for key, value := range *replacementVariables {
 		if strings.Contains(target, key) {
 			//fmt.Println("replacing with strings.contains, key=", key, "value=", value)
-			logging.Logger.Infof("Replacing [%s] using key [%s] & value [%s]", target, key, value)
+			logging.Logger.Debugf("Replacing [%s] using key [%s] & value [%s]", target, key, value)
 
 			target = strings.ReplaceAll(target, key, value)
 		}

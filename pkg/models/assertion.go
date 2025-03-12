@@ -25,3 +25,9 @@ type Capture struct {
 	VarName   string // name to save it as
 	Operation string // simple string, json, regex
 }
+
+type ResultOut struct {
+	Duration     int
+	RequestTotal int
+	FailureTotal int
+}

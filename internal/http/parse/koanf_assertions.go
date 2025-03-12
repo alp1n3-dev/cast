@@ -27,6 +27,7 @@ func (p *CustomParser) parseAssertions(assertLines []string) ([]models.Assertion
 			parts[i] = strings.TrimSuffix(parts[i], `"`)
 			parts[i] = strings.TrimPrefix(parts[i], `"`)
 		}
+		//fmt.Println(parts)
 
 		if parts[1] == "=" && len(parts) == 4 {
 			//fmt.Printf("REACHED PARSING CAPTURE")
@@ -69,12 +70,22 @@ func (p *CustomParser) parseAssertions(assertLines []string) ([]models.Assertion
 					assertions = append(assertions, assertion)
 				}
 			*/
-			if parts[0] == "header" && len(parts) == 4 {
+			if parts[0] == "header" && len(parts) == 4 && strings.Contains(parts[2], "==") {
 				assertion := models.Assertion{
 					Type:     "header.value", // header
 					Target:   parts[1],       // target header
 					Operator: parts[2],       // ==, !=
 					Expected: parts[3],       // wanted value
+				}
+				//fmt.Println(assertion)
+				assertions = append(assertions, assertion)
+			} else if (strings.Contains(parts[1], "==") || strings.Contains(parts[1], "!=")) && len(parts) == 3 {
+				//fmt.Println(parts)
+				assertion := models.Assertion{
+					Type:     parts[0], // header
+					Target:   parts[2], // target header
+					Operator: parts[1], // ==, !=
+					Expected: parts[2], // wanted value
 				}
 				//fmt.Println(assertion)
 				assertions = append(assertions, assertion)

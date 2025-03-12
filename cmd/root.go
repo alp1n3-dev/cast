@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"time"
 
 	//"log"
 	"os"
@@ -15,6 +16,7 @@ import (
 	"github.com/alp1n3-eth/cast/internal/http/capture"
 	"github.com/alp1n3-eth/cast/internal/http/executor"
 	"github.com/alp1n3-eth/cast/internal/http/parse"
+	output "github.com/alp1n3-eth/cast/internal/output/http"
 	"github.com/alp1n3-eth/cast/pkg/models"
 	"github.com/urfave/cli/v3"
 	"github.com/valyala/fasthttp"
@@ -125,6 +127,10 @@ func FileAction(ctx context.Context, command *cli.Command) error {
 		return fmt.Errorf("failed to parse file: %w", err)
 	}
 
+	var results models.ResultOut
+
+	startTime := time.Now()
+
 	for i := 0; i < len(castFile.CtxMap); i++ {
 		var reqCtx models.HTTPRequestContext
 		reqCtx = castFile.CtxMap[i]
@@ -132,13 +138,21 @@ func FileAction(ctx context.Context, command *cli.Command) error {
 		var replacementPlaceholder map[string]string
 
 		executor.SendHTTP(&replacementPlaceholder, &reqCtx)
+		results.RequestTotal += 1
 
-		assert.ValidateAssertions(&reqCtx.Response, reqCtx.Assertions)
+		assert.ValidateAssertions(&reqCtx.Response, reqCtx.Assertions, &results)
+
+		if i < (len(castFile.CtxMap) - 1) {
+			fmt.Println()
+		}
 
 		capture.Capture(&reqCtx)
 		//fmt.Println("global vars")
 		//fmt.Println(capture.GlobalVars)
 	}
+	results.Duration = int(time.Since(startTime).Milliseconds())
+
+	output.FileRun(&results)
 
 	return nil
 }

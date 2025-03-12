@@ -10,7 +10,7 @@ import (
 	"github.com/alp1n3-eth/cast/pkg/models"
 )
 
-func ValidateAssertions(resp *models.Response, assertions []models.Assertion) {
+func ValidateAssertions(resp *models.Response, assertions []models.Assertion, result *models.ResultOut) {
 	var err error
 	logging.Logger.Debug(assertions)
 	for _, assertion := range assertions {
@@ -20,6 +20,7 @@ func ValidateAssertions(resp *models.Response, assertions []models.Assertion) {
 			err = validateStatusCode(resp, &assertion.Expected)
 			if err != nil {
 				logging.Logger.Error(err)
+				result.FailureTotal += 1
 			}
 
 		case assertion.Type == "header.value":
@@ -27,21 +28,30 @@ func ValidateAssertions(resp *models.Response, assertions []models.Assertion) {
 			err = validateHeaderValue(resp, &assertion)
 			if err != nil {
 				logging.Logger.Error(err)
+				result.FailureTotal += 1
 			}
 
-			/*
-				// Header presence/absence checks
-				err = validateHeader(resp, &assertion)
-				if err != nil {
-					logging.Logger.Error(err)
-				}
-			*/
+		/*
+			// Header presence/absence checks
+			err = validateHeader(resp, &assertion)
+			if err != nil {
+				logging.Logger.Error(err)
+			}
+		*/
+		case assertion.Type == "header":
+			//fmt.Println(assertion)
+			// Header presence/absence checks
+			err = validateHeader(resp, &assertion)
+			if err != nil {
+				logging.Logger.Error(err)
+			}
 
 		case assertion.Type == "body":
 			// body
 			err = validateBody(resp, assertion.Expected)
 			if err != nil {
 				logging.Logger.Error(err)
+				result.FailureTotal += 1
 			}
 
 		case assertion.Type == "regex":
@@ -51,6 +61,7 @@ func ValidateAssertions(resp *models.Response, assertions []models.Assertion) {
 			err = validateSize(resp, &assertion)
 			if err != nil {
 				logging.Logger.Error(err)
+				result.FailureTotal += 1
 			}
 		case assertion.Type == "json":
 			// json body
@@ -79,17 +90,17 @@ func validateHeaderValue(resp *models.Response, assertion *models.Assertion) err
 
 	if assertion.Operator == "!=" {
 		if assertion.Expected == resp.Headers[assertion.Target] {
-			return fmt.Errorf("ASSERT FAILURE - Target: %s, NOT Value: %s", assertion.Target, assertion.Expected)
+			return fmt.Errorf("NEGATIVE ASSERT FAILURE - Not Expected: %s, Actual: %s", assertion.Target, assertion.Expected)
 		}
 		return nil
 	}
 
 	if assertion.Expected == resp.Headers[assertion.Target] {
-		logging.Logger.Infof("ASSERT SUCCESS - Target: %s, Value: %s", assertion.Target, assertion.Expected)
+		logging.Logger.Infof("ASSERT SUCCESS - Expected: %s, Actual: %s", assertion.Target, assertion.Expected)
 		return nil
 	}
 
-	return fmt.Errorf("header value assertion failed. Expected '%s' value in %s header", assertion.Expected, assertion.Target)
+	return fmt.Errorf("ASSERT FAILURE - Expected: %s, Target: %s", assertion.Expected, assertion.Target)
 }
 
 func validateHeader(resp *models.Response, assertion *models.Assertion) error {
@@ -102,6 +113,7 @@ func validateHeader(resp *models.Response, assertion *models.Assertion) error {
 			}
 		}
 
+		logging.Logger.Infof("ASSERT SUCCESS - Expected: %s, is NOT present", assertion.Expected)
 		return nil
 	}
 
@@ -110,19 +122,20 @@ func validateHeader(resp *models.Response, assertion *models.Assertion) error {
 	//fmt.Println(assertion.Expected)
 
 	if value, ok := resp.Headers[assertion.Expected]; ok {
-		logging.Logger.Infof("Assertion successful. Expected %s, present %s", assertion.Expected, value)
+		logging.Logger.Infof("ASSERT SUCCESS - Expected: %s, Actual: %s", assertion.Expected, value)
 		return nil
 	}
 
-	return fmt.Errorf("header assertion failed. Expect '%s' to be present", assertion.Expected)
+	return fmt.Errorf("ASSERT FAILURE - Expected: %s", assertion.Expected)
 }
 
 func validateBody(resp *models.Response, expectedStr string) error {
 	if bytes.Contains(resp.Body, []byte(expectedStr)) {
+		logging.Logger.Infof("ASSERT SUCCESS - Expected: %s, Location: Body", expectedStr)
 		return nil
 	}
 
-	return fmt.Errorf("body assertion failed")
+	return fmt.Errorf("ASSERT FAILURE - Expected: %s, Location: Body", expectedStr)
 }
 
 func validateRegex(resp *models.Response, expectedStr string) error {
@@ -138,47 +151,47 @@ func validateSize(resp *models.Response, assertion *models.Assertion) error {
 
 	if assertion.Operator == ">" {
 		if resp.Size > expected {
-			logging.Logger.Info("response size assertion successful")
+			logging.Logger.Infof("ASSERT SUCCESS - Expected Size: %d", expected)
 			return nil
 		}
 	}
 
 	if assertion.Operator == ">=" {
 		if resp.Size >= expected {
-			logging.Logger.Info("response size assertion successful")
+			logging.Logger.Infof("ASSERT SUCCESS - Expected Size: %d", expected)
 			return nil
 		}
 	}
 
 	if assertion.Operator == "<" {
 		if resp.Size < expected {
-			logging.Logger.Info("response size assertion successful")
+			logging.Logger.Infof("ASSERT SUCCESS - Expected Size: %d", expected)
 			return nil
 		}
 	}
 
 	if assertion.Operator == "<=" {
 		if resp.Size <= expected {
-			logging.Logger.Info("response size assertion successful")
+			logging.Logger.Infof("ASSERT SUCCESS - Expected Size: %d", expected)
 			return nil
 		}
 	}
 
 	if assertion.Operator == "==" {
 		if resp.Size == expected {
-			logging.Logger.Info("response size assertion successful")
+			logging.Logger.Infof("ASSERT SUCCESS - Expected Size: %d", expected)
 			return nil
 		}
 	}
 
 	if assertion.Operator == "!=" {
 		if resp.Size != expected {
-			logging.Logger.Info("response size assertion successful")
+			logging.Logger.Infof("ASSERT SUCCESS - Expected Size: %d", expected)
 			return nil
 		}
 	}
 
-	return fmt.Errorf("error parsing response size assertion. Expected: %s, Operator: %s", assertion.Expected, assertion.Operator)
+	return fmt.Errorf("ASSERT FAILURE - Expected: %s, Operator: %s", assertion.Expected, assertion.Operator)
 }
 
 func validateJSON(resp *models.Response, expectedStr string) error {
