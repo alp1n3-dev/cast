@@ -23,12 +23,17 @@ func (p *CustomParser) parseAssertions(assertLines []string) ([]models.Assertion
 		//if len(parts[1]) == 1 {
 		//logging.Logger.Debug("CAPTURE DETECTED CAPTURE DETECTED")
 		//}
+		//if strings.HasSuffix(, suffix string)
+		for i, _ := range parts {
+			parts[i] = strings.TrimSuffix(parts[i], `"`)
+			parts[i] = strings.TrimPrefix(parts[i], `"`)
+		}
 
 		if parts[1] == "=" && len(parts) == 4 {
 			//fmt.Printf("REACHED PARSING CAPTURE")
-			parts[3] = strings.TrimSuffix(parts[3], `"`)
+			//parts[3] = strings.TrimSuffix(parts[3], `"`)
 
-			parts[3] = strings.TrimPrefix(parts[3], `"`)
+			//parts[3] = strings.TrimPrefix(parts[3], `"`)
 
 			capture1 := models.Capture{
 				Location:  "resp",

@@ -11,6 +11,7 @@ import (
 
 	"github.com/alp1n3-eth/cast/internal/http/capture"
 	"github.com/alp1n3-eth/cast/pkg/models"
+	"github.com/google/uuid"
 )
 
 var vars map[string]string
@@ -59,6 +60,8 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 				vars[k] = v
 			}
 		}
+
+		// Perform functions before doing replacements.
 
 		re := regexp.MustCompile(`([a-zA-Z0-9_]+)`) // Regex to capture ANY variable name (alphanumeric and underscore)
 		line = re.ReplaceAllStringFunc(line, func(s string) string {
@@ -115,6 +118,9 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 			if len(parts) == 2 {
 				key := strings.TrimSpace(parts[0])
 				value := strings.TrimSpace(parts[1])
+				if !strings.HasPrefix(value, `"`) && !strings.HasSuffix(value, `"`) {
+					value = runScripts(value)
+				}
 				value = strings.Trim(value, `"`)
 				vars[key] = resolveVar(value, vars)
 			}
@@ -148,4 +154,23 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 // Marshal marshals the given config map to bytes.
 func (p *CustomParser) Marshal(m map[string]interface{}) ([]byte, error) {
 	return []byte{}, nil
+}
+
+func runScripts(str string) string {
+	var value string
+	fmt.Printf("value: %s", value)
+
+	if str == "uuidv7()" {
+		uuid, err := uuid.NewV7()
+		if err != nil {
+			fmt.Errorf("failed to generate UUID v7")
+			fmt.Errorf("failed to generate UUID v7")
+			fmt.Errorf("failed to generate UUID v7")
+			fmt.Errorf("failed to generate UUID v7")
+			return value
+		}
+		value = uuid.String()
+	}
+
+	return value
 }

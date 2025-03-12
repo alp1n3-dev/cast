@@ -1,6 +1,6 @@
 # Authentication Sequence
 [pre]
-env_token = "$env.token$"
+env_token = uuidv7()
 host_header = "Host: example.com"
 
 [request]
@@ -15,11 +15,10 @@ X-Request-ID: uuid
 }
 
 [post]
-status == 200
-header == "Cache-Control"
+status == "200"
 header "Cache-Control" == "max-age=0"
 header != "X-Rate-Limit"
-captureVal = regex (?i)\s*Access\s+Denied\s*
+captureVal = regex "(?i)\s*Access\s+Denied\s*"
 captureHeaderVal = header "Content-Type"
 
 [pre]
