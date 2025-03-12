@@ -163,10 +163,7 @@ func runScripts(str string) string {
 	if str == "uuidv7()" {
 		uuid, err := uuid.NewV7()
 		if err != nil {
-			fmt.Errorf("failed to generate UUID v7")
-			fmt.Errorf("failed to generate UUID v7")
-			fmt.Errorf("failed to generate UUID v7")
-			fmt.Errorf("failed to generate UUID v7")
+			fmt.Println(fmt.Errorf("failed to generate UUID v7"))
 			return value
 		}
 		value = uuid.String()

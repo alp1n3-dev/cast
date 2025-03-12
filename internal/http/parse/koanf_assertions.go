@@ -58,22 +58,24 @@ func (p *CustomParser) parseAssertions(assertLines []string) ([]models.Assertion
 			}
 			assertions = append(assertions, assertion)
 		} else if parts[0] == "header" {
-			if len(parts) == 2 {
-				// Handle status code assertions
-				assertion := models.Assertion{
-					Type:     "header",
-					Target:   "", //status code doesn't have a target
-					Operator: "==",
-					Expected: parts[1],
+			/*
+				if len(parts) == 2 {
+					// Handle status code assertions
+					assertion := models.Assertion{
+						Type:     "header",
+						Target:   "", //status code doesn't have a target
+						Operator: "==",
+						Expected: parts[1],
+					}
+					assertions = append(assertions, assertion)
 				}
-				assertions = append(assertions, assertion)
-			}
-			if parts[0] == "header" && len(parts) == 3 {
+			*/
+			if parts[0] == "header" && len(parts) == 4 {
 				assertion := models.Assertion{
-					Type:     "header",
-					Target:   "", //status code doesn't have a target
-					Operator: parts[1],
-					Expected: parts[2],
+					Type:     "header.value", // header
+					Target:   parts[1],       // target header
+					Operator: parts[2],       // ==, !=
+					Expected: parts[3],       // wanted value
 				}
 				//fmt.Println(assertion)
 				assertions = append(assertions, assertion)

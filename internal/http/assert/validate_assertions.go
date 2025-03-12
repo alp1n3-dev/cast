@@ -22,12 +22,20 @@ func ValidateAssertions(resp *models.Response, assertions []models.Assertion) {
 				logging.Logger.Error(err)
 			}
 
-		case assertion.Type == "header":
-			// Header presence/absence checks
-			err = validateHeader(resp, &assertion)
+		case assertion.Type == "header.value":
+			// Header value check
+			err = validateHeaderValue(resp, &assertion)
 			if err != nil {
 				logging.Logger.Error(err)
 			}
+
+			/*
+				// Header presence/absence checks
+				err = validateHeader(resp, &assertion)
+				if err != nil {
+					logging.Logger.Error(err)
+				}
+			*/
 
 		case assertion.Type == "body":
 			// body
@@ -65,6 +73,23 @@ func validateStatusCode(resp *models.Response, expectedStr *string) error {
 	logging.Logger.Info("status assertion successful")
 
 	return nil
+}
+
+func validateHeaderValue(resp *models.Response, assertion *models.Assertion) error {
+
+	if assertion.Operator == "!=" {
+		if assertion.Expected == resp.Headers[assertion.Target] {
+			return fmt.Errorf("ASSERT FAILURE - Target: %s, NOT Value: %s", assertion.Target, assertion.Expected)
+		}
+		return nil
+	}
+
+	if assertion.Expected == resp.Headers[assertion.Target] {
+		logging.Logger.Infof("ASSERT SUCCESS - Target: %s, Value: %s", assertion.Target, assertion.Expected)
+		return nil
+	}
+
+	return fmt.Errorf("header value assertion failed. Expected '%s' value in %s header", assertion.Expected, assertion.Target)
 }
 
 func validateHeader(resp *models.Response, assertion *models.Assertion) error {
