@@ -180,14 +180,14 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 
 ### file focus (> v0.5)
 
-- [ ] File input
-- [ ] Assertions
-- [ ] Re-work folders to increase clarity
-- [ ] Review `fasthttp` byte buffer tricks & best practices to ensure they're utilized correctly, along with pooling (especially regarding multi-request scenarios)
+- [x] File input
+- [x] Assertions
+- [ ] Re-work folders & file names, to increase clarity
+- [ ] Review `fasthttp` byte buffer tricks & best practices to ensure they're utilized correctly, along with pooling (especially regarding multi-request scenarios via file)
+- [ ] Add support for similar flags that are used in the `cli` into the `file` functionality.
 
 **v0.6**
 
-- [ ] Config
 - [ ] Add custom assertion errors to logger.
 - [ ] Run a directory (alphabetically / in order) option `cast --directory /tests/auth` (alias `-DIR`). Runs each `.cast` file sequentially.
 - [ ] Verify and fill out all CLI help text, instructions, and usage in the flag `.go` files.
@@ -198,6 +198,7 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 - [ ] Support proxying
 - [ ] Support client certificates
 - [ ] Export as cURL command(s) `cast --curl-export -F auth.cast` (Both file and one-off CLI commands)
+- [ ] Run it through Snyk and Semgrep
 
 **v0.8**
 

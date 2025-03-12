@@ -1,5 +1,5 @@
 package platforms
 
 /*
-Flag that can be enabled to print the command's equivalent cURL command for each request.
+Import / Export series of cURL requests (export as file AND CLI command).
 */

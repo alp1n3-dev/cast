@@ -99,7 +99,7 @@ func OutputResponse(resp *models.Response, args *models.CommandActions) {
 
 	if !args.More {
 		//resp.Body = resp.Body[:100]
-		truncatedMsg := []byte("\n\033[36m[TRUNCATED]\033[0m\n")
+		truncatedMsg := []byte("\n\033[36m[TRUNCATED]\033[0m\n\n")
 		resp.Body = append(resp.Body[:120], truncatedMsg...)
 		//resp.Body = resp.Body[:100] + []byte("\n[TRUNCATED]")
 	}

@@ -66,7 +66,7 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 		re := regexp.MustCompile(`([a-zA-Z0-9_]+)`) // Regex to capture ANY variable name (alphanumeric and underscore)
 		line = re.ReplaceAllStringFunc(line, func(s string) string {
 			if val, ok := vars[s]; ok { // Directly use the key "auth_token"
-				fmt.Printf("Replacing '%s' with '%s'", s, val)
+				//fmt.Printf("Replacing '%s' with '%s'", s, val)
 				return val
 			}
 			//fmt.Printf("Variable '%s' not found", s)
@@ -158,7 +158,7 @@ func (p *CustomParser) Marshal(m map[string]interface{}) ([]byte, error) {
 
 func runScripts(str string) string {
 	var value string
-	fmt.Printf("value: %s", value)
+	//fmt.Printf("value: %s", value)
 
 	if str == "uuidv7()" {
 		uuid, err := uuid.NewV7()

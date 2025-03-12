@@ -20,9 +20,9 @@ import (
 
 func SendHTTP(replacementVariables *map[string]string, HTTPCtx *models.HTTPRequestContext) {
 
-	//logging.Init(HTTPCtx.CmdArgs.Debug)
-	logging.Init(true)                                                             // temporarily turning debug on
-	HTTPCtx.CmdArgs.PrintOptions = append(HTTPCtx.CmdArgs.PrintOptions, "request") // temporarily turning print request on as well
+	logging.Init(HTTPCtx.CmdArgs.Debug)
+	//logging.Init(true)                                                             // temporarily turning debug on
+	//HTTPCtx.CmdArgs.PrintOptions = append(HTTPCtx.CmdArgs.PrintOptions, "request") // temporarily turning print request on as well
 
 	logging.Logger.Debugf("Debug: %t, Method: %s, URI: %s", HTTPCtx.CmdArgs.Debug, HTTPCtx.CmdArgs.Method, HTTPCtx.CmdArgs.URL)
 

@@ -136,8 +136,8 @@ func FileAction(ctx context.Context, command *cli.Command) error {
 		assert.ValidateAssertions(&reqCtx.Response, reqCtx.Assertions)
 
 		capture.Capture(&reqCtx)
-		fmt.Println("global vars")
-		fmt.Println(capture.GlobalVars)
+		//fmt.Println("global vars")
+		//fmt.Println(capture.GlobalVars)
 	}
 
 	return nil

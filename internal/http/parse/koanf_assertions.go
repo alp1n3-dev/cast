@@ -1,7 +1,6 @@
 package parse
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/alp1n3-eth/cast/internal/http/capture"
@@ -24,7 +23,7 @@ func (p *CustomParser) parseAssertions(assertLines []string) ([]models.Assertion
 		//logging.Logger.Debug("CAPTURE DETECTED CAPTURE DETECTED")
 		//}
 		//if strings.HasSuffix(, suffix string)
-		for i, _ := range parts {
+		for i := range parts {
 			parts[i] = strings.TrimSuffix(parts[i], `"`)
 			parts[i] = strings.TrimPrefix(parts[i], `"`)
 		}
@@ -43,7 +42,7 @@ func (p *CustomParser) parseAssertions(assertLines []string) ([]models.Assertion
 			}
 
 			capture.GlobalCaptures = append(capture.GlobalCaptures, capture1)
-			fmt.Println(capture.GlobalCaptures)
+			//fmt.Println(capture.GlobalCaptures)
 			//captures = append(captures, capture1)
 
 		}

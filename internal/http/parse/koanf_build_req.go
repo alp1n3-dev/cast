@@ -75,7 +75,10 @@ func (p *CustomParser) parseHTTPRequest(requestStr string, vars map[string]strin
 		fullURL = methodURL[1]
 	}
 
-	logging.Init(true)
+	// hardcoded debug turn on
+	//logging.Init(true)
+	// hardcoded debug turn off
+	logging.Init(false)
 
 	// Split the full URL by space to get only the URL path
 	urlParts := strings.SplitN(fullURL, " ", 2)

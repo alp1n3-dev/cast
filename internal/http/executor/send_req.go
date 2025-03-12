@@ -1,8 +1,6 @@
 package executor
 
 import (
-	"fmt"
-
 	"time"
 
 	"github.com/valyala/fasthttp"
@@ -77,7 +75,7 @@ func SendRequest(HTTPCtx *models.HTTPRequestContext) (*models.Response, error) {
 
 	//var respStore fasthttp.Response
 	//respStore = *resp
-	fmt.Println("reached end in send_rest.go")
+	//fmt.Println("reached end in send_rest.go")
 	//fmt.Println(storeResp)
 
 	return &storeResp, nil
@@ -116,7 +114,7 @@ func buildResp(resp *fasthttp.Response, duration int64, storeResp *models.Respon
 	storeResp.Duration = int(duration)
 
 	storeResp.Size = len(resp.Body()) + len(resp.Header.Header())
-	fmt.Println(storeResp.Size)
+	//fmt.Println(storeResp.Size)
 
 	return
 }
