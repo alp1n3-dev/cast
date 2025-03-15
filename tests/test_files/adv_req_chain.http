@@ -1,0 +1,56 @@
+# test created 2025-03-13
+# Authentication Sequence
+[pre]
+env_token = uuidv7()
+base64encoded = base64.encode("this is a base64 test encode")
+base64decoded = base64.decode("c2VjcmV0IGJhc2U2NA==")
+urlEncoded = url.encode("this is a url test encode")
+urlDecoded = url.decode("url%20decode%20this=%60%60%60")
+host_header = "Host: example.com"
+
+[request]
+POST /auth HTTP/1.1
+host_header
+Content-Type: application/json
+X-Request-ID: uuid
+
+{
+  "user": "user",
+  "pass": "env_token"
+  "b64encoded": "base64encoded"
+  "b64decoded": "base64decoded"
+  "uEncoded": "urlEncoded"
+  "uDecoded": "urlDecoded"
+}
+
+[post]
+status == "200"
+header "Cache-Control" == "max-age=0"
+header != "X-Rate-Limit"
+captureVal = regex "(?i)\s*Access\s+Denied\s*"
+captureHeaderVal = header "Content-Type"
+
+[pre]
+auth_token = uuidv7()
+b64captureVal = base64.encode(captureVal)
+
+# Request Resources Endpoint
+[request]
+GET /resources HTTP/1.1
+host_header
+Authorization: Bearer auth_token
+captureTarg: captureVal
+testTwo: captureHeaderVal
+
+[post]
+captureReq2 = simple "<title>" "</title>"
+status == "200"
+
+# Request Random Endpoint
+[request]
+GET /toastANDhoney HTTP/1.1
+host_header
+Authorization2: Bearer auth_token
+captureTarg2: captureVal
+testTwo2: captureHeaderVal
+simpleCapture: captureReq2

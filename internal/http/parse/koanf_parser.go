@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/alp1n3-eth/cast/internal/http/capture"
+	"github.com/alp1n3-eth/cast/internal/utils"
 	"github.com/alp1n3-eth/cast/pkg/models"
 	"github.com/google/uuid"
 )
@@ -158,6 +159,7 @@ func (p *CustomParser) Marshal(m map[string]interface{}) ([]byte, error) {
 
 func runScripts(str string) string {
 	var value string
+	var err error
 	//fmt.Printf("value: %s", value)
 
 	if str == "uuidv7()" {
@@ -167,6 +169,30 @@ func runScripts(str string) string {
 			return value
 		}
 		value = uuid.String()
+	}
+
+	if strings.Contains(str, "base64") {
+		before, after, _ := strings.Cut(str, `"`)
+		before, after, _ = strings.Cut(after, `"`)
+
+		if strings.Contains(str, "decode") {
+			value, err = utils.Base64(before, "decode")
+			if err != nil || value == "" {
+				//logging.Logger.Fatal(err)
+				fmt.Errorf("%s", err)
+			}
+			return value
+		}
+
+		if strings.Contains(str, "encode") {
+			value, err = utils.Base64(before, "encode")
+			if err != nil || value == "" {
+				//logging.Logger.Fatal(err)
+				fmt.Errorf("%s", err)
+			}
+			return value
+		}
+
 	}
 
 	return value

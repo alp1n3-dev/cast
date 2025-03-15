@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/valyala/fasthttp"
@@ -32,6 +33,8 @@ func SendRequest(HTTPCtx *models.HTTPRequestContext) (*models.Response, error) {
 	//defer fasthttp.ReleaseResponse(resp)
 
 	startTime := time.Now()
+
+	fmt.Println(HTTPCtx.Request.Req)
 
 	if HTTPCtx.CmdArgs.RedirectsToFollow > 0 {
 		if err = fasthttp.DoRedirects(HTTPCtx.Request.Req, resp, HTTPCtx.CmdArgs.RedirectsToFollow); err != nil {
