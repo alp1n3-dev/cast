@@ -11,7 +11,7 @@ import (
 
 	"github.com/alp1n3-eth/cast/internal/http/capture"
 	"github.com/alp1n3-eth/cast/internal/http/parse"
-	output "github.com/alp1n3-eth/cast/internal/output/http"
+	output "github.com/alp1n3-eth/cast/internal/output"
 	"github.com/alp1n3-eth/cast/pkg/logging"
 	"github.com/alp1n3-eth/cast/pkg/models"
 	"github.com/valyala/fasthttp"

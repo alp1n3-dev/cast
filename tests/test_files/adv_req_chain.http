@@ -1,12 +1,20 @@
 # test created 2025-03-13
 # Authentication Sequence
 [pre]
+# generate uuidv7
 env_token = uuidv7()
+# base64 encode
 base64encoded = base64.encode("this is a base64 test encode")
+# base64 decode
 base64decoded = base64.decode("c2VjcmV0IGJhc2U2NA==")
+# url encode
 urlEncoded = url.encode("this is a url test encode")
+# url decode
 urlDecoded = url.decode("url%20decode%20this=%60%60%60")
+# host header being set
 host_header = "Host: example.com"
+# run an external set of requests from a file before running the requests in this file.
+run(simple_request_chain.txt)
 
 [request]
 POST /auth HTTP/1.1
@@ -16,19 +24,26 @@ X-Request-ID: uuid
 
 {
   "user": "user",
-  "pass": "env_token"
-  "b64encoded": "base64encoded"
-  "b64decoded": "base64decoded"
-  "uEncoded": "urlEncoded"
+  "pass": "env_token",
+  "b64encoded": "base64encoded",
+  "b64decoded": "base64decoded",
+  "uEncoded": "urlEncoded",
   "uDecoded": "urlDecoded"
 }
 
 [post]
+# ensure status code is 200 OK
 status == "200"
+# ensure the cache control header contains that value
 header "Cache-Control" == "max-age=0"
+# ensure there is no rate limit header present
 header != "X-Rate-Limit"
+# capture a value from the response using regex
 captureVal = regex "(?i)\s*Access\s+Denied\s*"
+# capture the value from a header in the response
 captureHeaderVal = header "Content-Type"
+# capture the value between two strings if they're found
+captureBetween = "<html>", "/html"
 
 [pre]
 auth_token = uuidv7()
