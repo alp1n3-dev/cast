@@ -136,7 +136,7 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 				}
 				fmt.Println(string(out))
 				fmt.Println("cmd execution finished")
-				os.Exit(0)
+				//os.Exit(0)
 			}
 
 			parts := strings.SplitN(line, "=", 2)
