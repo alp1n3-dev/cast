@@ -242,6 +242,7 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 
 - [ ] Splitting import / export cURL commands into its own tool
 - [ ] Making an OpenAPI import / export separate tool
+- [ ] TUI app using Charm.sh tools
 
 ### _potential_ future plans
 

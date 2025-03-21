@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"os"
+	"os/exec"
 
 	//"os"
 	"regexp"
@@ -115,6 +117,28 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 
 		switch currentSection {
 		case "pre":
+			// Run a file before request.
+			if !strings.Contains(line, "=") && strings.Contains(line, "run") {
+				fmt.Println("[!] running a file of requests before actual provided file")
+
+				parts := strings.Split(line, "(")
+				parts2 := strings.Split(parts[1], ")")
+
+				fmt.Println("target file for pre-run:")
+				fmt.Println(parts2[0])
+				fmt.Println()
+
+				// ./cast file tests/test_files/adv_req_chain.http
+				out, err := exec.Command("./cast", "file", parts2[0]).Output()
+				if err != nil {
+					fmt.Println()
+					os.Exit(1)
+				}
+				fmt.Println(string(out))
+				fmt.Println("cmd execution finished")
+				os.Exit(0)
+			}
+
 			parts := strings.SplitN(line, "=", 2)
 			if len(parts) == 2 {
 				key := strings.TrimSpace(parts[0])

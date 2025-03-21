@@ -14,7 +14,7 @@ urlDecoded = url.decode("url%20decode%20this=%60%60%60")
 # host header being set
 host_header = "Host: example.com"
 # run an external set of requests from a file before running the requests in this file.
-run(simple_request_chain.txt)
+run(tests/test_files/simple_request_chain.txt)
 
 [request]
 POST /auth HTTP/1.1
