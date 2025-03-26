@@ -11,7 +11,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/alp1n3-eth/cast/internal/http/capture"
+	"github.com/alp1n3-eth/cast/internal/capture"
 	"github.com/alp1n3-eth/cast/internal/utils"
 	"github.com/alp1n3-eth/cast/pkg/models"
 	"github.com/google/uuid"

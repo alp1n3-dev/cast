@@ -182,7 +182,7 @@ Generally the program _shouldn't_ load / initiate / do anything that isn't invol
 
 - [x] File input
 - [x] Assertions
-- [ ] Re-work folders & file names, to increase clarity
+- [x] Re-work folders & file names, to increase clarity
 - [ ] Review `fasthttp` byte buffer tricks & best practices to ensure they're utilized correctly, along with pooling (especially regarding multi-request scenarios via file)
 - [ ] Add support for similar flags that are used in the `cli` into the `file` functionality.
 
