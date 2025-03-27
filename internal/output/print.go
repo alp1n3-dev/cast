@@ -97,11 +97,15 @@ func OutputResponse(resp *models.Response, args *models.CommandActions) {
 
 	}
 
-	if !args.More {
-		//resp.Body = resp.Body[:100]
+	// Turn off truncate-by-default
+	// Prev: if !args.More {
+	// TODO: Will need to fix, to make it an optional flag.
+	// WARNING: Need to modify, will break if response is too small. (AKA just a "hello" in the response body, for example.)
+	if args.More {
+
 		truncatedMsg := []byte("\n\033[36m[TRUNCATED]\033[0m\n\n")
 		resp.Body = append(resp.Body[:120], truncatedMsg...)
-		//resp.Body = resp.Body[:100] + []byte("\n[TRUNCATED]")
+
 	}
 
 	//fmt.Println("reached stdout in print.go")
