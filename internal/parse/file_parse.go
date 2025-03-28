@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"net/url"
 	"os"
 	"os/exec"
 
@@ -183,7 +184,7 @@ func (p *CustomParser) Marshal(m map[string]interface{}) ([]byte, error) {
 
 func runScripts(str string) string {
 	var value string
-	var err error
+	//var err error
 	//fmt.Printf("value: %s", value)
 
 	if str == "uuidv7()" {
@@ -196,27 +197,71 @@ func runScripts(str string) string {
 	}
 
 	if strings.Contains(str, "base64") {
-		before, after, _ := strings.Cut(str, `"`)
-		before, after, _ = strings.Cut(after, `"`)
+		return base64Ops(str)
+	}
 
-		if strings.Contains(str, "decode") {
-			value, err = utils.Base64(before, "decode")
-			if err != nil || value == "" {
-				//logging.Logger.Fatal(err)
-				fmt.Errorf("%s", err)
-			}
-			return value
+	if strings.Contains(str, "url") {
+		return urlOps(str)
+	}
+
+	return value
+}
+
+func urlOps(str string) string {
+	var value string
+	var err error
+
+	before, after, _ := strings.Cut(str, `"`)
+	before, after, _ = strings.Cut(after, `"`)
+
+	if strings.Contains(str, "decode") {
+		value, err = url.QueryUnescape(before)
+		if err != nil || value == "" {
+			//logging.Logger.Fatal(err)
+			//fmt.Errorf("%s", err)
+			fmt.Println(err)
 		}
+		return value
+	}
 
-		if strings.Contains(str, "encode") {
-			value, err = utils.Base64(before, "encode")
-			if err != nil || value == "" {
-				//logging.Logger.Fatal(err)
-				fmt.Errorf("%s", err)
-			}
-			return value
+	if strings.Contains(str, "encode") {
+		value = url.QueryEscape(before)
+		if err != nil || value == "" {
+			//logging.Logger.Fatal(err)
+			//fmt.Errorf("%s", err)
+			fmt.Println(err)
 		}
+		return value
+	}
 
+	return value
+}
+
+func base64Ops(str string) string {
+	var value string
+	var err error
+
+	before, after, _ := strings.Cut(str, `"`)
+	before, after, _ = strings.Cut(after, `"`)
+
+	if strings.Contains(str, "decode") {
+		value, err = utils.Base64(before, "decode")
+		if err != nil || value == "" {
+			//logging.Logger.Fatal(err)
+			//fmt.Errorf("%s", err)
+			fmt.Println(err)
+		}
+		return value
+	}
+
+	if strings.Contains(str, "encode") {
+		value, err = utils.Base64(before, "encode")
+		if err != nil || value == "" {
+			//logging.Logger.Fatal(err)
+			//fmt.Errorf("%s", err)
+			fmt.Println(err)
+		}
+		return value
 	}
 
 	return value
