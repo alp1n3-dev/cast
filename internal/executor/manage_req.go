@@ -42,7 +42,8 @@ func SendHTTP(replacementVariables *map[string]string, HTTPCtx *models.HTTPReque
 		//fmt.Scanln(&userChoice)
 		userChoice := "y" // temporarily hardcoding it
 		if userChoice == "y" {
-			http := "https://"
+			http := "http://" // temporary so that I can see traffic w/o cert/proxy.
+			//http := "https://"
 			http += requestURI
 			HTTPCtx.Request.Req.SetRequestURI(http)
 		}
