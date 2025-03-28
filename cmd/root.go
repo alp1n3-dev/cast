@@ -124,6 +124,7 @@ func FileAction(ctx context.Context, command *cli.Command) error {
 
 	parser := parse.CustomParser{}
 	castFile, err := parser.ParseToCastFile(fileContent)
+	//logging.Logger.Debug(castFile) still good formatting here
 	if err != nil {
 		return fmt.Errorf("failed to parse file: %w", err)
 	}
@@ -136,7 +137,7 @@ func FileAction(ctx context.Context, command *cli.Command) error {
 		var reqCtx models.HTTPRequestContext
 		reqCtx = castFile.CtxMap[i]
 
-		var replacementPlaceholder map[string]string
+		var replacementPlaceholder map[string]string // TODO: what is this?
 
 		executor.SendHTTP(&replacementPlaceholder, &reqCtx)
 		results.RequestTotal += 1

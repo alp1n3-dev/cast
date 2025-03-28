@@ -36,7 +36,7 @@ func (p *CustomParser) parseRequest(
 		return nil, fmt.Errorf("error parsing HTTP request: %w", err)
 	}
 
-	//logging.Logger.Debug(req)
+	logging.Logger.Debug(req)
 
 	assertions, err := p.parseAssertions(assertLines)
 	if err != nil {
@@ -78,7 +78,7 @@ func (p *CustomParser) parseHTTPRequest(requestStr string, vars map[string]strin
 	// hardcoded debug turn on
 	//logging.Init(true)
 	// hardcoded debug turn off
-	logging.Init(false)
+	//logging.Init(false)
 
 	// Split the full URL by space to get only the URL path
 	urlParts := strings.SplitN(fullURL, " ", 2)

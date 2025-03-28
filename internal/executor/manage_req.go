@@ -20,23 +20,38 @@ import (
 
 func SendHTTP(replacementVariables *map[string]string, HTTPCtx *models.HTTPRequestContext) {
 
-	logging.Init(HTTPCtx.CmdArgs.Debug)
+	//logging.Init(HTTPCtx.CmdArgs.Debug) // turning this one off for now
+
 	//logging.Init(true)                                                             // temporarily turning debug on
 	//HTTPCtx.CmdArgs.PrintOptions = append(HTTPCtx.CmdArgs.PrintOptions, "request") // temporarily turning print request on as well
 
-	logging.Logger.Debugf("Debug: %t, Method: %s, URI: %s", HTTPCtx.CmdArgs.Debug, HTTPCtx.CmdArgs.Method, HTTPCtx.CmdArgs.URL)
+	logging.Logger.Debugf("req uri directed fasthttp: %s", string(HTTPCtx.Request.Req.RequestURI()))
 
-	hostHeader := HTTPCtx.Request.Req.Header.Peek("Host")
-	if len(hostHeader) > 4 {
-		HTTPCtx.Request.Req.SetRequestURI(string(hostHeader))
+	if len(string(HTTPCtx.Request.Req.RequestURI())) > 4 {
+		HTTPCtx.CmdArgs.URL = string(HTTPCtx.Request.Req.RequestURI())
+		HTTPCtx.CmdArgs.Method = string(HTTPCtx.Request.Req.Header.Method())
 	}
+
+	logging.Logger.Debugf("Debug: %t, Method: %s, URI: %s", HTTPCtx.CmdArgs.Debug, HTTPCtx.CmdArgs.Method, HTTPCtx.CmdArgs.URL) // appears fine still here
+
+	/*
+		hostHeader := HTTPCtx.Request.Req.Header.Peek("Host")
+		if len(hostHeader) < 4 {
+			//logging.Logger.Debug("Host Header Being Set")
+			HTTPCtx.Request.Req.SetRequestURI(string(hostHeader))
+			logging.Logger.Debugf("Host Header Set: %s", string(hostHeader))
+		}
+	*/
 
 	requestURI := string(HTTPCtx.Request.Req.RequestURI())
 	if len(requestURI) <= 3 {
 		logging.Logger.Error("The request URI appears to be invalid", "err", requestURI)
 		return
 	}
-	if !strings.Contains(requestURI, "http") {
+
+	logging.Logger.Debug(requestURI)
+	if !strings.Contains(requestURI, "http") && (string(requestURI[0]) != "/") {
+		logging.Logger.Debug("HTTP Being Added - URI Being Edited")
 		//logging.Logger.Warnf("Did you want 'https://' inserted before the URI (%s)? [y/n]: ", requestURI)
 		//var userChoice string
 		//fmt.Scanln(&userChoice)

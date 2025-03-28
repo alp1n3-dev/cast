@@ -178,6 +178,7 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 		castFile.CtxMap[requestCounter] = *reqCtx
 	}
 
+	//logging.Logger.Debug(castFile) // req still in proper format
 	return castFile, nil
 }
 
