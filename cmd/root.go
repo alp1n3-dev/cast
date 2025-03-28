@@ -17,6 +17,7 @@ import (
 	"github.com/alp1n3-eth/cast/internal/flags"
 	output "github.com/alp1n3-eth/cast/internal/output"
 	"github.com/alp1n3-eth/cast/internal/parse"
+	"github.com/alp1n3-eth/cast/pkg/logging"
 	"github.com/alp1n3-eth/cast/pkg/models"
 	"github.com/urfave/cli/v3"
 	"github.com/valyala/fasthttp"
@@ -164,5 +165,7 @@ func EnvAction(ctx context.Context, command *cli.Command) error {
 func init() {
 	//cli.CommandHelpTemplate = "get"
 	//cli.SuggestCommand
+
+	logging.Init(true) // temporary fix to enable logging everywhere.
 
 }

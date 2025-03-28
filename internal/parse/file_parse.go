@@ -14,6 +14,7 @@ import (
 
 	"github.com/alp1n3-eth/cast/internal/capture"
 	"github.com/alp1n3-eth/cast/internal/utils"
+	"github.com/alp1n3-eth/cast/pkg/logging"
 	"github.com/alp1n3-eth/cast/pkg/models"
 	"github.com/google/uuid"
 )
@@ -125,9 +126,10 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 				parts := strings.Split(line, "(")
 				parts2 := strings.Split(parts[1], ")")
 
-				fmt.Println("target file for pre-run:")
-				fmt.Println(parts2[0])
-				fmt.Println()
+				logging.Logger.Infof("Running Request File: %s\n", parts2[0])
+				//fmt.Println("target file for pre-run:")
+				//fmt.Println(parts2[0])
+				//fmt.Println()
 
 				// ./cast file tests/test_files/adv_req_chain.http
 				out, err := exec.Command("./cast", "file", parts2[0]).Output()
@@ -135,8 +137,10 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 					fmt.Println()
 					os.Exit(1)
 				}
-				fmt.Println(string(out))
-				fmt.Println("cmd execution finished")
+				//fmt.Println(string(out)) // prints out the output of the file being run.
+				logging.Logger.Debugf("File Run Output: %s", out)
+				logging.Logger.Info("File Run Complete")
+				//fmt.Println("cmd execution finished")
 				//os.Exit(0)
 			}
 

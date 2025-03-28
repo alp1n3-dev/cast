@@ -28,7 +28,7 @@ func Build() error {
 	}
 
 	fmt.Println("Building...")
-	cmd := exec.Command("go", "build", "-o", "cast-via-mage", ".")
+	cmd := exec.Command("go", "build", "-o", "cast", ".")
 	return cmd.Run()
 }
 
@@ -69,7 +69,7 @@ func InstallDeps() error {
 // Clean up after yourself
 func Clean() {
 	fmt.Println("Cleaning...")
-	os.RemoveAll("cast-via-mage")
+	os.RemoveAll("cast")
 }
 
 func TestCLI() error {
@@ -107,7 +107,7 @@ func testCLIget() {
 	fmt.Println("running test get")
 
 	// Run commands using the newest "cast-via-mage" binary.
-	cmd := exec.Command("./cast-via-mage", "get", "http://localhost:1738/testGet")
+	cmd := exec.Command("./cast", "get", "http://localhost:1738/testGet")
 	cmdOut, err = cmd.CombinedOutput()
 	if err != nil {
 		fmt.Printf("Error encountered: %s", err)
