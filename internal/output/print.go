@@ -36,6 +36,7 @@ func print(r *string, highlight *bool) {
 			logging.Logger.Warn("Colored output failed, printing response regularly. Error: %s", err)
 
 		} else {
+			//fmt.Printf("<-- BREAK -->")
 			fmt.Println()
 			return
 		}
@@ -43,12 +44,13 @@ func print(r *string, highlight *bool) {
 
 	//fmt.Println(r) // printing it standard by default if highlight flag isn't true.
 	os.Stdout.Write([]byte(*r))
-
+	return
 }
 
 func OutputRequest(req *fasthttp.Request, args *models.CommandActions) error {
 	reqStr := req.String() + "\n"
 	print(&reqStr, &args.Color)
+	//fmt.Printf("<-- BREAK -->")
 
 	return nil
 }
@@ -59,6 +61,10 @@ func OutputResponse(resp *models.Response, args *models.CommandActions) {
 	// Should "waterfall" down, as users may want to print just status + body, or body + bytes, etc. Waterfalling allows them combos that eventually add back up to being a properly formatted response + bytes, duration, etc.
 	if len(args.PrintOptions) > 0 {
 		// If a print option is used, it essentially allows them to build their own response. If something isn't mentioned via the CLI, it won't be included in the printout when these options are used.
+		if slices.Contains(args.PrintOptions, "nothing") {
+			return
+		}
+
 		if slices.Contains(args.PrintOptions, "status") {
 			statusMsg := strconv.Itoa(resp.StatusCode)
 
@@ -69,31 +75,39 @@ func OutputResponse(resp *models.Response, args *models.CommandActions) {
 		}
 
 		if slices.Contains(args.PrintOptions, "headers") {
-			// TODO: For later. Probably will require reworking it from a slice to a map.
+			var headerStr string
+			for key, value := range resp.Headers {
+				headerStr += key + ": " + value
+			}
 
+			print(&headerStr, &args.Color)
 		}
 
 		if slices.Contains(args.PrintOptions, "body") {
-			// TODO: For later. Probably will require reworking it from a slice to a map.
 
-		}
+			bodyStr := string(resp.Body)
 
-		if slices.Contains(args.PrintOptions, "nothing") {
-			// TODO: For later. Probably will require reworking it from a slice to a map.
-
+			print(&bodyStr, &args.Color)
 		}
 
 		if slices.Contains(args.PrintOptions, "duration") {
-			// TODO: These should be using the color-optional print function, not Printf via fmt.
 			fmt.Printf("\nRequest duration: %d ms\n", resp.Duration)
 		}
 
 		if slices.Contains(args.PrintOptions, "bytes") {
 			// TODO: For later. Probably will require reworking it from a slice to a map.
 
+			fmt.Printf("\nRequest Body in Bytes:\n%d", resp.Body)
+		}
+
+		if slices.Contains(args.PrintOptions, "truncate") {
+			// TODO: For later. Probably will require reworking it from a slice to a map.
+			truncatedMsg := []byte("\n\033[36m[TRUNCATED]\033[0m\n\n")
+			resp.Body = append(resp.Body[:120], truncatedMsg...)
 		}
 		//print(resp, &args.Highlight)
 		//os.Stdout.Write()
+		return
 
 	}
 
@@ -101,14 +115,19 @@ func OutputResponse(resp *models.Response, args *models.CommandActions) {
 	// Prev: if !args.More {
 	// TODO: Will need to fix, to make it an optional flag.
 	// WARNING: Need to modify, will break if response is too small. (AKA just a "hello" in the response body, for example.)
-	if args.More {
+	// Moved to "truncate" print option above.
+	/*
+		if args.More {
 
-		truncatedMsg := []byte("\n\033[36m[TRUNCATED]\033[0m\n\n")
-		resp.Body = append(resp.Body[:120], truncatedMsg...)
+			truncatedMsg := []byte("\n\033[36m[TRUNCATED]\033[0m\n\n")
+			resp.Body = append(resp.Body[:120], truncatedMsg...)
 
-	}
+		}
+	*/
 
 	//fmt.Println("reached stdout in print.go")
+
+	// Default. Print full response.
 	print(respToStr(resp), &args.Color)
 
 	return
