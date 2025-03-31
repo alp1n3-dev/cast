@@ -1,4 +1,4 @@
-# cast
+# Cast
 
 A CLI tool to enable easy HTTP requests to be completed via the CLI or file-based workflows.
 
@@ -26,27 +26,27 @@ The focus of the CLI input and file-based scripting is to keep it simple and obv
 - [Clear is better than clever](https://go-proverbs.github.io)
 - [Every tool is targeted towards a specific use and thrive in specific scenarios](https://news.ycombinator.com/item?id=43239153)
 
-## install
+## Install
 
-### pkg repos
+### Pkg Repos
 
 #### macOS
 
 - homebrew: `brew install cast`
 
-#### linux
+#### Linux
 
 - pacman (arch via aur): ``
 
-### build it
+### Build It
 
-**With gorealeaser:**
+**With GoRealeaser:**
 
-**With go:**
+**With Go:**
 
-## example(s) / usage
+## Example(s) / Usage
 
-### cli usage
+### CLI Usage
 
 ```bash
 cast [ method ] [ url ] <args>
@@ -64,20 +64,14 @@ cast get https://google.com -H test:test1 -H test2:test3 --highlight
 
 ![image](./documentation/example_screenshots/readme_example_1.png)
 
-### file usage
+### File Usage
 
-Requests are separated mainly by `<% operations %>` and `methods`. They also can be separated by asserts, as it's something the tool matches on, but **asserts are not required**. So after a requests body it'll keep looking and won't start a new request until it finds a `{{ method }} {{ endpoint }}`.
-
-Comments can be included before methods, or after asserts. If you don't want to assert but need to leave comments directly after a body, just do: `<% null %>` and leave the comments after it. A clear endpoint for the body is important.
-
-Asserts are separated from each other by newlines, and from the body by two newlines. If, for whatever reason, the exact string `ASSERT` is needed in the body after two newlines, it can be escaped: `ASS\ERT`. The backslash will be auto-removed by the program post-assertions checks for any string that exactly matches that.
-
-A `Host` header **is required** for clarity. Even though in a normal HTTP interaction it technically wouldn't be required, for the scripts it is.
-
-- `save` works to temporarily save a value, and doubles as an `assert`.
-- `[function] [location] <modifier> [value] <modifier>` is a good way to see the post-response functionality.
-- If one default is defined on the first use of one variable, it'll count as the default for the rest of its uses.
-- If a variable is hardcoded, it'll will act as the default.
+- **asserts are not required**.
+- After a requests body it'll keep looking and won't start a new request until it finds a `[post]` or `[request]`.
+- Comments can be included before or after the request. If you don't want to assert but need to leave comments directly after a body, just do: `[post]` and leave the comments after it.
+- Asserts are separated from each other by newlines.
+- A `Host` header **is required** for clarity.
+- If a variable is hardcoded, it'll will act as the default value. This means if for whatever reason a value doesn't end up being stored in the variable, the variable will be sent instead.
 - Content-type will be auto-assigned if one isn't entered.
 
 ```bash
@@ -114,19 +108,45 @@ GET /resources HTTP/1.1
 Authorization: Bearer {{auth_token}}
 ```
 
-## quick comparisons
+## Quick Comparisons
 
-### with httpie
+### With Httpie
 
-### with hurl
+### With hurl
 
-### with xh
+### With xh
 
-### with cURL
+### With cURL
 
-### benchmark
+### Benchmark
+`hyperfine` used on an M1 Macbook Air:
 
-## issues, contributions, faqs
+```bash
+hyperfine --runs 5 './cast get https://www.google.com' 'http get https://www.google.com' 'xh get https://www.google.com' 'curl https://www.google.com' --warmup 5
+Benchmark 1: ./cast get https://www.google.com
+  Time (mean ± σ):     222.5 ms ±   4.6 ms    [User: 15.8 ms, System: 8.4 ms]
+  Range (min … max):   216.9 ms … 228.4 ms    5 runs
+
+Benchmark 2: http get https://www.google.com
+  Time (mean ± σ):     332.3 ms ±   8.9 ms    [User: 132.1 ms, System: 31.5 ms]
+  Range (min … max):   324.3 ms … 347.0 ms    5 runs
+
+Benchmark 3: xh get https://www.google.com
+  Time (mean ± σ):     335.0 ms ±  11.7 ms    [User: 96.1 ms, System: 10.6 ms]
+  Range (min … max):   325.4 ms … 354.2 ms    5 runs
+
+Benchmark 4: curl https://www.google.com
+  Time (mean ± σ):     195.0 ms ±   5.6 ms    [User: 14.0 ms, System: 10.0 ms]
+  Range (min … max):   188.4 ms … 201.9 ms    5 runs
+
+Summary
+  curl https://www.google.com ran
+    1.14 ± 0.04 times faster than ./cast get https://www.google.com
+    1.70 ± 0.07 times faster than http get https://www.google.com
+    1.72 ± 0.08 times faster than xh get https://www.google.com
+```
+
+## Issues, Contributions, Faqs
 
 _Warning: Not all issues or feature requests may be accepted._
 
@@ -134,9 +154,7 @@ _Warning: Not all issues or feature requests may be accepted._
 - `.md` on how to [contribute]()
 - `.md` containing [the faq]()
 
-Generally the program _shouldn't_ load / initiate / do anything that isn't involved in **only** the thing the user commands it. And the things it _does_ do, shouldn't be done until they're needed.
-
-## roadmap / to-do
+## Roadmap / To-Do
 
 > [!WARNING]
 > Any version under v1.0 is going to be **very** unstable and subject to change (flags, syntax, etc.). Please report any bugs or issues.
@@ -251,11 +269,11 @@ These may come about, in addition to others, if enough demand is seen. `cast` is
 - [ ] grpc support
 - [ ] graphql support / formatting
 
-## writings about creating it
+## Writings About Creating It
 
 I wrote a few blog posts on my personal blog about my experience and thoughts while developing `cast`. The are stream-of-thought and show how the scope of the project and its features changed over time. They can be read [here](https://alp1n3.dev/tags/cast/), and exist under the `cast` tag.
 
-## pkgs utilized
+## Pkgs Utilized
 
 The packages doing the heavy lifting (other than the standard library) are:
 
