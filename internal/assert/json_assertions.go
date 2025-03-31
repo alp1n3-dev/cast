@@ -1,10 +1,10 @@
-package parse
+package assert
 
 import (
 	"strings"
 
-	"github.com/alp1n3-eth/cast/pkg/logging"
-	"github.com/bytedance/sonic"
+	//"github.com/alp1n3-eth/cast/pkg/logging"
+	//"github.com/bytedance/sonic"
 	"github.com/valyala/fasthttp"
 )
 
@@ -31,10 +31,10 @@ func checkIfBodyIsJSON(resp *fasthttp.Response) (bool, *map[string]interface{}) 
 	}
 
 	// Check the body
-	if err := sonic.Unmarshal(resp.Body(), jsonBody); err != nil {
-		logging.Logger.Fatalf("Unable to unmarshal JSON: %s, %s", resp.Body(), err)
-		return false, nil
-	}
+	//if err := sonic.Unmarshal(resp.Body(), jsonBody); err != nil {
+	//logging.Logger.Fatalf("Unable to unmarshal JSON: %s, %s", resp.Body(), err)
+	//return false, nil
+	//}
 
 	return bodyValidity, &jsonBody
 }

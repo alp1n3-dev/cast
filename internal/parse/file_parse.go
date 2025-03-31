@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"net/url"
 	"os"
 	"os/exec"
 
@@ -13,6 +14,7 @@ import (
 
 	"github.com/alp1n3-eth/cast/internal/capture"
 	"github.com/alp1n3-eth/cast/internal/utils"
+	"github.com/alp1n3-eth/cast/pkg/logging"
 	"github.com/alp1n3-eth/cast/pkg/models"
 	"github.com/google/uuid"
 )
@@ -124,9 +126,10 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 				parts := strings.Split(line, "(")
 				parts2 := strings.Split(parts[1], ")")
 
-				fmt.Println("target file for pre-run:")
-				fmt.Println(parts2[0])
-				fmt.Println()
+				logging.Logger.Infof("Running Request File: %s\n", parts2[0])
+				//fmt.Println("target file for pre-run:")
+				//fmt.Println(parts2[0])
+				//fmt.Println()
 
 				// ./cast file tests/test_files/adv_req_chain.http
 				out, err := exec.Command("./cast", "file", parts2[0]).Output()
@@ -134,8 +137,10 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 					fmt.Println()
 					os.Exit(1)
 				}
-				fmt.Println(string(out))
-				fmt.Println("cmd execution finished")
+				//fmt.Println(string(out)) // prints out the output of the file being run.
+				logging.Logger.Debugf("File Run Output: %s", out)
+				logging.Logger.Info("File Run Complete")
+				//fmt.Println("cmd execution finished")
 				//os.Exit(0)
 			}
 
@@ -173,6 +178,7 @@ func (p *CustomParser) ParseToCastFile(b []byte) (*models.CastFile, error) {
 		castFile.CtxMap[requestCounter] = *reqCtx
 	}
 
+	//logging.Logger.Debug(castFile) // req still in proper format
 	return castFile, nil
 }
 
@@ -183,7 +189,7 @@ func (p *CustomParser) Marshal(m map[string]interface{}) ([]byte, error) {
 
 func runScripts(str string) string {
 	var value string
-	var err error
+	//var err error
 	//fmt.Printf("value: %s", value)
 
 	if str == "uuidv7()" {
@@ -196,27 +202,71 @@ func runScripts(str string) string {
 	}
 
 	if strings.Contains(str, "base64") {
-		before, after, _ := strings.Cut(str, `"`)
-		before, after, _ = strings.Cut(after, `"`)
+		return base64Ops(str)
+	}
 
-		if strings.Contains(str, "decode") {
-			value, err = utils.Base64(before, "decode")
-			if err != nil || value == "" {
-				//logging.Logger.Fatal(err)
-				fmt.Errorf("%s", err)
-			}
-			return value
+	if strings.Contains(str, "url") {
+		return urlOps(str)
+	}
+
+	return value
+}
+
+func urlOps(str string) string {
+	var value string
+	var err error
+
+	before, after, _ := strings.Cut(str, `"`)
+	before, after, _ = strings.Cut(after, `"`)
+
+	if strings.Contains(str, "decode") {
+		value, err = url.QueryUnescape(before)
+		if err != nil || value == "" {
+			//logging.Logger.Fatal(err)
+			//fmt.Errorf("%s", err)
+			fmt.Println(err)
 		}
+		return value
+	}
 
-		if strings.Contains(str, "encode") {
-			value, err = utils.Base64(before, "encode")
-			if err != nil || value == "" {
-				//logging.Logger.Fatal(err)
-				fmt.Errorf("%s", err)
-			}
-			return value
+	if strings.Contains(str, "encode") {
+		value = url.QueryEscape(before)
+		if err != nil || value == "" {
+			//logging.Logger.Fatal(err)
+			//fmt.Errorf("%s", err)
+			fmt.Println(err)
 		}
+		return value
+	}
 
+	return value
+}
+
+func base64Ops(str string) string {
+	var value string
+	var err error
+
+	before, after, _ := strings.Cut(str, `"`)
+	before, after, _ = strings.Cut(after, `"`)
+
+	if strings.Contains(str, "decode") {
+		value, err = utils.Base64(before, "decode")
+		if err != nil || value == "" {
+			//logging.Logger.Fatal(err)
+			//fmt.Errorf("%s", err)
+			fmt.Println(err)
+		}
+		return value
+	}
+
+	if strings.Contains(str, "encode") {
+		value, err = utils.Base64(before, "encode")
+		if err != nil || value == "" {
+			//logging.Logger.Fatal(err)
+			//fmt.Errorf("%s", err)
+			fmt.Println(err)
+		}
+		return value
 	}
 
 	return value

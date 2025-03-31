@@ -12,7 +12,7 @@ urlEncoded = url.encode("this is a url test encode")
 # url decode
 urlDecoded = url.decode("url%20decode%20this=%60%60%60")
 # host header being set
-host_header = "Host: example.com"
+host_header = "Host: localhost:9000"
 # run an external set of requests from a file before running the requests in this file.
 run(tests/test_files/simple_request_chain.txt)
 
