@@ -13,7 +13,7 @@ cast post https://example.com/api/v1/userUpdate -B newName=Greg -H X-Api-Key:123
 
 [![asciicast](https://asciinema.org/a/lKxrZCiO2oF70hl9kweiBrggm.svg)](https://asciinema.org/a/lKxrZCiO2oF70hl9kweiBrggm)
 
-HTTP and OpenAPI are great standards. **This tool revolves around _just_ them.**
+HTTP and OpenAPI are great standards. **This tool's intent is to revolve around _just_ them.**
 
 The focus of the CLI input and file-based scripting is to keep it simple and obvious, which requires being a little explicit. Things like:
 
