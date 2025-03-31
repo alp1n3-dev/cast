@@ -30,3 +30,5 @@ go.work.sum
 *cpu.prof
 cast
 cast
+# Added by goreleaser init:
+dist/
