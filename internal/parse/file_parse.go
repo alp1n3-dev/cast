@@ -231,7 +231,7 @@ func urlOps(str string) string {
 
 	if strings.Contains(str, "encode") {
 		value = url.QueryEscape(before)
-		if err != nil || value == "" {
+		if value == "" {
 			//logging.Logger.Fatal(err)
 			//fmt.Errorf("%s", err)
 			fmt.Println(err)

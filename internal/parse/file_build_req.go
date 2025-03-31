@@ -31,7 +31,7 @@ func (p *CustomParser) parseRequest(
 
 	requestStr = resolveVar(requestStr, vars)
 
-	req, cmdArgs, err := p.parseHTTPRequest(requestStr, vars)
+	req, cmdArgs, err := p.parseHTTPRequest(requestStr)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing HTTP request: %w", err)
 	}
@@ -58,7 +58,7 @@ func (p *CustomParser) parseRequest(
 }
 
 // Runs third
-func (p *CustomParser) parseHTTPRequest(requestStr string, vars map[string]string) (models.Request, models.CommandActions, error) {
+func (p *CustomParser) parseHTTPRequest(requestStr string) (models.Request, models.CommandActions, error) {
 	// Split the request string into lines.
 	lines := strings.Split(requestStr, "\n")
 	//fmt.Println(lines)

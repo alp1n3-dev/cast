@@ -66,7 +66,7 @@ func SendHTTP(replacementVariables *map[string]string, HTTPCtx *models.HTTPReque
 	}
 
 	if HTTPCtx.CmdArgs.CurlOutput {
-		curlCmd := generateCurlCommand(HTTPCtx.Request.Req, replacementVariables)
+		curlCmd := generateCurlCommand(HTTPCtx.Request.Req)
 
 		logging.Logger.Debug(curlCmd)
 		return
@@ -131,7 +131,7 @@ func SendHTTP(replacementVariables *map[string]string, HTTPCtx *models.HTTPReque
 
 }
 
-func generateCurlCommand(req *fasthttp.Request, replacementVariables *map[string]string) string {
+func generateCurlCommand(req *fasthttp.Request) string {
 	var curlCmdStr string
 
 	curlCmdStr = "curl -X " + (string(req.Header.Method())) + " " + (req.URI().String())

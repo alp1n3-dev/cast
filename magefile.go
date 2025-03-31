@@ -135,7 +135,7 @@ hello\n
 </html>
 		`
 
-		fmt.Fprintf(w, respBody)
+		fmt.Fprint(w, respBody)
 	})
 
 	http.HandleFunc("/testJSON", func(w http.ResponseWriter, req *http.Request) {
@@ -147,7 +147,7 @@ hello\n
 }
 		`
 
-		fmt.Fprintf(w, respBody)
+		fmt.Fprint(w, respBody)
 	})
 
 	if err := http.ListenAndServe(":1738", nil); err != nil {
