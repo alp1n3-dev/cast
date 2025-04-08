@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema-pro.json
+
 # This is an example .goreleaser.yml file with some sensible defaults.
 # Make sure to check the documentation at https://goreleaser.com
 
@@ -8,19 +10,33 @@
 
 version: 2
 
+#variables:
+#main: "."
+#binary_name: cast
+#description: "A CLI HTTP utility."
+#github_url: "https://github.com/alp1n3-dev/cast"
+#homepage: "https://cast.alp1n3.dev/"
+#brew_commit_author_name: "alp1n3-dev"
+#brew_owner: alp1n3-dev
+
 before:
   hooks:
-    # You may remove this if you don't use go modules.
     - go mod tidy
-    # you may remove this if you don't need go generate
     - go generate ./...
 
 builds:
   - env:
       - CGO_ENABLED=0
+    #main: "{{ with .Var.main }}{{ . }}{{ else }}.{{ end }}"
+    ldflags: -s -w -X main.Version=v{{ .Version }} -X main.CommitSHA={{ .Commit }} -X main.CommitDate={{ .CommitDate }}
     goos:
       - linux
       - darwin
+    hooks:
+      post:
+        - cmd: quill sign-and-notarize "{{ .Path }}" --dry-run={{ .IsSnapshot }} --ad-hoc={{ .IsSnapshot }} -vv
+          env:
+            - QUILL_LOG_FILE=/tmp/quill-{{ .Target }}.log
 
 archives:
   - formats: [tar.gz]
@@ -32,12 +48,50 @@ archives:
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
 
+#brews:
+#- repository:
+#owner: "{{ .Var.brew_owner }}"
+#name: homebrew-tap
+#token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+#commit_author:
+#name: "{{ .Var.brew_commit_author_name }}"
+#email: "{{ .Var.brew_commit_author_email }}"
+#homepage: "{{ .Var.homepage }}"
+#description: "{{ .Var.description }}"
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-snapshot"
+
+#nightly:
+#version_template: "{{ incpatch .Version }}-nightly"
+
 changelog:
   sort: asc
+  use: github
   filters:
     exclude:
-      - "^docs:"
+      - "^chore"
       - "^test:"
+      - "merge conflict"
+      - Merge pull request
+      - Merge remote-tracking branch
+      - Merge branch
+      - go mod tidy
+  groups:
+    - title: Dependency updates
+      regexp: "^.*\\(deps\\)*:+.*$"
+      order: 300
+    - title: "New Features"
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 100
+    - title: "Bug fixes"
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 200
+    - title: Other work
+      order: 9999
+
+git:
+  tag_sort: semver
 
 release:
   footer: >-

@@ -28,6 +28,20 @@ The focus of the CLI input and file-based scripting is to keep it simple and obv
 
 ## Install
 
+### Using Git
+
+```bash
+git clone --depth 1 https://github.com/alp1n3-eth/cast.git ~/.cast
+brew install go
+go build -C ~/.cast
+```
+
+Add it to path with:
+
+```bash
+
+```
+
 ### Pkg Repos
 
 #### macOS
@@ -38,11 +52,9 @@ The focus of the CLI input and file-based scripting is to keep it simple and obv
 
 - pacman (arch via aur): ``
 
-### Build It
+### Last Resort for macOS: Releases
 
-**With GoRealeaser:**
-
-**With Go:**
+**Releases are not signed / notarized. You will have to allow the program via system preferences.**
 
 ## Example(s) / Usage
 
@@ -119,6 +131,7 @@ Authorization: Bearer {{auth_token}}
 ### With cURL
 
 ### Benchmark
+
 `hyperfine` used on an M1 Macbook Air:
 
 ```bash
@@ -215,7 +228,6 @@ _Warning: Not all issues or feature requests may be accepted._
 
 - [ ] Support proxying
 - [ ] Support client certificates
-- [ ] Export as cURL command(s) `cast --curl-export -F auth.cast` (Both file and one-off CLI commands)
 - [ ] Run it through Snyk and Semgrep
 
 **v0.8**
@@ -252,7 +264,7 @@ _Warning: Not all issues or feature requests may be accepted._
 
 - [ ] optimize. find anti-patterns.
 - [ ] maintain. keep on top of package and language changes.
-- [ ] advanced cURL export, supports vars + other items.
+- [ ] advanced cURL export, supports vars + other items. Able to export whole cast files as single or multiple cURL commands.
 - [ ] support JSON output for responses so that they can be parsed with tools such as `jq`.
 - [ ] add an option to not print info/warning/errors. Ensure it doesn't make the warnings with `y/n` options hang / not complete. (`-q` for quiet)
 
